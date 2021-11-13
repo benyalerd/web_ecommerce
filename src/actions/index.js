@@ -1,3 +1,3 @@
 export default class Action{
-    static set_test_text = "set_test_text"
+    static set_user_info = "set_user_info";
 }

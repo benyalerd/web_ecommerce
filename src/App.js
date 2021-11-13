@@ -3,8 +3,8 @@ import { connect } from 'react-redux';
 import {Route,Switch,Redirect} from 'react-router-dom';
 
 
-const Test = React.lazy(() => import("./pages/test"));
-const Test2 = React.lazy(() => import("./pages/test2"));
+const Login = React.lazy(() => import("./pages/LogIn"));
+const Register = React.lazy(() => import("./pages/Register"));
 class App extends Component{
   displayName = App.name;
   
@@ -16,9 +16,9 @@ class App extends Component{
       </div>
     }>
       <Switch>
-        <Route exact path="/" component={Test2}/>
-        <Route path="/test" component={Test}/>
-        <Redirect to="/test"/>
+        <Route exact path="/" component={Login}/>
+        <Route path="/Register" component={Register}/>
+        <Redirect to="/"/>
       </Switch>
     </Suspense>
     )

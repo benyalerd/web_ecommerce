@@ -8,6 +8,7 @@ import thunk from 'redux-thunk'
 import logger from 'redux-logger';
 import { Provider } from 'react-redux';
 
+
 let storeSet = null;
 if(process.env.NODE_ENV !='development' & window.ProdBuild === true)
 {
