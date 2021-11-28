@@ -7,7 +7,9 @@ import rootReducer from './reducers';
 import thunk from 'redux-thunk'
 import logger from 'redux-logger';
 import { Provider } from 'react-redux';
-
+import 'bootstrap/dist/css/bootstrap.min.css';
+import $ from 'jquery';
+import Popper from 'popper.js';
 
 let storeSet = null;
 if(process.env.NODE_ENV !='development' & window.ProdBuild === true)
