@@ -5,14 +5,16 @@ import {connect} from 'react-redux';
 import * as loginAction from '../actions/Login/LogInAction'
 import * as loginApiAction from '../actions/api/LoginApiAction'
 import '../assets/css/index.css';
-import { buildQueries } from '@testing-library/dom';
+
 
 class LogIn extends React.Component{
   constructor(props) {
     super(props);
     this.state = 
     { width: 0, 
-      height: 0 };
+      height: 0,
+      loginErrorText:"",   
+    };
     this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
   }
   
@@ -40,10 +42,12 @@ class LogIn extends React.Component{
         <div className="form-group input" >
         <label for="InputEmail" className="brown-input-Text">Email</label>
         <input type="email" class="form-control"  id="InputEmail"/>
+       
       </div>
        <div className="form-group input">
        <label for="InputPassword" className="brown-input-Text">Password</label>
        <input type="password" class="form-control" id="InputPassword"/>
+       <label className="text-error"></label>
      </div>
      <div className="form-group input"  style={{width:'250px'}}>
       <button  className="primary-button">Login</button>

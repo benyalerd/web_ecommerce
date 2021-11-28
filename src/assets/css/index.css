@@ -22,7 +22,18 @@
     padding:5px;
     border-radius:10px;
     color:#d7c6b4;
-    border-color:'transparent';
+    border-color:transparent;
+    font-size:18px;
+    font-weight:bold;
+    width:100%;  
+  }
+
+  .secondary-button{
+    background-color:white;
+    padding:5px;
+    border-radius:10px;
+    color:#4f6137;
+    border-color:#4f6137;
     font-size:18px;
     font-weight:bold;
     width:100%;  
@@ -37,4 +48,9 @@
     padding:10px 0px;
     width: 350px;
     margin: 0 auto;
+  }
+
+  .text-error{
+    color:red;
+    font-size: 14px;
   }

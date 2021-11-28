@@ -1,8 +1,10 @@
 import {combineReducers} from 'redux';
 import login from './Login/LoginReducer';
+import Register from './Register/RegisterReducer';
 
 const appReducer = combineReducers({
-    login:login
+    login:login,
+    Register:Register
 });
 
 const rootReducer = (state,action) =>{
