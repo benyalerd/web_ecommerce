@@ -2,7 +2,7 @@ import Action from '../../actions/index';
 var initialState = {
     UserInfo:null
 }
-function login(state = initialState,action){
+function Merchant(state = initialState,action){
     switch (action.type) {
         case Action.set_user_info:
             return{...state,UserInfo:action.UserInfo};
@@ -11,4 +11,4 @@ function login(state = initialState,action){
             return state;
     }
 }
-export default login;
+export default Merchant;

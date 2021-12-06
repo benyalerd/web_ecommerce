@@ -1,14 +1,14 @@
 import Action from '../../actions/index';
 var initialState = {
-    UserInfo:null
+    Shop:null
 }
-function Register(state = initialState,action){
+function Shop(state = initialState,action){
     switch (action.type) {
         case Action.set_user_info:
-            return{...state,UserInfo:action.UserInfo};
+            return{...state,Shop:action.Shop};
               
         default:
             return state;
     }
 }
-export default Register;
+export default Shop;

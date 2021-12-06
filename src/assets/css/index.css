@@ -54,3 +54,9 @@
     color:red;
     font-size: 14px;
   }
+
+  .disabled{
+    cursor: none;
+    color: white;
+    background-color: lightgrey;
+  }
