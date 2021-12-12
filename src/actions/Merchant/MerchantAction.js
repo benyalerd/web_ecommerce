@@ -1,8 +1,8 @@
 import Action from '../index';
 
-export function setUserInfo(data){
+export function setMerchantInfo(data){
     return {
-       type:Action.set_user_info,
-       UserInfo:data
+       type:Action.set_Merchant_Info,
+       MerchantInfo:data
     };
 }

@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import {Route,Switch,Redirect} from 'react-router-dom';
 
 
-
 const Login = React.lazy(() => import("./pages/LogIn"));
 const Register = React.lazy(() => import("./pages/Register"));
 const AddShop = React.lazy(() => import("./pages/AddShop"))

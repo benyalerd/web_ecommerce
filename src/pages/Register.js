@@ -7,6 +7,8 @@ import * as registerApiAction from '../actions/api/RegisterApiAction'
 import '../assets/css/index.css';
 import 'react-dropdown/style.css';
 import {validEmail,validTel,validPassword} from '../helper/Regex'
+import { BubbleSpinLoader } from 'react-css-loaders';
+import 'style.css'
 
 
 class Register extends React.Component{
@@ -141,8 +143,9 @@ selectRole = (e) =>{
     this.setState({role:value});
 }
 
-registerOnClick = () =>{
-  //call api register
+registerOnClick = async() =>{
+  const res = await this.props.RegisterApiAction.RegisterMerchant(this.state.firstname,this.state.lastname,this.state.password,this.state.repeat_password,this.state.email,this.state.role,this.state.tel);
+  console.log(JSON.stringify(res));
 }
 
 cancelOnClick = () =>{

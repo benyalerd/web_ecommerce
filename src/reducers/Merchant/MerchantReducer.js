@@ -1,11 +1,11 @@
 import Action from '../../actions/index';
 var initialState = {
-    UserInfo:null
+    MerchantInfo:null
 }
 function Merchant(state = initialState,action){
     switch (action.type) {
-        case Action.set_user_info:
-            return{...state,UserInfo:action.UserInfo};
+        case Action.set_Merchant_Info:
+            return{...state,MerchantInfo:action.MerchantInfo};
               
         default:
             return state;
