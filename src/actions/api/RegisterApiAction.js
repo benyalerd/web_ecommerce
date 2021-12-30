@@ -12,6 +12,7 @@ export  const  RegisterMerchant = (name,lastname,password,repeat_password,email,
         "role":role,
         "tel":tel
     });
+    
         const data = axios.post(apiEndpoint,request,{
             headers:{
                 "Content-Type":"application/json"

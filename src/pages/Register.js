@@ -7,8 +7,9 @@ import * as registerApiAction from '../actions/api/RegisterApiAction'
 import '../assets/css/index.css';
 import 'react-dropdown/style.css';
 import {validEmail,validTel,validPassword} from '../helper/Regex'
-import { BubbleSpinLoader } from 'react-css-loaders';
-import 'style.css'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import jwt_decode from "jwt-decode";
 
 
 class Register extends React.Component{
@@ -52,88 +53,88 @@ class Register extends React.Component{
      return  (!value || value == undefined || value == "" || value.length == 0);
   }
 
-  validateFirstName = (e) =>{
+  validateFirstName = async(e) =>{
    var value = e.target.value
     if(this.IsNullOrEmpty(value)){
-      this.setState({firstname:value,firstnameErrorText:'กรุณากรอกชื่อ'});
+      await this.setState({firstname:value,firstnameErrorText:'กรุณากรอกชื่อ'});
     }
     else{
-      this.setState({firstname:value,firstnameErrorText:''});
+      await this.setState({firstname:value,firstnameErrorText:''});
 
     }
-    var isDisable = this.CheckDisableRegisterButton();
+    var isDisable = this.CheckDisableRegisterButton(value,this.state.firstnameErrorText);
     this.setState({IsRegisterDisable:isDisable});
  }
 
- validateLastName = (e) =>{
+ validateLastName = async(e) =>{
   var value = e.target.value
   if(this.IsNullOrEmpty(value)){
-    this.setState({lastname:value,lastnameErrorText:'กรุณากรอกนามสกุล'});
+    await this.setState({lastname:value,lastnameErrorText:'กรุณากรอกนามสกุล'});
   }
   else{
-    this.setState({lastname:value,lastnameErrorText:''});
+    await this.setState({lastname:value,lastnameErrorText:''});
   }
-  var isDisable = this.CheckDisableRegisterButton();
+  var isDisable = this.CheckDisableRegisterButton(value,this.state.lastnameErrorText);
   this.setState({IsRegisterDisable:isDisable});
 }
 
-validateEmail = (e) =>{
+validateEmail = async(e) =>{
   var value = e.target.value
   if(this.IsNullOrEmpty(value)){
-    this.setState({email:value,emailErrorText:'กรุณากรอกอีเมล์'});
+    await this.setState({email:value,emailErrorText:'กรุณากรอกอีเมล์'});
   }
   else if(!validEmail.test(value)){
-    this.setState({email:value,emailErrorText:'อีเมล์ไม่ถูกต้อง'});
+    await this.setState({email:value,emailErrorText:'อีเมล์ไม่ถูกต้อง'});
   }
   else{
-    this.setState({email:value,emailErrorText:''});
+    await this.setState({email:value,emailErrorText:''});
   }
-  var isDisable = this.CheckDisableRegisterButton();
+  var isDisable = this.CheckDisableRegisterButton(value,this.state.emailErrorText);
   this.setState({IsRegisterDisable:isDisable});
 }
 
-validateTel = (e) =>{
+validateTel = async(e) =>{
   var value = e.target.value
   if(this.IsNullOrEmpty(value)){
-    this.setState({tel:value,telErrorText:'กรุณากรอกเบอร์โทรศัพท์'});
+    await this.setState({tel:value,telErrorText:'กรุณากรอกเบอร์โทรศัพท์'});
   }
   else if(!validTel.test(value)){
-    this.setState({tel:value,telErrorText:'เบอร์โทรศัพท์ไม่ถูกต้อง'});
+    await this.setState({tel:value,telErrorText:'เบอร์โทรศัพท์ไม่ถูกต้อง'});
   }
   else{
-    this.setState({tel:value,telErrorText:''});
+    await this.setState({tel:value,telErrorText:''});
   }
 
-  var isDisable = this.CheckDisableRegisterButton();
+  var isDisable = this.CheckDisableRegisterButton(value,this.state.telErrorText);
   this.setState({IsRegisterDisable:isDisable});
 }
 
-validatePasword = (e) =>{
+validatePasword = async(e) =>{
   var value = e.target.value
   if(this.IsNullOrEmpty(value)){
-    this.setState({password:value,passwordErrorText:'กรุณากรอกรหัสผ่าน'});
+    await this.setState({password:value,passwordErrorText:'กรุณากรอกรหัสผ่าน'});
   }
   else if(!validPassword.test(value)){
-    this.setState({password:value,passwordErrorText:'รหัสผ่านต้องเป็นตัวเลขหรือตัวอักษรขนาด 8-20 ตัว'});
+    await this.setState({password:value,passwordErrorText:'รหัสผ่านต้องเป็นตัวเลขหรือตัวอักษรขนาด 8-20 ตัว'});
   }
   else{
-    this.setState({password:value,passwordErrorText:''});
+    await this.setState({password:value,passwordErrorText:''});
   }
 
-  var isDisable = this.CheckDisableRegisterButton();
+  var isDisable = this.CheckDisableRegisterButton(value,this.state.passwordErrorText);
   this.setState({IsRegisterDisable:isDisable});
 }
 
-validateConfirmPasword = (e) =>{
+validateConfirmPasword = async(e) =>{
   var value = e.target.value
   if(this.state.password != value){
-    this.setState({confirmPassword:value,confirmPasswordErrorText:'รหัสผ่านไม่ตรงกัน'});
+    await this.setState({confirmPassword:value,confirmPasswordErrorText:'รหัสผ่านไม่ตรงกัน'});
   }
   else{
-    this.setState({confirmPassword:value,confirmPasswordErrorText:''});
+    await this.setState({confirmPassword:value,confirmPasswordErrorText:''});
   }
   
-  var isDisable = this.CheckDisableRegisterButton();
+  var isDisable = this.CheckDisableRegisterButton(value,this.state.confirmPasswordErrorText);
   this.setState({IsRegisterDisable:isDisable});
 }
 
@@ -144,8 +145,20 @@ selectRole = (e) =>{
 }
 
 registerOnClick = async() =>{
+  try
+  {
   const res = await this.props.RegisterApiAction.RegisterMerchant(this.state.firstname,this.state.lastname,this.state.password,this.state.repeat_password,this.state.email,this.state.role,this.state.tel);
   console.log(JSON.stringify(res));
+  if(res.data.isError){
+    toast.error(res.data.errorMsg);
+    return;
+  }
+  var merchant = jwt_decode(res.data.token);
+  localStorage.setItem('merchant',merchant);
+}
+catch(ex){
+  toast.error("เกิดข้อผิดพลาด กรุณาติดต่อเจ้าหน้าที่");
+  }
 }
 
 cancelOnClick = () =>{
@@ -153,27 +166,42 @@ cancelOnClick = () =>{
 }
 
 CheckDisableRegisterButton = () =>{
-  if(this.IsNullOrEmpty(this.state.firstnameErrorText) &&
-  this.IsNullOrEmpty(this.state.lastnameErrorText)&&
-  this.IsNullOrEmpty(this.state.passwordErrorText)&&
-  this.IsNullOrEmpty(this.state.confirmPasswordErrorText) &&
-  this.IsNullOrEmpty(this.state.emailErrorText)&&
-  this.IsNullOrEmpty(this.state.telErrorText)&&
-  !this.IsNullOrEmpty(this.state.firstname)&&
-  !this.IsNullOrEmpty(this.state.lastname)&&
-  !this.IsNullOrEmpty(this.state.password)&&
-  !this.IsNullOrEmpty(this.state.confirmPassword)&&
-  !this.IsNullOrEmpty(this.state.email)&&
-  !this.IsNullOrEmpty(this.state.tel)){
+  if(!this.IsNullOrEmpty(this.state.firstnameErrorText)|| this.IsNullOrEmpty(this.state.firstname))
+  {
     return true;
   }
-  return false;
-}
+  if(!this.IsNullOrEmpty(this.state.lastnameErrorText)|| this.IsNullOrEmpty(this.state.lastname))
+  {
+    return true;
+  }
+  if(!this.IsNullOrEmpty(this.state.telErrorText)|| this.IsNullOrEmpty(this.state.tel))
+  {
+    return true;
+  }
+  if(!this.IsNullOrEmpty(this.state.emailErrorText)|| this.IsNullOrEmpty(this.state.email))
+  {
+    return true;
+  }
+  if(!this.IsNullOrEmpty(this.state.passwordErrorText)|| this.IsNullOrEmpty(this.state.password))
+  {
+    return true;
+  }
+  if(!this.IsNullOrEmpty(this.state.confirmPasswordErrorText)|| this.IsNullOrEmpty(this.state.confirmPassword))
+  {
+    return true;
+  }
+  return false
+  }
+
+
   
     render(){
       
       return(
-        <div className="form-group row" style={{height:this.state.height}}>       
+        <div>
+           <ToastContainer />  
+        <div className="form-group row" style={{height:this.state.height}}>     
+       
         <div className="col-4" style={this.state.width <= 998 ?{display:'none'}:{backgroundColor:'#4f6137'}} ></div>
       <div className={this.state.width <= 998 ?"col-12":"col-8"} style={{position:'relative'}}>
         <div className="vertical-center" style={{width:'100%'}}>
@@ -201,7 +229,7 @@ CheckDisableRegisterButton = () =>{
     <div className="form-group row">
       <div className="form-group input col-6">
       <label for="InputTel" className="brown-input-Text">Tel</label>
-      <input type="text" class="form-control"  id="InputTel" value={this.state.tel} onChange={this.validateTel.bind(this)}/>
+      <input type="text" class="form-control" maxLength={10}  id="InputTel" value={this.state.tel} onChange={this.validateTel.bind(this)}/>
      </div>
      <div className="form-group input col-6">
      <label for="InputEmail" className="brown-input-Text">Email</label>
@@ -256,6 +284,7 @@ CheckDisableRegisterButton = () =>{
     
   
   
+   </div>
    </div>
    </div>
    </div>
