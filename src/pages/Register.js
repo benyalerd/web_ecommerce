@@ -148,13 +148,13 @@ registerOnClick = async() =>{
   try
   {
   const res = await this.props.RegisterApiAction.RegisterMerchant(this.state.firstname,this.state.lastname,this.state.password,this.state.repeat_password,this.state.email,this.state.role,this.state.tel);
-  console.log(JSON.stringify(res));
   if(res.data.isError){
     toast.error(res.data.errorMsg);
     return;
   }
   var merchant = jwt_decode(res.data.token);
   localStorage.setItem('merchant',merchant);
+  this.props.history.push('/Register-Shop');
 }
 catch(ex){
   toast.error("เกิดข้อผิดพลาด กรุณาติดต่อเจ้าหน้าที่");

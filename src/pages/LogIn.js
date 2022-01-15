@@ -5,7 +5,10 @@ import {connect} from 'react-redux';
 import * as merchantAction from '../actions/Merchant/MerchantAction'
 import * as loginApiAction from '../actions/api/LoginApiAction'
 import '../assets/css/index.css';
-import {validEmail,validTel,validPassword} from '../helper/Regex'
+import {validEmail,validPassword} from '../helper/Regex'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import jwt_decode from "jwt-decode";
 
 
 class LogIn extends React.Component{
@@ -38,13 +41,35 @@ class LogIn extends React.Component{
     return  (!value || value == undefined || value == "" || value.length == 0);
  }
 
-  LoginOnClick = () =>{
-   if(this.IsNullOrEmpty(this.state.email) || this.IsNullOrEmpty(this.state.password) || !validEmail(this.state.email)){
+ onChangeEmail = (e) =>{
+  var value = e.target.value
+    this.setState({email:value,emailErrorText:''}); 
+}
+
+onChangePasword = (e) =>{
+  var value = e.target.value
+    this.setState({password:value});
+}
+  LoginOnClick = async() =>{
+   if(this.IsNullOrEmpty(this.state.email) || this.IsNullOrEmpty(this.state.password) || !validEmail.test(this.state.email) || !validPassword.test(this.state.password)){
        this.setState({loginErrorText:"อีเมล์หรือรหัสผ่านไม่ถูกต้อง"})
    }
    else{
-     //call api login
-     //push main page
+    try
+    {
+    const res = await this.props.LoginApiAction.Login(this.state.email,this.state.password);
+    if(res.data.isError){
+      toast.error(res.data.errorMsg);
+      return;
+    }
+    var merchant = jwt_decode(res.data.token);
+    localStorage.setItem('merchant',merchant);
+    this.props.history.push('/MainPage');
+   
+  }
+  catch(ex){
+    toast.error("เกิดข้อผิดพลาด กรุณาติดต่อเจ้าหน้าที่");
+    }
    }
   }
 
@@ -61,12 +86,12 @@ class LogIn extends React.Component{
         <div className="brown-Bold-Topic-Text" style={{textAlign:'center'}}>Login</div>
         <div className="form-group input" >
         <label for="InputEmail" className="brown-input-Text">Email</label>
-        <input type="email" class="form-control"  id="InputEmail" value={this.state.email}/>
+        <input type="email" class="form-control"  id="InputEmail" value={this.state.email} onChange={this.onChangeEmail.bind(this)}/>
        
       </div>
        <div className="form-group input">
        <label for="InputPassword" className="brown-input-Text">Password</label>
-       <input type="password" class="form-control" id="InputPassword" value={this.state.password}/>
+       <input type="password" class="form-control" id="InputPassword" value={this.state.password} onChange={this.onChangePasword.bind(this)}/>
        <label className="text-error"></label>
      </div>
      <div className="form-group input"  style={{padding:'10px 0px',textAlign:'center'}}>
