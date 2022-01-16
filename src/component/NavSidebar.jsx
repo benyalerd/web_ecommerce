@@ -2,7 +2,6 @@ import { Navigation } from "react-minimal-side-navigation";
 import { useHistory, useLocation } from "react-router-dom";
 import Icon from "awesome-react-icons";
 import React, { useState } from "react";
-
 import "react-minimal-side-navigation/lib/ReactMinimalSideNavigation.css";
 
 export const NavSidebar = () => {
@@ -28,22 +27,8 @@ export const NavSidebar = () => {
           isSidebarOpen ? "ease-out translate-x-0" : "ease-in -translate-x-full"
         }`}
       >
-       
-       <div className="absolute top-0 w-full my-8">
-          <Navigation
-            activeItemId={location.pathname}
-            items={[
-              {
-                title: "Test",
-                elemBefore: () => <Icon name="users" />
-              }
-            ]}
-            onSelect={() => {
-                // go to edit merchant
-             alert("Beer");
-            }}
-          />
-        </div>
+
+      
         <Navigation
           activeItemId={location.pathname}
           onSelect={({ itemId }) => {
@@ -51,20 +36,26 @@ export const NavSidebar = () => {
           }}
           items={[
             {
+              title: "Benya Lerd...",
+              itemId: "/login",
+              // Optional
+              elemBefore: () => <Icon name="user"/>
+            },
+            {
               title: "MainPage",
               itemId: "/MainPage",
               // Optional
-              elemBefore: () => <Icon name="users" />
+              elemBefore: () => <Icon name="coffee" />
             },
             {
               title: "Product",
-              elemBefore: () => <Icon name="users" />,
+              elemBefore: () => <Icon name="briefcase" />,
               subNav: [
                 {
-                  title: "All Product",
+                  title: "Product",
                   itemId: "/login",
                   // Optional
-                  elemBefore: () => <Icon name="users" />
+                  elemBefore: () => <Icon name="star" />
                 }
               ]
             }
@@ -77,15 +68,20 @@ export const NavSidebar = () => {
             items={[
               {
                 title: "Logout",
-                elemBefore: () => <Icon name="users" />
+                elemBefore: () => <Icon name="log-out" />
               }
             ]}
             onSelect={() => {
                 //clear localstorage
-             alert("Beer");
+             
             }}
           />
         </div>
+      
+      
+      
+      
+      
       </div>
     </React.Fragment>
   );

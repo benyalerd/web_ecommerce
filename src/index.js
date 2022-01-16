@@ -10,6 +10,7 @@ import { Provider } from 'react-redux';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import $ from 'jquery';
 import Popper from 'popper.js';
+import "./style/main.bundle.css";
 
 let storeSet = null;
 if(process.env.NODE_ENV !='development' & window.ProdBuild === true)
