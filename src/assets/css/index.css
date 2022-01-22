@@ -12,6 +12,27 @@
     color:#d7c6b4
   }
 
+  .black-Bold-Topic-Text{
+    font-size:24px;
+    font-weight:bold;
+    color:black;
+    padding: 0px 20px;
+    
+  }
+
+  .black-Bold-18-Text{
+    font-size:18px;
+    font-weight:bold;
+    color:black;
+    
+  }
+
+  .black-Regular-18-Text{
+    font-size:18px;
+    color:black;
+    
+  }
+
   .brown-input-Text{
     font-size:12px;
     color:#d7c6b4
@@ -59,6 +80,29 @@
     cursor: none;
     color: white;
     background-color: lightgrey;
+  }
+
+  .imageCenter {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+  }
+
+  .imageTopic{
+    padding:10px;
+    width:10px;
+    height:50px;
+    background-color:#4f6137;
+  }
+
+  .horizonCenter {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
   }
 
 

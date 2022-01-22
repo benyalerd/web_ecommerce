@@ -23,7 +23,7 @@ class AddShop extends React.Component{
       shopNameErrorText:"",
       shopImageErrorText:"",
       IsRegisterDisable:true,
-     
+     isEdit:false
     };
     this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
   }
@@ -64,9 +64,14 @@ catch(ex){
   }
 }
 
-cancelOnClick = () =>{
-  this.props.history.goBack(); 
+editOnClick = async() =>{
+    await this.setState({isEdit:true})
 }
+
+cancelOnClick = async() =>{
+   await this.setState({isEdit:false})
+}
+
   IsNullOrEmpty = (value) =>{
      return  (!value || value == undefined || value == "" || value.length == 0);
   }
@@ -116,11 +121,14 @@ cancelOnClick = () =>{
  }
     render(){
       return(
-        <div className="form-group row" style={{height:this.state.height}}>       
-        <div className="col-4" style={this.state.width <= 998 ?{display:'none'}:{backgroundColor:'#4f6137'}} ></div>
-      <div className={this.state.width <= 998 ?"col-12":"col-8"} style={{position:'relative'}}>
+        <div className="form-group row" style={{height:this.state.height}}> 
+
+       <div className={"col-12"} style={{position:'relative'}}>
         <div className="vertical-center" style={{width:'100%'}}>
-      <div className="brown-Bold-Topic-Text" style={{textAlign:'center'}}>Register Shop</div>
+        {!this.state.isEdit?
+        <button  className={"primary-button"} style={{width:'150px',marginRight:'10px',right:'90px',position:'absolute',top:'-60px'}} onClick={this.editOnClick} >Edit</button>:null}
+     
+   <div className="brown-Bold-Topic-Text" style={{textAlign:'center'}}>Register Shop</div>
       <div className="form-group input">
        <div className="input" style={{padding:'0px',width:'150px',height:'150px',border:'1px solid lightgray',borderRadius:'5px'}}>
             <img className="imageCenter" src={this.state.shopImage!= null && this.state.shopImage != ""?this.state.shopImage: require('../assets/images/add_image.png').default} style={{margin:'37px'}}/>
@@ -128,33 +136,49 @@ cancelOnClick = () =>{
       </div>
       <div className="form-group input">
       <label for="InputShopname" className="brown-input-Text">Shop Name</label>
+      {this.state.isEdit?
       <input type="text" class="form-control"  id="InputShopname" value={this.state.shopName} onChange={this.validateshopName.bind(this)}/>
-     </div>
+     :<div className="col-2 black-Bold-18-Text" >{this.state.shopName}</div>}</div>
+      
       <div className="form-group input" >
         <label for="InputEmail" className="brown-input-Text">Email</label>
+        {this.state.isEdit?
         <input type="email" class="form-control"  id="InputEmail" value={this.state.shopEmail} onChange={this.emailOnchange.bind(this)}/>
-       
-      </div>
-      <div className="form-group input">
+    :<div className="col-2 black-Bold-18-Text" >{this.state.shopEmail}</div>}</div>
+    
+    <div className="form-group input">
       <label for="InputTel" className="brown-input-Text">Tel</label>
+      {this.state.isEdit?
       <input type="text" class="form-control"  id="InputTel" value={this.state.shopTel} onChange={this.telOnchange.bind(this)}/>
+     
+     :<div className="col-2 black-Bold-18-Text" >{this.state.shopTel}</div>}
      </div>
+    
 
      <div className="form-group input" style={{height:'150px'}}>
       <label for="InputShopname" className="brown-input-Text">Address</label>
+      {this.state.isEdit?
       <input type="text" class="form-control"  id="InputShopname" value={this.state.shopAddress} onChange={this.addressOnchange.bind(this)}/>
+     :
+     <div className="col-2 black-Bold-18-Text" >{this.state.lastname}</div>}
      </div>
+      
+    
+     
+    
+      {this.state.isEdit?
     <div className="form-group" style={{padding:'40px 0px',display:'flex',justifyContent:'center',margin:'0px 15px'}}>
      
-      <button  className={!this.state.IsRegisterDisable?"primary-button":"primary-button disabled"} style={{width:'250px',marginRight:'10px'}} onClick={this.addShopOnClick}>Register</button>
+      <button  className={!this.state.IsRegisterDisable?"primary-button":"primary-button disabled"} style={{width:'250px',marginRight:'10px'}} onClick={this.addShopOnClick}>OK</button>
       <button  className="secondary-button" style={{width:'250px'}} onClick={this.cancelOnClick}>Cancel</button>
      
     </div>
+    :null}
     
   
-  
    </div>
    </div>
+     
    </div>
       );
     }

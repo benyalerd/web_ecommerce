@@ -6,3 +6,4 @@ export function setShopInfo(data){
        Shop:data
     };
 }
+

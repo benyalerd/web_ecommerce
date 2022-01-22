@@ -6,8 +6,10 @@ import {Oval} from 'react-loader-spinner'
 const Login = React.lazy(() => import("./pages/LogIn"));
 const Register = React.lazy(() => import("./pages/Register"));
 const AddShop = React.lazy(() => import("./pages/AddShop"));
-const MainPage = React.lazy(() => import("./pages/MainPage"))
-const Loading = React.lazy(() => import("./component/Loadind"))
+const MainPage = React.lazy(() => import("./pages/MainPage"));
+const Loading = React.lazy(() => import("./component/Loadind"));
+const MerchantInfo = React.lazy(() => import("./pages/MerchantInfo"));
+const ShopInfo = React.lazy(() => import("./pages/ShopInfo"));
 
 class App extends Component{
   displayName = "Ecommerce";
@@ -24,7 +26,8 @@ class App extends Component{
         <Route path="/Register" component={Register}/>
         <Route path="/Register-Shop" component={AddShop}/>
         <Route path="/MainPage" component={MainPage}/>
-         <Route path="/Loading" component={Loading}/>
+        <Route path="/MerchantInfo" component={MerchantInfo}/>
+        <Route path="/ShopInfo" component={ShopInfo}/>
         
         <Redirect to="/"/>
       </Switch>

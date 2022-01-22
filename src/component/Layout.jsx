@@ -3,7 +3,6 @@ import React from "react";
 import { NavSidebar } from "./NavSidebar";
 import BodyWrapper from "./BodyWrapper";
 
-//navbar - show merchant name
 export const DashboardLayout = ({ children }) => {
   return (
     <BodyWrapper>
