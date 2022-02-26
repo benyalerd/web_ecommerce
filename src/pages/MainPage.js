@@ -11,6 +11,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import jwt_decode from "jwt-decode";
 import '../assets/css/index.css';
+import {Loading} from '../component/Loadind';
 
 class MainPage extends React.Component{
     constructor(props) {
@@ -18,9 +19,7 @@ class MainPage extends React.Component{
         this.state = 
         { width: 0, 
           height: 0,
-          shopName:"",
-          shopEmail:"",
-          shopImage:""
+             isloading:false
         };
         this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
       }
@@ -29,13 +28,38 @@ class MainPage extends React.Component{
         
         this.updateWindowDimensions();
         window.addEventListener('resize', this.updateWindowDimensions);
-        //check have merchant or not
-        //yes - next step
-        //no - go to log in
-        //check add shop or not
-        //yes - render+set up shop + set up merchant
-        //no - go to add shop
+        this.checkLoginAndAddShop();
       }
+
+      checkLoginAndAddShop = async() => {
+        this.setState({isloading:true});
+      var merchantId = localStorage.getItem('merchantId');
+      if(merchantId == null || merchantId == 'undefined'){
+      this.props.history.push('/Login');
+        }
+        var merchant = {
+       "id":  localStorage.getItem('merchantId'),
+     "fullname":localStorage.getItem('merchantFullname'),
+      "email":localStorage.getItem('merchantEmail'),
+       "role":localStorage.getItem('merchantRole'),
+     "tel": localStorage.getItem('merchantTel')
+        }
+      
+      await this.props.MerchantAction.setMerchantInfo(merchant);     
+      var res = await this.props.ShopApiAction.GetShopInfo(this.props.Merchant.Merchant.id);
+      
+      if(res.data.isError == true){
+      toast.error(res.data.errorMsg);
+      return;
+      }
+      if(!res.data.shops){
+      this.props.history.push('/Register-Shop');
+      }
+         await this.props.ShopAction.setShopInfo(res.data.shops);
+         this.setState({isloading:false});
+
+      }
+      
       
       componentWillUnmount() {
         window.removeEventListener('resize', this.updateWindowDimensions);
@@ -51,7 +75,13 @@ class MainPage extends React.Component{
 render(){
       
     return (
-        <DashboardLayout>
+       <React.Fragment>
+       {this.state.isloading?
+       <Loading height={this.state.height} />:null}
+        <DashboardLayout merchantName={this.props.Merchant?.Merchant?.fullname}>
+        
+        <div>
+        <ToastContainer />  
           <div style={{width: 'auto', height: this.state.height,backgroundColor:'white',margin:'20px',borderRadius:'10px'}}>
         <div className="form-group row" style={{marginLeft: '30px',paddingTop: '30px'}}>
         <div className="imageTopic col-3" />
@@ -60,17 +90,17 @@ render(){
   <div className="form-group row" style={{backgroundColor:'#d7c6b4',margin:'20px 0px',height:'150px'}}>
     <div className="col-3" style={{position:'relative'}} >
      <div className="input vertical-center horizonCenter" style={{backgroundColor:'white', padding:'0px',margin:'0px',width:'100px',height:'100px',border:'1px solid lightgray',borderRadius:'5px'}}>
-            <img  src={this.state.shopImage != null && this.state.shopImage != ""?this.state.shopImage: require('../assets/images/add_image.png').default} />
+            <img  src={this.props.Shop?.Shop?.shopImage != null && this.props.Shop?.Shop?.shopImage != ""?this.state.shopImage: require('../assets/images/add_image.png').default} />
        </div>
     </div>
         <div className="col-7" style={{margin:'40px 0px'}}>
         <div className="form-group row" style={{marginBottom:'20px'}}>
         <div className="col-2 black-Bold-18-Text" style={{textAlign:'end'}}>ชื่อร้านค้า : </div>
-        <div className="col-10 black-Bold-18-Text">{this.state.shopName != null && this.state.shopName != ""?this.state.shopName:"-"}</div>
+        <div className="col-10 black-Bold-18-Text">{this.props.Shop?.Shop?.shopName != null && this.props.Shop?.Shop?.shopName != ""?this.props.Shop?.Shop?.shopName:"-"}</div>
         </div>
         <div className="form-group row">
          <div className="col-2 black-Bold-18-Text" style={{textAlign:'end'}}>Email : </div>
-        <div className="col-10 black-Bold-18-Text">{this.state.shopEmail != null && this.state.shopEmail != ""?this.state.shopEmail:"-"}</div>
+        <div className="col-10 black-Bold-18-Text">{this.props.Shop?.Shop?.shopEmail != null && this.props.Shop?.Shop?.shopEmail != ""?this.props.Shop?.Shop?.shopEmail:"-"}</div>
         </div>
         </div> 
         <div className="col-2" style={{position:'relative'}}>
@@ -82,13 +112,15 @@ render(){
  </div>
 
 
-
+</div>
         </DashboardLayout>
+        </React.Fragment>
       )
   }
 }
 const mapStateToProps = state =>({
-  Shop :state.Shop
+  Shop :state.Shop,
+  Merchant:state.Merchant
   });
   
   const mapDispatchToProps = dispatch =>({

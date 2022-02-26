@@ -4,7 +4,7 @@ var initialState = {
 }
 function Shop(state = initialState,action){
     switch (action.type) {
-        case Action.set_user_info:
+        case Action.set_Shop_Info:
             return{...state,Shop:action.Shop};
              
         default:

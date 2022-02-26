@@ -4,10 +4,9 @@ import Icon from "awesome-react-icons";
 import React, { useState } from "react";
 import "react-minimal-side-navigation/lib/ReactMinimalSideNavigation.css";
 
-export const NavSidebar = () => {
+export const NavSidebar = (props) => {
   const history = useHistory();
   const location = useLocation();
-  //set up merchant name this.props
   return (
     <React.Fragment>
      
@@ -32,7 +31,7 @@ export const NavSidebar = () => {
           }}
           items={[
             {
-              title: "Benya",
+              title: props.merchantName,
               itemId: "/MerchantInfo",
               // Optional
               elemBefore: () => <Icon name="user"/>
@@ -68,7 +67,8 @@ export const NavSidebar = () => {
               }
             ]}
             onSelect={() => {
-                //clear localstorage
+                 localStorage.removeItem('merchant');
+                 history.push('/Login');
              
             }}
           />

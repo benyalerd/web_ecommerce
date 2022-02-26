@@ -8,6 +8,8 @@ import '../assets/css/index.css';
 import 'react-dropdown/style.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import {Loading} from '../component/Loadind';
+
 
 class AddShop extends React.Component{
   constructor(props) {
@@ -23,6 +25,8 @@ class AddShop extends React.Component{
       shopNameErrorText:"",
       shopImageErrorText:"",
       IsRegisterDisable:true,
+      merchantId:"",
+      isloading:false
      
     };
     this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
@@ -31,6 +35,7 @@ class AddShop extends React.Component{
   componentDidMount() {
     this.updateWindowDimensions();
     window.addEventListener('resize', this.updateWindowDimensions);
+    this.checkLogin();
   }
   
   componentWillUnmount() {
@@ -41,31 +46,43 @@ class AddShop extends React.Component{
     this.setState({ width: window.innerWidth, height: window.innerHeight });
   }
 
+  checkLogin = async() =>{
+     var merchantId = localStorage.getItem('merchantId');
+      if(merchantId == null || merchantId == 'undefined'){
+    this.props.history.push('/Login');
+    }
+    await this.setState({merchantId:merchantId});
+  }
+
   CheckDisableRegisterButton = () =>{
   if(!this.IsNullOrEmpty(this.state.shopNameErrorText)|| this.IsNullOrEmpty(this.state.shopName))
   {
     return true;
   }
-  if(!this.IsNullOrEmpty(this.state.shopImageErrorText)|| this.IsNullOrEmpty(this.state.shopImage))
-  {
-    return true;
-  }
+  
   
   return false
   }
 
   addShopOnClick = async() =>{
-  try
+ try
   {
-  //call api
+    this.setState({isloading:true});
+  const res = await this.props.ShopApiAction.AddShop(this.state.shopImage,this.state.shopName,this.state.shopEmail,this.state.shopTel,this.state.shopAddress,this.state.merchantId);
+  if(res.data.isError == true){
+    toast.error(res.data.errorMsg);
+    return;
   }
+  this.props.history.push('/MainPage');
+}
 catch(ex){
   toast.error("เกิดข้อผิดพลาด กรุณาติดต่อเจ้าหน้าที่");
   }
+  this.setState({isloading:false});
 }
 
 cancelOnClick = () =>{
-  this.props.history.goBack(); 
+  this.props.history.push('/Login');
 }
   IsNullOrEmpty = (value) =>{
      return  (!value || value == undefined || value == "" || value.length == 0);
@@ -80,14 +97,13 @@ cancelOnClick = () =>{
       await this.setState({shopName:value,shopNameErrorText:''});
 
     }
-    var isDisable = this.CheckDisableRegisterButton(value,this.state.shopNameErrorText);
-    this.setState({IsRegisterDisable:isDisable});
+   
  }
 
  validateshopImage = async(e) =>{
    var value = e.target.value
     if(this.IsNullOrEmpty(value)){
-      await this.setState({shopImage:value,shopImageErrorText:'กรุณากรอกชื่อ'});
+      await this.setState({shopImage:value,shopImageErrorText:'กรุณากรอกเลือกรูป'});
     }
     else{
       await this.setState({shopImage:value,shopImageErrorText:''});
@@ -116,7 +132,13 @@ cancelOnClick = () =>{
  }
     render(){
       return(
-        <div className="form-group row" style={{height:this.state.height}}>       
+         <React.Fragment>
+       {this.state.isloading?
+       <Loading height={this.state.height} />:null}
+         <div>
+           <ToastContainer />  
+        <div className="form-group row" style={{height:this.state.height}}>  
+            
         <div className="col-4" style={this.state.width <= 998 ?{display:'none'}:{backgroundColor:'#4f6137'}} ></div>
       <div className={this.state.width <= 998 ?"col-12":"col-8"} style={{position:'relative'}}>
         <div className="vertical-center" style={{width:'100%'}}>
@@ -156,6 +178,8 @@ cancelOnClick = () =>{
    </div>
    </div>
    </div>
+   </div>
+   </React.Fragment>
       );
     }
   }

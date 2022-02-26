@@ -3,11 +3,11 @@ import React from "react";
 import { NavSidebar } from "./NavSidebar";
 import BodyWrapper from "./BodyWrapper";
 
-export const DashboardLayout = ({ children }) => {
+export const DashboardLayout = ({ children,merchantName}) => {
   return (
     <BodyWrapper>
       <div className="flex h-screen bg-gray-200">
-        <NavSidebar />
+        <NavSidebar merchantName={merchantName}/>
 
         <div className="flex flex-col flex-1 overflow-hidden">
           <main className="content">

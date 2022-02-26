@@ -9,6 +9,7 @@ import {validEmail,validPassword} from '../helper/Regex'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import jwt_decode from "jwt-decode";
+import {Loading} from '../component/Loadind';
 
 
 class LogIn extends React.Component{
@@ -19,7 +20,8 @@ class LogIn extends React.Component{
       height: 0,
       loginErrorText:"",   
       email:"",
-      password:""
+      password:"",
+      isloading:false
     };
     this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
   }
@@ -57,29 +59,43 @@ onChangePasword = (e) =>{
    else{
     try
     {
+      this.setState({isloading:true});
     const res = await this.props.LoginApiAction.Login(this.state.email,this.state.password);
-    if(res.data.isError){
+    if(res.data.isError == true){
       toast.error(res.data.errorMsg);
       return;
     }
+    localStorage.setItem('token',res.data.token);
     var merchant = jwt_decode(res.data.token);
-    localStorage.setItem('merchant',merchant);
+    localStorage.setItem('merchantId',merchant.id);
+     localStorage.setItem('merchantFullname',merchant.fullname);
+      localStorage.setItem('merchantEmail',merchant.email);
+       localStorage.setItem('merchantRole',merchant.role);
+      localStorage.setItem('merchantTel',merchant.tel);
     this.props.history.push('/MainPage');
    
   }
   catch(ex){
     toast.error("เกิดข้อผิดพลาด กรุณาติดต่อเจ้าหน้าที่");
     }
+
    }
+    this.setState({isloading:false});
   }
 
   RegisterLinkOnclick = () => {
     this.props.history.push('/Register');
   }
+  
     render(){
-      return(
-       
+      return(      
+       <React.Fragment>
+       {this.state.isloading?
+       <Loading height={this.state.height} />:null}
+        <div>
+           <ToastContainer />             
         <div className="form-group row" style={{height:this.state.height}}>       
+         
           <div className="col-4" style={this.state.width <= 998 ?{display:'none'}:{backgroundColor:'#4f6137'}} ></div>
         <div className={this.state.width <= 998 ?"col-12":"col-8"} style={{position:'relative'}}>
           <div className="vertical-center" style={{width:'100%'}}>
@@ -106,7 +122,9 @@ onChangePasword = (e) =>{
      </div>
      </div>
      </div>
+     </div>
      
+    </React.Fragment>
       );
     }
   }

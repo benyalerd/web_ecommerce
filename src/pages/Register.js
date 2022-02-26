@@ -10,6 +10,7 @@ import {validEmail,validTel,validPassword} from '../helper/Regex'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import jwt_decode from "jwt-decode";
+import {Loading} from '../component/Loadind';
 
 
 class Register extends React.Component{
@@ -31,7 +32,9 @@ class Register extends React.Component{
       tel:"",
       password:"",
       confirmPassword:"",
-      role:"1" 
+      role:"1",
+         isloading:false
+
     };
     this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
   }
@@ -147,22 +150,29 @@ selectRole = (e) =>{
 registerOnClick = async() =>{
   try
   {
+      this.setState({isloading:true});
   const res = await this.props.RegisterApiAction.RegisterMerchant(this.state.firstname,this.state.lastname,this.state.password,this.state.repeat_password,this.state.email,this.state.role,this.state.tel);
-  if(res.data.isError){
+  if(res.data.isError == true){
     toast.error(res.data.errorMsg);
     return;
   }
-  var merchant = jwt_decode(res.data.token);
-  localStorage.setItem('merchant',merchant);
+ localStorage.setItem('token',res.data.token);
+    var merchant = jwt_decode(res.data.token);
+    localStorage.setItem('merchantId',merchant.id);
+     localStorage.setItem('merchantFullname',merchant.fullname);
+      localStorage.setItem('merchantEmail',merchant.email);
+       localStorage.setItem('merchantRole',merchant.role);
+      localStorage.setItem('merchantTel',merchant.tel);
   this.props.history.push('/Register-Shop');
 }
 catch(ex){
   toast.error("เกิดข้อผิดพลาด กรุณาติดต่อเจ้าหน้าที่");
   }
+    this.setState({isloading:false});
 }
 
 cancelOnClick = () =>{
-  this.props.history.goBack(); 
+  this.props.history.push('/Login');
 }
 
 CheckDisableRegisterButton = () =>{
@@ -198,6 +208,9 @@ CheckDisableRegisterButton = () =>{
     render(){
       
       return(
+         <React.Fragment>
+       {this.state.isloading?
+       <Loading height={this.state.height} />:null}
         <div>
            <ToastContainer />  
         <div className="form-group row" style={{height:this.state.height}}>     
@@ -288,6 +301,7 @@ CheckDisableRegisterButton = () =>{
    </div>
    </div>
    </div>
+   </React.Fragment>
       );
     }
   }

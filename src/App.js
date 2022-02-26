@@ -15,11 +15,10 @@ class App extends Component{
   displayName = "Ecommerce";
 
   render(){
+    const height = window.innerHeight;
     return(
     <Suspense fallback={
-       <div style={{width: 'fit-content',margin: 'auto',marginTop:'20px'}}>
-    <Oval arialLabel="loading-indicator" color="#4f6137"  visible={true}/>
-    </div>
+     <div></div>
     }>
       <Switch>
         <Route exact path="/" component={Login}/>
