@@ -67,10 +67,11 @@ class AddShop extends React.Component{
   addShopOnClick = async() =>{
  try
   {
-    this.setState({isloading:true});
+    await this.setState({isloading:true});
   const res = await this.props.ShopApiAction.AddShop(this.state.shopImage,this.state.shopName,this.state.shopEmail,this.state.shopTel,this.state.shopAddress,this.state.merchantId);
   if(res.data.isError == true){
     toast.error(res.data.errorMsg);
+    await this.setState({isloading:false});
     return;
   }
   this.props.history.push('/MainPage');
@@ -78,7 +79,7 @@ class AddShop extends React.Component{
 catch(ex){
   toast.error("เกิดข้อผิดพลาด กรุณาติดต่อเจ้าหน้าที่");
   }
-  this.setState({isloading:false});
+  await this.setState({isloading:false});
 }
 
 cancelOnClick = () =>{

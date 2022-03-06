@@ -59,10 +59,11 @@ onChangePasword = (e) =>{
    else{
     try
     {
-      this.setState({isloading:true});
+      await this.setState({isloading:true});
     const res = await this.props.LoginApiAction.Login(this.state.email,this.state.password);
     if(res.data.isError == true){
       toast.error(res.data.errorMsg);
+      await this.setState({isloading:false});
       return;
     }
     localStorage.setItem('token',res.data.token);
@@ -78,9 +79,9 @@ onChangePasword = (e) =>{
   catch(ex){
     toast.error("เกิดข้อผิดพลาด กรุณาติดต่อเจ้าหน้าที่");
     }
-
+    await this.setState({isloading:false});
    }
-    this.setState({isloading:false});
+    
   }
 
   RegisterLinkOnclick = () => {

@@ -32,7 +32,7 @@ class MainPage extends React.Component{
       }
 
       checkLoginAndAddShop = async() => {
-        this.setState({isloading:true});
+        await this.setState({isloading:true});
       var merchantId = localStorage.getItem('merchantId');
       if(merchantId == null || merchantId == 'undefined'){
       this.props.history.push('/Login');
@@ -50,13 +50,14 @@ class MainPage extends React.Component{
       
       if(res.data.isError == true){
       toast.error(res.data.errorMsg);
+      await this.setState({isloading:false});
       return;
       }
       if(!res.data.shops){
       this.props.history.push('/Register-Shop');
       }
          await this.props.ShopAction.setShopInfo(res.data.shops);
-         this.setState({isloading:false});
+         await this.setState({isloading:false});
 
       }
       

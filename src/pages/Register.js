@@ -150,10 +150,11 @@ selectRole = (e) =>{
 registerOnClick = async() =>{
   try
   {
-      this.setState({isloading:true});
+      await this.setState({isloading:true});
   const res = await this.props.RegisterApiAction.RegisterMerchant(this.state.firstname,this.state.lastname,this.state.password,this.state.repeat_password,this.state.email,this.state.role,this.state.tel);
   if(res.data.isError == true){
     toast.error(res.data.errorMsg);
+    await this.setState({isloading:false});
     return;
   }
  localStorage.setItem('token',res.data.token);
@@ -168,7 +169,7 @@ registerOnClick = async() =>{
 catch(ex){
   toast.error("เกิดข้อผิดพลาด กรุณาติดต่อเจ้าหน้าที่");
   }
-    this.setState({isloading:false});
+    await this.setState({isloading:false});
 }
 
 cancelOnClick = () =>{

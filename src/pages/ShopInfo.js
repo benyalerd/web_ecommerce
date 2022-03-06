@@ -38,7 +38,7 @@ class AddShop extends React.Component{
       this.checkLoginAndAddShop();
   }
     checkLoginAndAddShop = async() => {
-        this.setState({isloading:true});
+       await this.setState({isloading:true});
      var merchantId = localStorage.getItem('merchantId');
       if(merchantId == null || merchantId == 'undefined'){
       this.props.history.push('/Login');
@@ -54,6 +54,7 @@ class AddShop extends React.Component{
      var res = await this.props.ShopApiAction.GetShopInfo(this.props.Merchant.Merchant.id);
       if(res.data?.isError == true){
     toast.error(res.data.errorMsg);
+    await this.setState({isloading:false});
     return;
   }
   var shop = res.data?.shops;
@@ -62,7 +63,7 @@ class AddShop extends React.Component{
         }
          await this.props.ShopAction.setShopInfo(shop);
          await this.setState({shopImage:shop?.coverImage,shopName:shop?.shopName,shopEmail:shop?.email,shopTel:shop?.tel,shopAddress:shop?.address})
-        this.setState({isloading:false});
+        await this.setState({isloading:false});
       }
   componentWillUnmount() {
     window.removeEventListener('resize', this.updateWindowDimensions);
@@ -83,23 +84,25 @@ class AddShop extends React.Component{
   updateShopOnClick = async() =>{
     try
     {
-        this.setState({isloading:true});
+        await this.setState({isloading:true});
   const res = await this.props.ShopApiAction.UpdateShop(this.state.shopImage,this.state.shopName,this.state.shopEmail,this.state.shopTel,this.state.shopAddress,this.props.Merchant.Merchant.id);
   console.log("Res : " +JSON.stringify(res));
   
   if(res.data.isError === true){
     
     toast.error(res.data.errorMsg);
+    await this.setState({isloading:false});
     return;
   }
   var shop = res.data?.shops;
   await this.props.ShopAction.setShopInfo(shop);
   await this.setState({shopImage:shop?.coverImage,shopName:shop?.shopName,shopEmail:shop?.email,shopTel:shop?.tel,shopAddress:shop?.address})
-    this.setState({isloading:false});
+ 
 }
 catch(ex){
   toast.error("เกิดข้อผิดพลาด กรุณาติดต่อเจ้าหน้าที่");
   }
+   await this.setState({isloading:false});
 }
 
 editOnClick = async() =>{

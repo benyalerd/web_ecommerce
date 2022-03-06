@@ -45,7 +45,7 @@ class MerchantInfo extends React.Component{
    
   }
   checkLoginAndAddShop = async() => {
-    this.setState({isloading:true});
+    await this.setState({isloading:true});
        var merchantId = localStorage.getItem('merchantId');
       if(merchantId == null || merchantId == 'undefined'){
       this.props.history.push('/Login');
@@ -62,6 +62,7 @@ class MerchantInfo extends React.Component{
       var res = await this.props.ShopApiAction.GetShopInfo(this.props.Merchant.Merchant.id);
       if(res.data?.isError == true){
     toast.error(res.data.errorMsg);
+    await this.setState({isloading:false});
     return;
   }
  
@@ -69,7 +70,7 @@ class MerchantInfo extends React.Component{
       this.props.history.push('/Register-Shop');
         }
          await this.props.ShopAction.setShopInfo(res.data?.shops);
-         this.setState({isloading:false});
+         await this.setState({isloading:false});
       }
   componentWillUnmount() {
     window.removeEventListener('resize', this.updateWindowDimensions);
@@ -147,10 +148,11 @@ selectRole = (e) =>{
 updateMerchantOnClick = async() =>{
   try
   {
-    this.setState({isloading:true});
+    await this.setState({isloading:true});
   const res = await this.props.RegisterApiAction.updateMerchant(this.state.firstname,this.state.lastname,this.state.tel);
   if(res.data.isError == true){
     toast.error(res.data.errorMsg);
+    await this.setState({isloading:false});
     return;
   }
   var merchant = jwt_decode(res.data.token);
@@ -163,7 +165,7 @@ updateMerchantOnClick = async() =>{
         }
    await this.props.MerchantAction.setMerchantInfo(merchant);     
   await this.setState({firstname:merchant.fullname.split(" ")[0],lastname:merchant.fullname.split(" ")[1],email:merchant.email,tel:merchant.tel,role:merchant.role})
-  this.setState({isloading:false});
+  await this.setState({isloading:false});
 }
 
 
