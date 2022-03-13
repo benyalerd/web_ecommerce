@@ -14,13 +14,15 @@ import {DashboardLayout} from '../component/Layout';
 import * as shopApiAction from '../actions/api/ShopApiAction'
 import * as shopAction from '../actions/Shop/ShopAction'
 import {Loading} from '../component/Loadind';
+import {GetMerchantFromToken,IsNullOrEmpty} from '../helper/Common';
 
 
 class MerchantInfo extends React.Component{
   constructor(props) {
     super(props);
     this.state = 
-    { width: 0, 
+    { 
+      width: 0, 
       height: 0,
       firstnameErrorText:"",
       lastnameErrorText:"",
@@ -33,7 +35,7 @@ class MerchantInfo extends React.Component{
       tel:"",
       role:"",
       isEdit:false,
-         isloading:false
+      isloading:false
     };
     this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
   }
@@ -41,47 +43,38 @@ class MerchantInfo extends React.Component{
   componentDidMount() {
     this.updateWindowDimensions();
     window.addEventListener('resize', this.updateWindowDimensions);
-      this.checkLoginAndAddShop();
-   
+    this.checkLoginAndAddShop();  
   }
+
   checkLoginAndAddShop = async() => {
     await this.setState({isloading:true});
-       var merchantId = localStorage.getItem('merchantId');
-      if(merchantId == null || merchantId == 'undefined'){
+    var merchantId = localStorage.getItem('merchantId');
+    if(!merchantId){
       this.props.history.push('/Login');
-        }
-          var merchant = {
-       "id":  localStorage.getItem('merchantId'),
-     "fullname":localStorage.getItem('merchantFullname'),
-      "email":localStorage.getItem('merchantEmail'),
-       "role":localStorage.getItem('merchantRole'),
-     "tel": localStorage.getItem('merchantTel')
-        }
-      await this.props.MerchantAction.setMerchantInfo(merchant);
-      await this.setState({firstname:merchant.fullname.split(" ")[0],lastname:merchant.fullname.split(" ")[1],email:merchant.email,tel:merchant.tel,role:merchant.role})
-      var res = await this.props.ShopApiAction.GetShopInfo(this.props.Merchant.Merchant.id);
-      if(res.data?.isError == true){
-    toast.error(res.data.errorMsg);
+    }
+    var merchant = await GetMerchantFromToken();  
+    await this.props.MerchantAction.setMerchantInfo(merchant);
+    await this.setState({firstname:merchant.fullname.split(" ")[0],lastname:merchant.fullname.split(" ")[1],email:merchant.email,tel:merchant.tel,role:merchant.role})
+    var res = await this.props.ShopApiAction.GetShopInfo(this.props.Merchant.Merchant.id);
+    if(res?.data?.isError == true){
+    //TO DO CATCH POPUP
     await this.setState({isloading:false});
     return;
   }
  
-      if(!res.data?.shops){
+  if(!res?.data?.shops){
       this.props.history.push('/Register-Shop');
-        }
-         await this.props.ShopAction.setShopInfo(res.data?.shops);
-         await this.setState({isloading:false});
-      }
+  }
+    await this.props.ShopAction.setShopInfo(res.data?.shops);
+    await this.setState({isloading:false});
+  }
+
   componentWillUnmount() {
     window.removeEventListener('resize', this.updateWindowDimensions);
   }
   
   updateWindowDimensions() {
     this.setState({ width: window.innerWidth, height: window.innerHeight });
-  }
-
-  IsNullOrEmpty = (value) =>{
-     return  (!value || value == undefined || value == "" || value.length == 0);
   }
 
   validateFirstName = async(e) =>{
@@ -148,30 +141,27 @@ selectRole = (e) =>{
 updateMerchantOnClick = async() =>{
   try
   {
-    await this.setState({isloading:true});
+   //TO DO POPUP CONFIRM
+  }
+  catch(ex){
+  toast.error("เกิดข้อผิดพลาด กรุณาติดต่อเจ้าหน้าที่");
+  }
+}
+
+updateMerchantApi = async() =>{
+  
+  await this.setState({isloading:true});
   const res = await this.props.RegisterApiAction.updateMerchant(this.state.firstname,this.state.lastname,this.state.tel);
-  if(res.data.isError == true){
-    toast.error(res.data.errorMsg);
+  if(res?.data?.isError == true){
+    //TO DO POPUP CATCH
     await this.setState({isloading:false});
     return;
   }
-  var merchant = jwt_decode(res.data.token);
-    var merchant = {
-       "id":  localStorage.getItem('merchantId'),
-     "fullname":localStorage.getItem('merchantFullname'),
-      "email":localStorage.getItem('merchantEmail'),
-       "role":localStorage.getItem('merchantRole'),
-     "tel": localStorage.getItem('merchantTel')
-        }
-   await this.props.MerchantAction.setMerchantInfo(merchant);     
+  var merchant = await GetMerchantFromToken();   
+  await this.props.MerchantAction.setMerchantInfo(merchant);     
   await this.setState({firstname:merchant.fullname.split(" ")[0],lastname:merchant.fullname.split(" ")[1],email:merchant.email,tel:merchant.tel,role:merchant.role})
   await this.setState({isloading:false});
-}
-
-
-catch(ex){
-  toast.error("เกิดข้อผิดพลาด กรุณาติดต่อเจ้าหน้าที่");
-  }
+  //TO DO POPUP SUCCESS
 }
 
 editOnClick = async() =>{
@@ -201,26 +191,33 @@ CheckDisableRegisterButton = () =>{
   }
   return false
   }
-
-
-  
-    render(){
+   
+  render(){
       
-      return(
-         <React.Fragment>
-       {this.state.isloading?
-       <Loading height={this.state.height} />:null}
-           <DashboardLayout merchantName={this.props.Merchant?.Merchant?.fullname}>
-        <div>
+  return(
+      <React.Fragment>    
+       <Loading height={this.state.height} onLoading={this.state.isloading}/>
+           <DashboardLayout merchantName={this.props.Merchant?.Merchant?.fullname} shopId={this.props.Shop.Shop._id}>
+           <React.Fragment>
            <ToastContainer />  
-        <div className="form-group row" style={{height:this.state.height, backgroundColor:'white'}}>     
+
+        <div className="form-group row" style={{height:this.state.height, backgroundColor:'white'}}>   
+
        <div className={"col-12"} style={{position:'relative'}}>
         
         <div className="vertical-center" style={{width:'100%'}}>
+
+        {/*Detail View*/}     
+         {/*Edit Button*/} 
         {!this.state.isEdit?
         <button  className={"primary-button"} style={{width:'150px',marginRight:'10px',right:'90px',position:'absolute',top:'-60px'}} onClick={this.editOnClick} >Edit</button>:null}
+      
+       {/*Register*/} 
       <div className="brown-Bold-Topic-Text" style={{textAlign:'center'}}>Register</div>
+
       <div className="form-group row">
+
+        {/*Firstname*/} 
       <div className="form-group input col-6" >
       <label for="InputFirstname" className="brown-input-Text">Firstname</label>
       {this.state.isEdit?
@@ -229,6 +226,7 @@ CheckDisableRegisterButton = () =>{
     }
      </div>
      
+     {/*Lastname*/} 
      <div className="form-group input col-6">
       <label for="InputLastname" className="brown-input-Text">Lastname</label>
       {this.state.isEdit?
@@ -237,39 +235,55 @@ CheckDisableRegisterButton = () =>{
     }
      </div>
     </div>
+
+     {/*Error Text*/} 
     <div className="form-group row">
+
     <div className="input col-6"  style={{padding:'0px',textAlign:'center'}}>
        <div className="text-error">{this.state.firstnameErrorText}</div>
      </div>
+
      <div className="input col-6"  style={{padding:'0px',textAlign:'center'}}>
        <div className="text-error">{this.state.lastnameErrorText}</div>
      </div>
+
      </div>
+
+     
     <div className="form-group row">
+
+      {/*Tel*/} 
       <div className="form-group input col-6">
       <label for="InputTel" className="brown-input-Text">Tel</label>
       {this.state.isEdit?
       <input type="text" class="form-control" maxLength={10}  id="InputTel" value={this.state.tel} onChange={this.validateTel.bind(this)}/>
     :<div className="black-Bold-18-Text" >{this.state.tel != null && this.state.tel != ""?this.state.tel:"-"}</div>
-    }
-    
+    }   
      </div>
+
+     {/*Email*/} 
      <div className="form-group input col-6">
      <label for="InputEmail" className="brown-input-Text">Email</label>
      <div className="black-Bold-18-Text" >{this.state.email != null && this.state.email != ""?this.state.email:"-"}</div>
      </div>
     </div>
 
+{/*Error Text*/} 
     <div className="form-group row">
+
     <div className="input col-6"  style={{padding:'0px',textAlign:'center'}}>
        <div className="text-error">{this.state.telErrorText}</div>
      </div>
+
      <div className="input col-6"  style={{padding:'0px',textAlign:'center'}}>
        <div className="text-error">{this.state.emailErrorText}</div>
      </div>
+
      </div>
 
       <div className="form-group row">
+
+        {/*Role*/} 
       <div className="form-group input col-6">
       <label for="InputRole" className="brown-input-Text">Role</label>
        <div className="black-Bold-18-Text" >{this.state.role == 2 ?"Owner":"Admin"}</div>
@@ -279,7 +293,9 @@ CheckDisableRegisterButton = () =>{
      </div>
      
     </div>
-         {this.state.isEdit?
+
+{/*Button*/} 
+    {this.state.isEdit?
     <div className="form-group" style={{padding:'40px 0px',display:'flex',justifyContent:'center',margin:'0px 15px'}}>
      
       <button  className={!this.state.IsRegisterDisable?"primary-button":"primary-button disabled"} style={{width:'250px',marginRight:'10px'}} onClick={this.updateMerchantOnClick}>Register</button>
@@ -288,16 +304,10 @@ CheckDisableRegisterButton = () =>{
     </div>:null
     }
     
-    </div>
-    
-   
-  
-  
+    </div> 
+   </div>      
    </div>
-      
-   </div>
-   </div>
-   
+   </React.Fragment>  
    </DashboardLayout>
    </React.Fragment>
         

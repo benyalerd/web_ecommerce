@@ -9,3 +9,7 @@ export const validEmail = new RegExp(
  export const validPassword = new RegExp(
     '^[a-zA-Z0-9]{8,20}$'
  );
+
+ export const onlyNumber = new RegExp(
+   '^[0-9]+$'
+);

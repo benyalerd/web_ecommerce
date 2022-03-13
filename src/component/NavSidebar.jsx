@@ -27,7 +27,9 @@ export const NavSidebar = (props) => {
           
           activeItemId={location.pathname}
           onSelect={({ itemId }) => {
-            history.push(itemId);
+            var split = itemId?.split('|');         
+            history.push({pathname:split?split[0]: ""
+                          ,search: split?split[1]: ""});
           }}
           items={[
             {
@@ -43,12 +45,12 @@ export const NavSidebar = (props) => {
               elemBefore: () => <Icon name="coffee" />
             },
             {
-              title: "Product",
-              elemBefore: () => <Icon name="briefcase" />,
+              title: "Setting",
+              elemBefore: () => <Icon name="settings" />,
               subNav: [
                 {
-                  title: "Product",
-                  itemId: "/login",
+                  title: "Payment",
+                  itemId: `/PaymentSetup|?shopId=${props.shopId}`,
                   // Optional
                   elemBefore: () => <Icon name="star" />
                 }

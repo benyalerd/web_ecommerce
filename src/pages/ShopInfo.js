@@ -11,6 +11,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import {DashboardLayout} from '../component/Layout';
 import * as merchantAction from '../actions/Merchant/MerchantAction'
 import {Loading} from '../component/Loadind';
+import {GetMerchantFromToken,IsNullOrEmpty} from '../helper/Common';
 
 class AddShop extends React.Component{
   constructor(props) {
@@ -35,36 +36,33 @@ class AddShop extends React.Component{
   componentDidMount() {
     this.updateWindowDimensions();
     window.addEventListener('resize', this.updateWindowDimensions);
-      this.checkLoginAndAddShop();
+    this.checkLoginAndAddShop();
   }
-    checkLoginAndAddShop = async() => {
-       await this.setState({isloading:true});
-     var merchantId = localStorage.getItem('merchantId');
-      if(merchantId == null || merchantId == 'undefined'){
+
+  checkLoginAndAddShop = async() => {
+      await this.setState({isloading:true});
+      var merchantId = localStorage.getItem('merchantId');
+      if(!merchantId){
       this.props.history.push('/Login');
-        }
-          var merchant = {
-       "id":  localStorage.getItem('merchantId'),
-     "fullname":localStorage.getItem('merchantFullname'),
-      "email":localStorage.getItem('merchantEmail'),
-       "role":localStorage.getItem('merchantRole'),
-     "tel": localStorage.getItem('merchantTel')
-        }
+      }
+      var merchant = await GetMerchantFromToken();
       await this.props.MerchantAction.setMerchantInfo(merchant);
-     var res = await this.props.ShopApiAction.GetShopInfo(this.props.Merchant.Merchant.id);
-      if(res.data?.isError == true){
-    toast.error(res.data.errorMsg);
-    await this.setState({isloading:false});
-    return;
+      var res = await this.props.ShopApiAction.GetShopInfo(this.props.Merchant.Merchant.id);
+      if(res?.data?.isError == true){
+       //TO DO CATCH POPUP
+      await this.setState({isloading:false});
+      return;
   }
-  var shop = res.data?.shops;
+
+      var shop = res?.data?.shops;
       if(!shop){
-      this.props.history.push('/Register-Shop');
-        }
+        this.props.history.push('/Register-Shop');
+      }
          await this.props.ShopAction.setShopInfo(shop);
          await this.setState({shopImage:shop?.coverImage,shopName:shop?.shopName,shopEmail:shop?.email,shopTel:shop?.tel,shopAddress:shop?.address})
-        await this.setState({isloading:false});
-      }
+         await this.setState({isloading:false});
+  }
+
   componentWillUnmount() {
     window.removeEventListener('resize', this.updateWindowDimensions);
   }
@@ -84,25 +82,30 @@ class AddShop extends React.Component{
   updateShopOnClick = async() =>{
     try
     {
-        await this.setState({isloading:true});
-  const res = await this.props.ShopApiAction.UpdateShop(this.state.shopImage,this.state.shopName,this.state.shopEmail,this.state.shopTel,this.state.shopAddress,this.props.Merchant.Merchant.id);
-  console.log("Res : " +JSON.stringify(res));
-  
-  if(res.data.isError === true){
-    
-    toast.error(res.data.errorMsg);
-    await this.setState({isloading:false});
-    return;
+        //TO DO CONFIRM POPUP
+       
+    }
+    catch(ex){
+      toast.error("เกิดข้อผิดพลาด กรุณาติดต่อเจ้าหน้าที่");
+    }
+   await this.setState({isloading:false});
   }
-  var shop = res.data?.shops;
+
+updateShopApi = async() =>{
+  
+      await this.setState({isloading:true});
+      const res = await this.props.ShopApiAction.UpdateShop(this.state.shopImage,this.state.shopName,this.state.shopEmail,this.state.shopTel,this.state.shopAddress,this.props.Merchant.Merchant.id);
+
+      if(res?.data?.isError === true){    
+      //TO DO CATCH POPUP
+      await this.setState({isloading:false});
+      return;
+  }
+  var shop = res?.data?.shops;
   await this.props.ShopAction.setShopInfo(shop);
   await this.setState({shopImage:shop?.coverImage,shopName:shop?.shopName,shopEmail:shop?.email,shopTel:shop?.tel,shopAddress:shop?.address})
- 
-}
-catch(ex){
-  toast.error("เกิดข้อผิดพลาด กรุณาติดต่อเจ้าหน้าที่");
-  }
-   await this.setState({isloading:false});
+  await this.setState({isloading:false});
+  //TO DO SUCCESS POPUP
 }
 
 editOnClick = async() =>{
@@ -114,10 +117,6 @@ editOnClick = async() =>{
 cancelOnClick = async() =>{
    await this.setState({isEdit:false})
 }
-
-  IsNullOrEmpty = (value) =>{
-     return  (!value || value == undefined || value == "" || value.length == 0);
-  }
 
   validateshopName = async(e) =>{
    var value = e.target.value
@@ -164,46 +163,56 @@ cancelOnClick = async() =>{
     render(){
       return(
          <React.Fragment>
-       {this.state.isloading?
-       <Loading height={this.state.height} />:null}
-         <DashboardLayout merchantName={this.props.Merchant?.Merchant?.fullname}>
-        
-          <div>
+       <Loading height={this.state.height}  onLoading={this.state.isloading}/>
+         <DashboardLayout merchantName={this.props.Merchant?.Merchant?.fullname}  shopId={this.props?.Shop?.Shop?._id}>       
+         <React.Fragment>
            <ToastContainer />  
         <div className="form-group row" style={{height:this.state.height,backgroundColor:'white'}} > 
 
        <div className={"col-12"} style={{position:'relative'}}>
+
         <div className="vertical-center" style={{width:'100%'}}>
+
+           {/*Detail View*/}  
+            {/*Edit Button*/} 
         {!this.state.isEdit?
+
+       
         <button  className={"primary-button"} style={{width:'150px',marginRight:'10px',right:'90px',position:'absolute',top:'-60px'}} onClick={this.editOnClick} >Edit</button>:null}
      
+     {/*Register Shop*/} 
    <div className="brown-Bold-Topic-Text" style={{textAlign:'center'}}>Register Shop</div>
+
+ {/*Shop Image*/} 
       <div className="form-group input">
        <div className="input" style={{padding:'0px',width:'150px',height:'150px',border:'1px solid lightgray',borderRadius:'5px'}}>
             <img className="imageCenter" src={this.state.shopImage!= null && this.state.shopImage != ""?this.state.shopImage: require('../assets/images/add_image.png').default} style={{margin:'37px'}}/>
        </div>
       </div>
+
+ {/*Shop Name*/} 
       <div className="form-group input">
       <label for="InputShopname" className="brown-input-Text">Shop Name</label>
       {this.state.isEdit?
       <input type="text" class="form-control"  id="InputShopname" value={this.state.shopName} onChange={this.validateshopName.bind(this)}/>
      :<div className="black-Bold-18-Text" >{this.state.shopName != null && this.state.shopName != ""?this.state.shopName:"-" }</div>}</div>
       
+       {/*Shop Email*/} 
       <div className="form-group input" >
         <label for="InputEmail" className="brown-input-Text">Email</label>
         {this.state.isEdit?
         <input type="email" class="form-control"  id="InputEmail" value={this.state.shopEmail} onChange={this.emailOnchange.bind(this)}/>
     :<div className="black-Bold-18-Text" >{this.state.shopEmail != null && this.state.shopEmail != ""?this.state.shopEmail :"-"}</div>}</div>
     
+     {/*Shop Tel*/} 
     <div className="form-group input">
       <label for="InputTel" className="brown-input-Text">Tel</label>
       {this.state.isEdit?
-      <input type="text" class="form-control"  id="InputTel" value={this.state.shopTel} onChange={this.telOnchange.bind(this)}/>
-     
+      <input type="text" class="form-control"  id="InputTel" value={this.state.shopTel} onChange={this.telOnchange.bind(this)}/>   
      :<div className="black-Bold-18-Text" >{this.state.shopTel != null && this.state.shopTel !=""?this.state.shopTel:"-"}</div>}
      </div>
     
-
+ {/*Shop Address*/} 
      <div className="form-group input" style={{height:'150px'}}>
       <label for="InputShopname" className="brown-input-Text">Address</label>
       {this.state.isEdit?
@@ -212,24 +221,19 @@ cancelOnClick = async() =>{
      <div className="black-Bold-18-Text" >{this.state.shopAddress != null && this.state.shopAddress != ""?this.state.shopAddress:"-"}</div>}
      </div>
       
-    
-     
-    
+     {/*Button*/}    
       {this.state.isEdit?
-    <div className="form-group" style={{padding:'40px 0px',display:'flex',justifyContent:'center',margin:'0px 15px'}}>
-     
+    <div className="form-group" style={{padding:'40px 0px',display:'flex',justifyContent:'center',margin:'0px 15px'}}>    
       <button  className={!this.state.IsRegisterDisable?"primary-button":"primary-button disabled"} style={{width:'250px',marginRight:'10px'}} onClick={this.updateShopOnClick}>OK</button>
       <button  className="secondary-button" style={{width:'250px'}} onClick={this.cancelOnClick}>Cancel</button>
      
     </div>
     :null}
-    
-  
-   </div>
-   </div>
      
    </div>
+   </div>  
    </div>
+   </React.Fragment>
    </DashboardLayout>
    </React.Fragment>
       );

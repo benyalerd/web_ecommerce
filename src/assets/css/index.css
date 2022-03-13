@@ -119,5 +119,51 @@
     cursor: pointer;
   }
 
+  .normal-background{
+    background-color:white;
+    margin:20px;
+    border-radius:10px;
+    border: 1px solid #4f6137;
+    border-top: 10px solid #4f6137;
+  }
+
+  .book-bank-list-dislog-close-button {
+    width: 18px;
+    position: absolute;
+    padding-top: 6px;
+    right: 20px;
+    cursor: pointer;
+}
+
+.select-book-bank-list {
+  font-size: 24px;
+  font-weight: bold;
+  margin-right: 0px;
+  margin-left: 0px;
+  padding: 11px 20px 11px 20px;
+}
+
+  .select-book-bank-list:hover {
+      background-color: #d7c6b4;
+      color: white;
+      cursor: pointer;
+  }
+
+  .select-book-bank-logobox {
+    width: auto;
+    padding-left: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin-left: -10px;
+    margin-bottom: -10px;
+    cursor: pointer;
+}
+
+.select-book-bank-logo {
+  width: 50px;
+  height: 50px;
+  margin-right: 20px;
+  margin-left: -4px;
+}
 
   

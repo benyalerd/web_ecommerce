@@ -11,6 +11,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import jwt_decode from "jwt-decode";
 import {Loading} from '../component/Loadind';
+import {IsNullOrEmpty,SetToken} from '../helper/Common';
 
 
 class Register extends React.Component{
@@ -50,10 +51,6 @@ class Register extends React.Component{
   
   updateWindowDimensions() {
     this.setState({ width: window.innerWidth, height: window.innerHeight });
-  }
-
-  IsNullOrEmpty = (value) =>{
-     return  (!value || value == undefined || value == "" || value.length == 0);
   }
 
   validateFirstName = async(e) =>{
@@ -151,25 +148,20 @@ registerOnClick = async() =>{
   try
   {
       await this.setState({isloading:true});
-  const res = await this.props.RegisterApiAction.RegisterMerchant(this.state.firstname,this.state.lastname,this.state.password,this.state.repeat_password,this.state.email,this.state.role,this.state.tel);
-  if(res.data.isError == true){
-    toast.error(res.data.errorMsg);
-    await this.setState({isloading:false});
-    return;
+      const res = await this.props.RegisterApiAction.RegisterMerchant(this.state.firstname,this.state.lastname,this.state.password,this.state.repeat_password,this.state.email,this.state.role,this.state.tel);
+      if(res?.data?.isError == true){
+      //TO DO CATCH POPUP
+      await this.setState({isloading:false});
+      return;
   }
- localStorage.setItem('token',res.data.token);
-    var merchant = jwt_decode(res.data.token);
-    localStorage.setItem('merchantId',merchant.id);
-     localStorage.setItem('merchantFullname',merchant.fullname);
-      localStorage.setItem('merchantEmail',merchant.email);
-       localStorage.setItem('merchantRole',merchant.role);
-      localStorage.setItem('merchantTel',merchant.tel);
+
+  await SetToken(res?.data?.token);
   this.props.history.push('/Register-Shop');
 }
 catch(ex){
   toast.error("เกิดข้อผิดพลาด กรุณาติดต่อเจ้าหน้าที่");
   }
-    await this.setState({isloading:false});
+  await this.setState({isloading:false});
 }
 
 cancelOnClick = () =>{
@@ -204,34 +196,41 @@ CheckDisableRegisterButton = () =>{
   return false
   }
 
-
-  
     render(){
       
       return(
-         <React.Fragment>
-       {this.state.isloading?
-       <Loading height={this.state.height} />:null}
-        <div>
-           <ToastContainer />  
+       <React.Fragment>
+       <Loading height={this.state.height}  onLoading={this.state.isloading} />
+       <React.Fragment>
+        <ToastContainer />  
         <div className="form-group row" style={{height:this.state.height}}>     
-       
+        {/*Background Side*/} 
         <div className="col-4" style={this.state.width <= 998 ?{display:'none'}:{backgroundColor:'#4f6137'}} ></div>
-      <div className={this.state.width <= 998 ?"col-12":"col-8"} style={{position:'relative'}}>
+        
+         {/*Text Box Side*/}
+        <div className={this.state.width <= 998 ?"col-12":"col-8"} style={{position:'relative'}}>
+
         <div className="vertical-center" style={{width:'100%'}}>
-      <div className="brown-Bold-Topic-Text" style={{textAlign:'center'}}>Register</div>
+
+        {/*Register*/}
+        <div className="brown-Bold-Topic-Text" style={{textAlign:'center'}}>Register</div>
+
       <div className="form-group row">
+
+        {/*Firstname*/}
       <div className="form-group input col-6" >
       <label for="InputFirstname" className="brown-input-Text">Firstname</label>
-      <input type="text" class="form-control"  id="InputFirstname" value={this.state.firstname} onChange={this.validateFirstName.bind(this)}/>
-     
+      <input type="text" class="form-control"  id="InputFirstname" value={this.state.firstname} onChange={this.validateFirstName.bind(this)}/>    
      </div>
      
+      {/*Lastname*/}
      <div className="form-group input col-6">
       <label for="InputLastname" className="brown-input-Text">Lastname</label>
       <input type="text" class="form-control"  id="InputLastname" value={this.state.lastname}  onChange={this.validateLastName.bind(this)}/>
      </div>
     </div>
+
+     {/*Error Text*/}
     <div className="form-group row">
     <div className="input col-6"  style={{padding:'0px',textAlign:'center'}}>
        <div className="text-error">{this.state.firstnameErrorText}</div>
@@ -240,16 +239,23 @@ CheckDisableRegisterButton = () =>{
        <div className="text-error">{this.state.lastnameErrorText}</div>
      </div>
      </div>
+
+     
     <div className="form-group row">
+       {/*Tel*/}
       <div className="form-group input col-6">
       <label for="InputTel" className="brown-input-Text">Tel</label>
       <input type="text" class="form-control" maxLength={10}  id="InputTel" value={this.state.tel} onChange={this.validateTel.bind(this)}/>
      </div>
+
+      {/*Email*/}
      <div className="form-group input col-6">
      <label for="InputEmail" className="brown-input-Text">Email</label>
         <input type="email" class="form-control"  id="InputEmail" value={this.state.email} onChange={this.validateEmail.bind(this)}/>
      </div>
     </div>
+
+     {/*Error Text*/}
     <div className="form-group row">
     <div className="input col-6"  style={{padding:'0px',textAlign:'center'}}>
        <div className="text-error">{this.state.telErrorText}</div>
@@ -258,16 +264,24 @@ CheckDisableRegisterButton = () =>{
        <div className="text-error">{this.state.emailErrorText}</div>
      </div>
      </div>
+
+
     <div className="form-group row">
+
+       {/*Password*/}
       <div className="form-group input col-6">
       <label for="InputPassword" className="brown-input-Text">Password</label>
       <input type="password" class="form-control"  id="InputPassword" value={this.state.password} onChange={this.validatePasword.bind(this)} />
      </div>
+
+      {/*Confirm Password*/}
      <div className="form-group input col-6">
      <label for="InputConfirmPassword" className="brown-input-Text">Confirm Password</label>
         <input type="password" class="form-control"  id="InputConfirmPassword" value={this.state.confirmPassword} onChange={this.validateConfirmPasword.bind(this)}/>
      </div>
     </div>
+
+     {/*Error Text*/}
     <div className="form-group row">
     <div className="input col-6"  style={{padding:'0px',textAlign:'center'}}>
        <div className="text-error">{this.state.passwordErrorText}</div>
@@ -276,7 +290,10 @@ CheckDisableRegisterButton = () =>{
        <div className="text-error">{this.state.confirmPasswordErrorText}</div>
      </div>
      </div>
+
+
     <div className="form-group row">
+ {/*Role*/}
       <div className="form-group input col-6">
       <label for="InputRole" className="brown-input-Text">Role</label>
       <div>
@@ -286,9 +303,12 @@ CheckDisableRegisterButton = () =>{
                </select>
                </div>
      </div>
+
      <div className="form-group input col-6">
      </div>
     </div>
+
+     {/*Button*/}
     <div className="form-group" style={{padding:'40px 0px',display:'flex',justifyContent:'center',margin:'0px 15px'}}>
      
       <button  className={!this.state.IsRegisterDisable?"primary-button":"primary-button disabled"} style={{width:'250px',marginRight:'10px'}} onClick={this.registerOnClick}>Register</button>
@@ -301,7 +321,7 @@ CheckDisableRegisterButton = () =>{
    </div>
    </div>
    </div>
-   </div>
+   </React.Fragment>
    </React.Fragment>
       );
     }
