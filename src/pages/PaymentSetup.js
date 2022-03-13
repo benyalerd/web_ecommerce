@@ -94,7 +94,7 @@ class PaymentSetup extends React.Component{
 
   editBankInfo = async(index)=> {
   await this.props.PaymentSetupAction.setPaymentEdit(true); 
-  await this.props.PaymentSetupAction.setAddPaymentDialogOpen(this.state.paymentList[index],true);
+  await this.props.PaymentSetupAction.setAddPaymentDialogOpen({...this.state.paymentList[index],"merchantId":this.props.Merchant.Merchant.id},true);
   }
 
   deleteBankInfo = async(index)=> {

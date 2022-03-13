@@ -68,7 +68,8 @@ export class BookBankListDialog extends React.Component {
             "accountName": null,
             "accountNumber": null,
             "masterName":masterName,
-            "masterImg":masterImg
+            "masterImg":masterImg,
+            "merchantId":this.props.Merchant.Merchant.id
         }    
         await this.props.PaymentSetupAction.setBookBankListDialogOpen(false);
         await this.props.PaymentSetupAction.setAddPaymentDialogOpen(SelectAccount,true);
@@ -174,6 +175,7 @@ const mapStateToProps = state => ({
     PaymentSetup:state.PaymentSetup,
     SessionAlert:state.SessionAlert,
     Shop :state.Shop,
+    Merchant:state.Merchant
 });
 
 const mapDispatchToProps = dispatch => ({
