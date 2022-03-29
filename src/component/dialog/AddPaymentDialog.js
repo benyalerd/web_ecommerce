@@ -70,9 +70,7 @@ class AddPaymentDialog extends React.Component {
         if(value)
         {          
             if(!onlyNumber.test(value)){         
-            var newValue = value.substring(0,value.length-1);          
-            await this.setState({accountNumberDisplay:newValue,accountNumber:newValue,accountNumberError:''})
-            return;
+            value = value.substring(0,value.length-1);          
             }  
         }      
         await this.setState({accountNumberDisplay:value,accountNumberError:'',accountNumber:value});
@@ -94,7 +92,7 @@ class AddPaymentDialog extends React.Component {
     addPaymentApi = async (selectBankDetail) =>{
         var res = await this.props.PaymentSetupApiAction.InsertPayment(selectBankDetail);
         if(res?.data?.isError == true){
-           //TO DO CATCH POPUP
+            this.props.AlertAction.setAlert(2,res?.data?.errorMsg,true);
             await this.setState({IsLoading:false});
             return;
           }
@@ -105,7 +103,7 @@ class AddPaymentDialog extends React.Component {
     updatePaymentApi = async(selectBankDetail) =>{
         var res = await this.props.PaymentSetupApiAction.EditPayment(selectBankDetail);
         if(res?.data?.isError == true){
-            //TO DO CATCH POPUP
+            this.props.AlertAction.setAlert(2,res?.data?.errorMsg,true);
              await this.setState({IsLoading:false});
              return;
            }
@@ -116,11 +114,11 @@ class AddPaymentDialog extends React.Component {
     Onsubmit = async() =>{
      
         var isValid = true;
-        if(this.IsNullOrEmpty(this.state.accountName)){
+        if(IsNullOrEmpty(this.state.accountName)){
         this.setState({accountNameError:"กรุณากรอกชื่อบัญชี"});
         isValid = false;
         }       
-        if(this.IsNullOrEmpty(this.state.accountNumber)){
+        if(IsNullOrEmpty(this.state.accountNumber)){
         this.setState({loginErrorText:"กรุณากรอกเลขที่บัญชี"});
         isValid = false;
         }

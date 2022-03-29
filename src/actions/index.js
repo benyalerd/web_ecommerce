@@ -5,4 +5,7 @@ export default class Action{
     static Set_Session_Alert = 'Set-Session-Alert';
     static set_Add_Payment_Dialog_Open = "set_Add_Payment_Dialog_Open";
     static set_Payment_Edit = "set_Payment_Edit";
+    static set_Shipping_Edit ="set_Shipping_Edit";
+    static set_Add_Shipping_Dialog_Open = "set_Add_Shipping_Dialog_Open";
+    static Set_Alert = "Set_Alert";
 }

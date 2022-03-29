@@ -38,10 +38,9 @@ export class BookBankListDialog extends React.Component {
         try {
             await this.setState({IsLoading:true});          
             const response = await this.props.MasterApiAction.GetMasterData(1);
-            console.log("Data : " +JSON.stringify(response))
             if(response?.data?.isError == true){
                 await this.setState({IsLoading:false});
-                //TO DO CATCH POPUP
+                this.props.AlertAction.setAlert(2,response?.data?.errorMsg,true);
                 return;
             }           
             await this.setState({IsLoading:false,bankingList:response?.data?.masters});

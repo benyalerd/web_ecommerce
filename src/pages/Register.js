@@ -12,6 +12,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import jwt_decode from "jwt-decode";
 import {Loading} from '../component/Loadind';
 import {IsNullOrEmpty,SetToken} from '../helper/Common';
+import AlertDialog from '../component/dialog/AlertDialog';
+import * as alertAction from '../actions/Alert/AlertAction';
 
 
 class Register extends React.Component{
@@ -55,7 +57,7 @@ class Register extends React.Component{
 
   validateFirstName = async(e) =>{
    var value = e.target.value
-    if(this.IsNullOrEmpty(value)){
+    if(IsNullOrEmpty(value)){
       await this.setState({firstname:value,firstnameErrorText:'กรุณากรอกชื่อ'});
     }
     else{
@@ -68,7 +70,7 @@ class Register extends React.Component{
 
  validateLastName = async(e) =>{
   var value = e.target.value
-  if(this.IsNullOrEmpty(value)){
+  if(IsNullOrEmpty(value)){
     await this.setState({lastname:value,lastnameErrorText:'กรุณากรอกนามสกุล'});
   }
   else{
@@ -80,7 +82,7 @@ class Register extends React.Component{
 
 validateEmail = async(e) =>{
   var value = e.target.value
-  if(this.IsNullOrEmpty(value)){
+  if(IsNullOrEmpty(value)){
     await this.setState({email:value,emailErrorText:'กรุณากรอกอีเมล์'});
   }
   else if(!validEmail.test(value)){
@@ -95,7 +97,7 @@ validateEmail = async(e) =>{
 
 validateTel = async(e) =>{
   var value = e.target.value
-  if(this.IsNullOrEmpty(value)){
+  if(IsNullOrEmpty(value)){
     await this.setState({tel:value,telErrorText:'กรุณากรอกเบอร์โทรศัพท์'});
   }
   else if(!validTel.test(value)){
@@ -111,7 +113,7 @@ validateTel = async(e) =>{
 
 validatePasword = async(e) =>{
   var value = e.target.value
-  if(this.IsNullOrEmpty(value)){
+  if(IsNullOrEmpty(value)){
     await this.setState({password:value,passwordErrorText:'กรุณากรอกรหัสผ่าน'});
   }
   else if(!validPassword.test(value)){
@@ -150,7 +152,7 @@ registerOnClick = async() =>{
       await this.setState({isloading:true});
       const res = await this.props.RegisterApiAction.RegisterMerchant(this.state.firstname,this.state.lastname,this.state.password,this.state.repeat_password,this.state.email,this.state.role,this.state.tel);
       if(res?.data?.isError == true){
-      //TO DO CATCH POPUP
+        this.props.AlertAction.setAlert(2,res?.data?.errorMsg,true);
       await this.setState({isloading:false});
       return;
   }
@@ -169,27 +171,27 @@ cancelOnClick = () =>{
 }
 
 CheckDisableRegisterButton = () =>{
-  if(!this.IsNullOrEmpty(this.state.firstnameErrorText)|| this.IsNullOrEmpty(this.state.firstname))
+  if(!IsNullOrEmpty(this.state.firstnameErrorText)|| IsNullOrEmpty(this.state.firstname))
   {
     return true;
   }
-  if(!this.IsNullOrEmpty(this.state.lastnameErrorText)|| this.IsNullOrEmpty(this.state.lastname))
+  if(!IsNullOrEmpty(this.state.lastnameErrorText)|| IsNullOrEmpty(this.state.lastname))
   {
     return true;
   }
-  if(!this.IsNullOrEmpty(this.state.telErrorText)|| this.IsNullOrEmpty(this.state.tel))
+  if(!IsNullOrEmpty(this.state.telErrorText)|| IsNullOrEmpty(this.state.tel))
   {
     return true;
   }
-  if(!this.IsNullOrEmpty(this.state.emailErrorText)|| this.IsNullOrEmpty(this.state.email))
+  if(!IsNullOrEmpty(this.state.emailErrorText)|| IsNullOrEmpty(this.state.email))
   {
     return true;
   }
-  if(!this.IsNullOrEmpty(this.state.passwordErrorText)|| this.IsNullOrEmpty(this.state.password))
+  if(!IsNullOrEmpty(this.state.passwordErrorText)|| IsNullOrEmpty(this.state.password))
   {
     return true;
   }
-  if(!this.IsNullOrEmpty(this.state.confirmPasswordErrorText)|| this.IsNullOrEmpty(this.state.confirmPassword))
+  if(!IsNullOrEmpty(this.state.confirmPasswordErrorText)|| IsNullOrEmpty(this.state.confirmPassword))
   {
     return true;
   }
@@ -200,6 +202,7 @@ CheckDisableRegisterButton = () =>{
       
       return(
        <React.Fragment>
+           <AlertDialog/>
        <Loading height={this.state.height}  onLoading={this.state.isloading} />
        <React.Fragment>
         <ToastContainer />  
@@ -332,7 +335,8 @@ CheckDisableRegisterButton = () =>{
   
   const mapDispatchToProps = dispatch =>({
     MerchantAction : bindActionCreators(merchantAction,dispatch),
-    RegisterApiAction : bindActionCreators(registerApiAction,dispatch)
+    RegisterApiAction : bindActionCreators(registerApiAction,dispatch),
+    AlertAction : bindActionCreators(alertAction,dispatch),
   });
   
   

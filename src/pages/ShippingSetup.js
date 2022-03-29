@@ -11,24 +11,23 @@ import 'react-toastify/dist/ReactToastify.css';
 import {DashboardLayout} from '../component/Layout';
 import * as shopApiAction from '../actions/api/ShopApiAction'
 import * as shopAction from '../actions/Shop/ShopAction'
-import * as paymentSetupAction from '../actions/PaymentSetup/PaymentSetupAction'
+import * as shippingSetupAction from '../actions/Shipping/ShippingSetupAction'
 import {Loading} from '../component/Loadind';
-import BookBankListDialog from '../component/dialog/BookBankListDialog';
-import AddPaymentDialog from '../component/dialog/AddPaymentDialog';
-import * as paymentSetupApiAction from '../actions/api/PaymentSetupApiAction';
+import AddShippingDialog from '../component/dialog/AddShippingDialog';
+import * as shippingSetupApiAction from '../actions/api/ShippingSetupApiAction';
 import queryString from 'query-string';
 import {GetMerchantFromToken,IsNullOrEmpty} from '../helper/Common';
 import AlertDialog from '../component/dialog/AlertDialog';
 import * as alertAction from '../actions/Alert/AlertAction';
 
-class PaymentSetup extends React.Component{
+class ShippingSetup extends React.Component{
   constructor(props) {
     super(props);
     this.state = 
     { width: 0, 
       height: 0,
       isloading:false,
-      paymentList:null,
+      shippingList:null,
     };
     this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
   }
@@ -37,13 +36,13 @@ class PaymentSetup extends React.Component{
     this.updateWindowDimensions();
     window.addEventListener('resize', this.updateWindowDimensions);
     this.checkLoginAndAddShop();
-    this.getAllPayment();
+    this.getAllShipping();
      
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if(prevProps.PaymentSetup.IsAddPaymentOpen !== this.props.PaymentSetup.IsAddPaymentOpen){
-      this.getAllPayment();
+    if(prevProps.ShippingSetup.IsAddShippingOpen !== this.props.ShippingSetup.IsAddShippingOpen){
+      this.getAllShipping();
     }
   }
 
@@ -53,7 +52,7 @@ class PaymentSetup extends React.Component{
     if(!merchantId){
       this.props.history.push('/Login');
     }
-    var merchant = await GetMerchantFromToken();   
+    var merchant = await GetMerchantFromToken();  
     await this.props.MerchantAction.setMerchantInfo(merchant);
     var res = await this.props.ShopApiAction.GetShopInfo(this.props.Merchant.Merchant.id);
     if(res?.data?.isError == true){
@@ -69,17 +68,18 @@ class PaymentSetup extends React.Component{
     await this.setState({isloading:false});
   }
 
-  getAllPayment = async() => {
+  getAllShipping = async() => {
     await this.setState({isloading:true});
     const query = queryString.parse(this.props.location.search);
-    var res = await this.props.PaymentSetupApiAction.GetPayment(query.shopId);
+    var res = await this.props.ShippingSetupApiAction.GetShipping(query.shopId);
+    console.log("shipping :" +JSON.stringify(res));
     if(res?.data?.isError == true){
       this.props.AlertAction.setAlert(2,res?.data?.errorMsg,true);
     await this.setState({isloading:false});
     return;
   }
 
-  await this.setState({isloading:false,paymentList:res?.data?.payments});
+  await this.setState({isloading:false,shippingList:res?.data?.Shippings});
   }
 
   componentWillUnmount() {
@@ -90,27 +90,38 @@ class PaymentSetup extends React.Component{
     this.setState({ width: window.innerWidth, height: window.innerHeight });
   }
 
-  addPaymentDialogOnclick = async () =>{
-    await this.props.PaymentSetupAction.setBookBankListDialogOpen(true);
+  addShippingDialogOnclick = async () =>{
+    var selectShipping ={
+      "shopId":this.props.Shop.Shop._id,
+      "masterId":"",
+      "price":0,
+      "minDay":0,
+      "maxDay":0,
+      "masterName":"",
+      "masterImg":""
+      
+    }
+    await this.props.ShippingSetupAction.setAddShippingDialogOpen(selectShipping,true);
   }
 
-  editBankInfo = async(index)=> {
-  await this.props.PaymentSetupAction.setPaymentEdit(true); 
-  await this.props.PaymentSetupAction.setAddPaymentDialogOpen({...this.state.paymentList[index],"merchantId":this.props.Merchant.Merchant.id},true);
+  editShippingInfo = async(index)=> {
+  await this.props.ShippingSetupAction.setShippingEdit(true); 
+  await this.props.ShippingSetupAction.setAddShippingDialogOpen({...this.state.shippingList[index],"merchantId":this.props.Merchant.Merchant.id},true);
   }
 
-  deleteBankInfo = async(index)=> {
+  deleteShippingInfo = async(index)=> {
   try{
     //TO DO POPUP CONFIRM
   }
   catch(ex){
+    console.log("deleteShippingInfo");
     toast.error("เกิดข้อผิดพลาด กรุณาติดต่อเจ้าหน้าที่");
     }
   }
 
-  deleteBankInfoApi = async(index)=> {
+  deleteShippingInfoApi = async(index)=> {
     await this.setState({isloading:true});
-    var res = await this.props.PaymentSetupApiAction.DeletePayment(this.state.paymentList[index]);
+    var res = await this.props.ShippingSetupApiAction.DeleteShipping(this.state.shippingList[index]);
     if(res?.data?.isError == true){
       this.props.AlertAction.setAlert(2,res?.data?.errorMsg,true);
       await this.setState({isloading:false});
@@ -126,9 +137,8 @@ class PaymentSetup extends React.Component{
 render(){
       return(
          <React.Fragment>
-             <AlertDialog/>
-           <BookBankListDialog />
-           <AddPaymentDialog/>
+            <AlertDialog/>
+           <AddShippingDialog/>
            <Loading height={this.state.height} onLoading={this.state.isloading}/>
            <DashboardLayout merchantName={this.props.Merchant?.Merchant?.fullname} shopId={this.props?.Shop?.Shop?._id}>
            <React.Fragment>
@@ -136,19 +146,19 @@ render(){
 
         <div className="form-group"> 
 
-        {/*Payment Set Up*/}  
-        <div className="brown-Bold-Topic-Text" style={{padding:'0px 20px'}}>Payment Set Up</div>
+        {/*Shipping Set Up*/}  
+        <div className="brown-Bold-Topic-Text" style={{padding:'0px 20px'}}>Shipping Set Up</div>
 
         <div className="form-group normal-background" style={{height:this.state.height}}> 
         
-        {/*Payment Set Up*/}  
-        <div className="brown-Bold-Topic-Text" style={{textAlign:'center'}}>Payment Set Up</div>
+        {/*Shipping Set Up*/}  
+        <div className="brown-Bold-Topic-Text" style={{textAlign:'center'}}>Shipping Set Up</div>
         
-        {/*Button เพิ่มบัญชีธนาคาร*/}  
+        {/*Button เพิ่มการจัดส่ง*/}  
         <div className="form-row" style={{position:'relative',height:'50px'}}>
-        <button onClick={this.addPaymentDialogOnclick} style={{width:'150px',backgroundColor:'#4f6137',position:'absolute',right:'30px',width:'175px',height:'40px',borderRadius:'5px',fontSize:'16px',color:'white',cursor:'pointer'}}>
+        <button onClick={this.addShippingDialogOnclick} style={{width:'150px',backgroundColor:'#4f6137',position:'absolute',right:'30px',width:'175px',height:'40px',borderRadius:'5px',fontSize:'16px',color:'white',cursor:'pointer'}}>
             <img src={require('../assets/images/plusIcon.png').default} style={{marginTop: '0px',width:'30px',marginRight: '4px',display:'unset'}} ></img>
-            <span>เพิ่มบัญชีธนาคาร</span>
+            <span>เพิ่มการจัดส่ง</span>
             </button>       
       </div>
 
@@ -158,22 +168,23 @@ render(){
       <div className="row" style={{marginLeft: '40px', marginRight: '40px', fontSize: '16px'}}>
 
           {/*Header*/}  
-          <div className="col-9" style={{background: 'lightgray', height: '45px', padding: '10px 30px', fontWeight: 'bold', borderTop: '1px solid white', borderBottom: '1px solid white', borderLeft: '1px solid white', color: 'gray', borderRadius: '5px 0px 0px 0px'}}>ข้อมูลบัญชี</div>
+          <div className="col-9" style={{background: 'lightgray', height: '45px', padding: '10px 30px', fontWeight: 'bold', borderTop: '1px solid white', borderBottom: '1px solid white', borderLeft: '1px solid white', color: 'gray', borderRadius: '5px 0px 0px 0px'}}>ข้อมูลขนส่ง</div>
           <div className="col-3" style={{background: 'lightgray', height: '45px', padding: '10px 0px', fontWeight: 'bold', borderTop: '1px solid white', borderBottom: '1px solid white', borderLeft: '1px solid white', color: 'gray', borderRadius: '0px 5px 0px 0px',textAlign:'center'}}>ดำเนินการ</div>
           
           </div>
 
-        {/*Payment List*/}  
+        {/*Shipping List*/}  
           <div className="row" style={{marginLeft: '40px', marginRight: '40px', fontSize: '16px',height:'max-content'}}>
-          {this.state.paymentList == null || this.state.paymentList.length <= 0?<div className="col-12" style={{background: 'white', padding: '10px 30px', fontWeight: 'bold', border: '1px solid lightgray', color: 'lightgray', borderRadius: '0px',textAlign:'center'}}>ไม่พบข้อมูลบัญชีธนาคาร</div>  :  
+          {this.state.shippingList == null || this.state.shippingList.length <= 0?<div className="col-12" style={{background: 'white', padding: '10px 30px', fontWeight: 'bold', border: '1px solid lightgray', color: 'lightgray', borderRadius: '0px',textAlign:'center'}}>ไม่พบข้อมูลการขนส่ง</div>  :  
           
           <React.Fragment>
-            {this.state.paymentList?.map(({
+            {this.state.shippingList?.map(({
               _id,
               masterName,
               masterImg,
-              accountName,
-              accountNumber     
+              price,
+              minDay,
+              maxDay     
           },index) =>
 
             <React.Fragment>
@@ -183,12 +194,12 @@ render(){
                           {/*Image*/}  
                         <img style={{width: '50px',height: '50px',marginRight: '20px',marginTop: '3px',display:'unset'}}  src={masterImg ?masterImg:require('../assets/images/noimage.png').default}/> </div>
                         <div className="col-9" >
-                            {/*Bank Name*/}  
+                            {/*Shipping Name*/}  
                             <div>{masterName}</div>
-                              {/*Account Number*/}  
-                            <div style={{fontWeight:'normal'}}>{accountNumber}</div>
-                              {/*Account Name*/}  
-                            <div style={{fontWeight:'normal'}}>{accountName}</div>
+                              {/*Price*/}  
+                            <div style={{fontWeight:'normal'}}>{price.toFixed(2)}</div>
+                              {/*Period*/}  
+                            <div style={{fontWeight:'normal'}}>{"(ระยะเวลาจัดส่ง " +minDay + " - "+ maxDay +" วัน)"}</div>
                             </div>                       
                     </div>
                 </div>
@@ -196,8 +207,8 @@ render(){
   {/*Edit / Delete*/}  
        <div className="col-3" style={{background: 'white', height: '100px', fontWeight: 'bold', border: '1px solid lightgray', color: 'black', borderRadius: '0px',display: 'flex',alignItems: 'center',justifyContent: 'center'}}>
           
-           <img style={{width: '40px',height: '40px',marginRight: '10px',display:'unset',cursor:'pointer'}} src={require('../assets/images/editIcon.png').default}  onClick={() => this.editBankInfo(index)}/>
-           <img style={{width: '40px',height: '40px',display:'unset',cursor:'pointer'}} src={require('../assets/images/deleteIcon.png').default} onClick={() => this.deleteBankInfo(index)}/>
+           <img style={{width: '40px',height: '40px',marginRight: '10px',display:'unset',cursor:'pointer'}} src={require('../assets/images/editIcon.png').default}  onClick={() => this.editShippingInfo(index)}/>
+           <img style={{width: '40px',height: '40px',display:'unset',cursor:'pointer'}} src={require('../assets/images/deleteIcon.png').default} onClick={() => this.deleteShippingInfo(index)}/>
            
       </div>
       
@@ -222,7 +233,7 @@ render(){
   const mapStateToProps = state =>({
     Shop :state.Shop,
   Merchant:state.Merchant,
-  PaymentSetup:state.PaymentSetup,
+  ShippingSetup:state.ShippingSetup,
   SessionAlert:state.SessionAlert
   });
   
@@ -231,12 +242,12 @@ render(){
     MerchantAction : bindActionCreators(merchantAction,dispatch),
     RegisterApiAction : bindActionCreators(registerApiAction,dispatch),
      ShopApiAction : bindActionCreators(shopApiAction,dispatch),
-     PaymentSetupAction : bindActionCreators(paymentSetupAction,dispatch),
-     PaymentSetupApiAction : bindActionCreators(paymentSetupApiAction,dispatch),
+     ShippingSetupAction : bindActionCreators(shippingSetupAction,dispatch),
+     ShippingSetupApiAction : bindActionCreators(shippingSetupApiAction,dispatch),
      AlertAction : bindActionCreators(alertAction,dispatch),
      
   });
 
   
   
-  export default withRouter(connect(mapStateToProps,mapDispatchToProps)(PaymentSetup));
+  export default withRouter(connect(mapStateToProps,mapDispatchToProps)(ShippingSetup));

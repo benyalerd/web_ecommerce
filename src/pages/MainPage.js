@@ -13,6 +13,8 @@ import jwt_decode from "jwt-decode";
 import '../assets/css/index.css';
 import {Loading} from '../component/Loadind';
 import {GetMerchantFromToken} from '../helper/Common';
+import * as alertAction from '../actions/Alert/AlertAction';
+import AlertDialog from '../component/dialog/AlertDialog';
 
 class MainPage extends React.Component{
   constructor(props) {
@@ -41,11 +43,11 @@ class MainPage extends React.Component{
       await this.props.MerchantAction.setMerchantInfo(merchant);     
       var res = await this.props.ShopApiAction.GetShopInfo(this.props.Merchant.Merchant.id);     
       if(res?.data?.isError == true){
-      //TO DO CATCH POPUP
+      this.props.AlertAction.setAlert(2,res?.data?.errorMsg,true);
       await this.setState({isloading:false});
       return;
       }
-
+     
       if(!res?.data?.shops){
       this.props.history.push('/Register-Shop');
       }
@@ -68,6 +70,7 @@ class MainPage extends React.Component{
 render(){     
     return (
        <React.Fragment>
+         <AlertDialog/>
        <Loading height={this.state.height} onLoading={this.state.isloading} />
        <DashboardLayout merchantName={this.props.Merchant?.Merchant?.fullname} shopId={this.props?.Shop?.Shop?._id}>        
        <React.Fragment>
@@ -128,6 +131,7 @@ const mapStateToProps = state =>({
     ShopAction : bindActionCreators(shopAction,dispatch),
     ShopApiAction : bindActionCreators(shopApiAction,dispatch),
       MerchantAction : bindActionCreators(merchantAction,dispatch),
+      AlertAction : bindActionCreators(alertAction,dispatch),
   });
   
   

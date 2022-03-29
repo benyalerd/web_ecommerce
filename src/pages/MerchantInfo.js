@@ -15,7 +15,8 @@ import * as shopApiAction from '../actions/api/ShopApiAction'
 import * as shopAction from '../actions/Shop/ShopAction'
 import {Loading} from '../component/Loadind';
 import {GetMerchantFromToken,IsNullOrEmpty} from '../helper/Common';
-
+import AlertDialog from '../component/dialog/AlertDialog';
+import * as alertAction from '../actions/Alert/AlertAction';
 
 class MerchantInfo extends React.Component{
   constructor(props) {
@@ -57,7 +58,7 @@ class MerchantInfo extends React.Component{
     await this.setState({firstname:merchant.fullname.split(" ")[0],lastname:merchant.fullname.split(" ")[1],email:merchant.email,tel:merchant.tel,role:merchant.role})
     var res = await this.props.ShopApiAction.GetShopInfo(this.props.Merchant.Merchant.id);
     if(res?.data?.isError == true){
-    //TO DO CATCH POPUP
+      this.props.AlertAction.setAlert(2,res?.data?.errorMsg,true);
     await this.setState({isloading:false});
     return;
   }
@@ -79,7 +80,7 @@ class MerchantInfo extends React.Component{
 
   validateFirstName = async(e) =>{
    var value = e.target.value
-    if(this.IsNullOrEmpty(value)){
+    if(IsNullOrEmpty(value)){
       await this.setState({firstname:value,firstnameErrorText:'กรุณากรอกชื่อ'});
     }
     else{
@@ -92,7 +93,7 @@ class MerchantInfo extends React.Component{
 
  validateLastName = async(e) =>{
   var value = e.target.value
-  if(this.IsNullOrEmpty(value)){
+  if(IsNullOrEmpty(value)){
     await this.setState({lastname:value,lastnameErrorText:'กรุณากรอกนามสกุล'});
   }
   else{
@@ -104,7 +105,7 @@ class MerchantInfo extends React.Component{
 
 validateEmail = async(e) =>{
   var value = e.target.value
-  if(this.IsNullOrEmpty(value)){
+  if(IsNullOrEmpty(value)){
     await this.setState({email:value,emailErrorText:'กรุณากรอกอีเมล์'});
   }
   else if(!validEmail.test(value)){
@@ -119,7 +120,7 @@ validateEmail = async(e) =>{
 
 validateTel = async(e) =>{
   var value = e.target.value
-  if(this.IsNullOrEmpty(value)){
+  if(IsNullOrEmpty(value)){
     await this.setState({tel:value,telErrorText:'กรุณากรอกเบอร์โทรศัพท์'});
   }
   else if(!validTel.test(value)){
@@ -153,7 +154,7 @@ updateMerchantApi = async() =>{
   await this.setState({isloading:true});
   const res = await this.props.RegisterApiAction.updateMerchant(this.state.firstname,this.state.lastname,this.state.tel);
   if(res?.data?.isError == true){
-    //TO DO POPUP CATCH
+    this.props.AlertAction.setAlert(2,res?.data?.errorMsg,true);
     await this.setState({isloading:false});
     return;
   }
@@ -161,7 +162,7 @@ updateMerchantApi = async() =>{
   await this.props.MerchantAction.setMerchantInfo(merchant);     
   await this.setState({firstname:merchant.fullname.split(" ")[0],lastname:merchant.fullname.split(" ")[1],email:merchant.email,tel:merchant.tel,role:merchant.role})
   await this.setState({isloading:false});
-  //TO DO POPUP SUCCESS
+  this.props.AlertAction.setAlert(1,"ทำรายการสำเร็จ",true);
 }
 
 editOnClick = async() =>{
@@ -173,19 +174,19 @@ cancelOnClick = async() =>{
 }
 
 CheckDisableRegisterButton = () =>{
-  if(!this.IsNullOrEmpty(this.state.firstnameErrorText)|| this.IsNullOrEmpty(this.state.firstname))
+  if(!IsNullOrEmpty(this.state.firstnameErrorText)|| IsNullOrEmpty(this.state.firstname))
   {
     return true;
   }
-  if(!this.IsNullOrEmpty(this.state.lastnameErrorText)|| this.IsNullOrEmpty(this.state.lastname))
+  if(!IsNullOrEmpty(this.state.lastnameErrorText)|| IsNullOrEmpty(this.state.lastname))
   {
     return true;
   }
-  if(!this.IsNullOrEmpty(this.state.telErrorText)|| this.IsNullOrEmpty(this.state.tel))
+  if(!IsNullOrEmpty(this.state.telErrorText)|| IsNullOrEmpty(this.state.tel))
   {
     return true;
   }
-  if(!this.IsNullOrEmpty(this.state.emailErrorText)|| this.IsNullOrEmpty(this.state.email))
+  if(!IsNullOrEmpty(this.state.emailErrorText)|| IsNullOrEmpty(this.state.email))
   {
     return true;
   }
@@ -195,7 +196,8 @@ CheckDisableRegisterButton = () =>{
   render(){
       
   return(
-      <React.Fragment>    
+      <React.Fragment>   
+          <AlertDialog/> 
        <Loading height={this.state.height} onLoading={this.state.isloading}/>
            <DashboardLayout merchantName={this.props.Merchant?.Merchant?.fullname} shopId={this.props.Shop.Shop._id}>
            <React.Fragment>
@@ -323,7 +325,8 @@ CheckDisableRegisterButton = () =>{
      ShopAction : bindActionCreators(shopAction,dispatch),
     MerchantAction : bindActionCreators(merchantAction,dispatch),
     RegisterApiAction : bindActionCreators(registerApiAction,dispatch),
-     ShopApiAction : bindActionCreators(shopApiAction,dispatch)
+     ShopApiAction : bindActionCreators(shopApiAction,dispatch),
+     AlertAction : bindActionCreators(alertAction,dispatch),
   });
   
   

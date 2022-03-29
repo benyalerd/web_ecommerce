@@ -12,6 +12,8 @@ import {DashboardLayout} from '../component/Layout';
 import * as merchantAction from '../actions/Merchant/MerchantAction'
 import {Loading} from '../component/Loadind';
 import {GetMerchantFromToken,IsNullOrEmpty} from '../helper/Common';
+import AlertDialog from '../component/dialog/AlertDialog';
+import * as alertAction from '../actions/Alert/AlertAction';
 
 class AddShop extends React.Component{
   constructor(props) {
@@ -49,7 +51,7 @@ class AddShop extends React.Component{
       await this.props.MerchantAction.setMerchantInfo(merchant);
       var res = await this.props.ShopApiAction.GetShopInfo(this.props.Merchant.Merchant.id);
       if(res?.data?.isError == true){
-       //TO DO CATCH POPUP
+        this.props.AlertAction.setAlert(2,res?.data?.errorMsg,true);
       await this.setState({isloading:false});
       return;
   }
@@ -72,7 +74,7 @@ class AddShop extends React.Component{
   }
 
   CheckDisableRegisterButton = () =>{
-  if(!this.IsNullOrEmpty(this.state.shopNameErrorText)|| this.IsNullOrEmpty(this.state.shopName))
+  if(!IsNullOrEmpty(this.state.shopNameErrorText)|| IsNullOrEmpty(this.state.shopName))
   {
     return true;
   }
@@ -97,7 +99,7 @@ updateShopApi = async() =>{
       const res = await this.props.ShopApiAction.UpdateShop(this.state.shopImage,this.state.shopName,this.state.shopEmail,this.state.shopTel,this.state.shopAddress,this.props.Merchant.Merchant.id);
 
       if(res?.data?.isError === true){    
-      //TO DO CATCH POPUP
+        this.props.AlertAction.setAlert(2,res?.data?.errorMsg,true);
       await this.setState({isloading:false});
       return;
   }
@@ -105,7 +107,7 @@ updateShopApi = async() =>{
   await this.props.ShopAction.setShopInfo(shop);
   await this.setState({shopImage:shop?.coverImage,shopName:shop?.shopName,shopEmail:shop?.email,shopTel:shop?.tel,shopAddress:shop?.address})
   await this.setState({isloading:false});
-  //TO DO SUCCESS POPUP
+  this.props.AlertAction.setAlert(1,"ทำรายการสำเร็จ",true);
 }
 
 editOnClick = async() =>{
@@ -120,7 +122,7 @@ cancelOnClick = async() =>{
 
   validateshopName = async(e) =>{
    var value = e.target.value
-    if(this.IsNullOrEmpty(value)){
+    if(IsNullOrEmpty(value)){
       await this.setState({shopName:value,shopNameErrorText:'กรุณากรอกชื่อ'});
     }
     else{
@@ -133,7 +135,7 @@ cancelOnClick = async() =>{
 
  validateshopImage = async(e) =>{
    var value = e.target.value
-    if(this.IsNullOrEmpty(value)){
+    if(IsNullOrEmpty(value)){
       await this.setState({shopImage:value,shopImageErrorText:'กรุณากรอกเลือกรูป'});
     }
     else{
@@ -163,6 +165,7 @@ cancelOnClick = async() =>{
     render(){
       return(
          <React.Fragment>
+             <AlertDialog/>
        <Loading height={this.state.height}  onLoading={this.state.isloading}/>
          <DashboardLayout merchantName={this.props.Merchant?.Merchant?.fullname}  shopId={this.props?.Shop?.Shop?._id}>       
          <React.Fragment>
@@ -247,7 +250,8 @@ cancelOnClick = async() =>{
   const mapDispatchToProps = dispatch =>({
     ShopAction : bindActionCreators(shopAction,dispatch),
     ShopApiAction : bindActionCreators(shopApiAction,dispatch),
-     MerchantAction : bindActionCreators(merchantAction,dispatch)
+     MerchantAction : bindActionCreators(merchantAction,dispatch),
+     AlertAction : bindActionCreators(alertAction,dispatch),
   });
   
   

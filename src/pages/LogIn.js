@@ -11,6 +11,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import jwt_decode from "jwt-decode";
 import {Loading} from '../component/Loadind';
 import {IsNullOrEmpty,SetToken} from '../helper/Common';
+import AlertDialog from '../component/dialog/AlertDialog';
+import * as alertAction from '../actions/Alert/AlertAction';
 
 
 class LogIn extends React.Component{
@@ -50,7 +52,7 @@ onChangePasword = (e) =>{
     this.setState({password:value});
 }
   LoginOnClick = async() =>{
-   if(this.IsNullOrEmpty(this.state.email) || this.IsNullOrEmpty(this.state.password) || !validEmail.test(this.state.email) || !validPassword.test(this.state.password)){
+   if(IsNullOrEmpty(this.state.email) || IsNullOrEmpty(this.state.password) || !validEmail.test(this.state.email) || !validPassword.test(this.state.password)){
        this.setState({loginErrorText:"อีเมล์หรือรหัสผ่านไม่ถูกต้อง"})
    }
    else{
@@ -59,7 +61,7 @@ onChangePasword = (e) =>{
       await this.setState({isloading:true});
       const res = await this.props.LoginApiAction.Login(this.state.email,this.state.password);
       if(res?.data?.isError == true){
-      //TO DO POPUP CATCH
+        this.props.AlertAction.setAlert(2,res?.data?.errorMsg,true);
       await this.setState({isloading:false});
       return;
     }
@@ -81,6 +83,7 @@ onChangePasword = (e) =>{
     render(){
       return(      
        <React.Fragment>    
+           <AlertDialog/>
        <Loading height={this.state.height} onLoading={this.state.isloading} />
        <React.Fragment>
         <ToastContainer />             
@@ -138,7 +141,8 @@ onChangePasword = (e) =>{
   
   const mapDispatchToProps = dispatch =>({
     MerchantAction : bindActionCreators(merchantAction,dispatch),
-    LoginApiAction : bindActionCreators(loginApiAction,dispatch)
+    LoginApiAction : bindActionCreators(loginApiAction,dispatch),
+    AlertAction : bindActionCreators(alertAction,dispatch),
   });
   
   

@@ -53,6 +53,12 @@ export const NavSidebar = (props) => {
                   itemId: `/PaymentSetup|?shopId=${props.shopId}`,
                   // Optional
                   elemBefore: () => <Icon name="star" />
+                },
+                {
+                  title: "Shipping",
+                  itemId: `/ShippingSetup|?shopId=${props.shopId}`,
+                  // Optional
+                  elemBefore: () => <Icon name="star" />
                 }
               ]
             }

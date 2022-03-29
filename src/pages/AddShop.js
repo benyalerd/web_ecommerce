@@ -10,6 +10,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {Loading} from '../component/Loadind';
 import {IsNullOrEmpty} from '../helper/Common';
+import AlertDialog from '../component/dialog/AlertDialog';
+import * as alertAction from '../actions/Alert/AlertAction';
 
 
 class AddShop extends React.Component{
@@ -56,7 +58,7 @@ class AddShop extends React.Component{
   }
 
   CheckDisableRegisterButton = () =>{
-  if(!this.IsNullOrEmpty(this.state.shopNameErrorText)|| this.IsNullOrEmpty(this.state.shopName))
+  if(!IsNullOrEmpty(this.state.shopNameErrorText)|| IsNullOrEmpty(this.state.shopName))
   {
     return true;
   } 
@@ -79,11 +81,11 @@ addShopApi = async() =>{
      const res = await this.props.ShopApiAction.AddShop(this.state.shopImage,this.state.shopName,this.state.shopEmail,this.state.shopTel,this.state.shopAddress,this.state.merchantId);
      if(res?.data?.isError == true){
      await this.setState({isloading:false});
-     //TO DO POPUP CATCH
+     this.props.AlertAction.setAlert(2,res?.data?.errorMsg,true);
      return;
    }
    await this.setState({isloading:false});
-   //TO DO POPUP SUCCESS
+   this.props.AlertAction.setAlert(1,"ทำรายการสำเร็จ",true);
    this.props.history.push('/MainPage');   
  }
 
@@ -93,7 +95,7 @@ cancelOnClick = () =>{
  
 validateshopName = async(e) =>{
    var value = e.target.value
-    if(this.IsNullOrEmpty(value)){
+    if(IsNullOrEmpty(value)){
       await this.setState({shopName:value,shopNameErrorText:'กรุณากรอกชื่อ'});
     }
     else{
@@ -103,7 +105,7 @@ validateshopName = async(e) =>{
 
  validateshopImage = async(e) =>{
    var value = e.target.value
-    if(this.IsNullOrEmpty(value)){
+    if(IsNullOrEmpty(value)){
       await this.setState({shopImage:value,shopImageErrorText:'กรุณากรอกเลือกรูป'});
     }
     else{
@@ -134,6 +136,7 @@ validateshopName = async(e) =>{
     render(){
       return(
          <React.Fragment>     
+             <AlertDialog/>
          <Loading height={this.state.height} onLoading={this.state.isloading} />
          <React.Fragment>
          <ToastContainer />  
@@ -210,7 +213,8 @@ validateshopName = async(e) =>{
   
   const mapDispatchToProps = dispatch =>({
     ShopAction : bindActionCreators(shopAction,dispatch),
-    ShopApiAction : bindActionCreators(shopApiAction,dispatch)
+    ShopApiAction : bindActionCreators(shopApiAction,dispatch),
+    AlertAction : bindActionCreators(alertAction,dispatch),
   });
   
   
