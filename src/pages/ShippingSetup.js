@@ -16,7 +16,7 @@ import {Loading} from '../component/Loadind';
 import AddShippingDialog from '../component/dialog/AddShippingDialog';
 import * as shippingSetupApiAction from '../actions/api/ShippingSetupApiAction';
 import queryString from 'query-string';
-import {GetMerchantFromToken,IsNullOrEmpty} from '../helper/Common';
+import {IsNullOrEmpty} from '../helper/Common';
 import AlertDialog from '../component/dialog/AlertDialog';
 import * as alertAction from '../actions/Alert/AlertAction';
 
@@ -52,7 +52,12 @@ class ShippingSetup extends React.Component{
     if(!merchantId){
       this.props.history.push('/Login');
     }
-    var merchant = await GetMerchantFromToken();  
+    var merchant = await this.props.RegisterApiAction.getMerchant();  
+      if(merchant?.data?.isError == true){
+        this.props.AlertAction.setAlert(2,res?.data?.errorMsg,true);
+        await this.setState({isloading:false});
+        return;
+      }   
     await this.props.MerchantAction.setMerchantInfo(merchant);
     var res = await this.props.ShopApiAction.GetShopInfo(this.props.Merchant.Merchant.id);
     if(res?.data?.isError == true){
@@ -111,7 +116,7 @@ class ShippingSetup extends React.Component{
 
   deleteShippingInfo = async(index)=> {
   try{
-    //TO DO POPUP CONFIRM
+    await this.props.AlertAction.setConfirmAlert('ลบข้อมูลขนส่ง',this.deleteShippingInfoApi,true);
   }
   catch(ex){
     console.log("deleteShippingInfo");

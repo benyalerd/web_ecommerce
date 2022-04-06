@@ -12,7 +12,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import jwt_decode from "jwt-decode";
 import '../assets/css/index.css';
 import {Loading} from '../component/Loadind';
-import {GetMerchantFromToken} from '../helper/Common';
 import * as alertAction from '../actions/Alert/AlertAction';
 import AlertDialog from '../component/dialog/AlertDialog';
 
@@ -39,8 +38,13 @@ class MainPage extends React.Component{
     if(!merchantId){
       this.props.history.push('/Login');
     }
-      var merchant = await GetMerchantFromToken();     
-      await this.props.MerchantAction.setMerchantInfo(merchant);     
+      var merchant = await this.props.RegisterApiAction.getMerchant();  
+      if(merchant?.data?.isError == true){
+        this.props.AlertAction.setAlert(2,res?.data?.errorMsg,true);
+        await this.setState({isloading:false});
+        return;
+      }    
+      await this.props.MerchantAction.setMerchantInfo(merchant);   
       var res = await this.props.ShopApiAction.GetShopInfo(this.props.Merchant.Merchant.id);     
       if(res?.data?.isError == true){
       this.props.AlertAction.setAlert(2,res?.data?.errorMsg,true);

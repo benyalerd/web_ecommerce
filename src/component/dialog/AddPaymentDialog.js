@@ -137,11 +137,11 @@ class AddPaymentDialog extends React.Component {
               
              if(this.props.PaymentSetup.isEdit)
              {
-             //TO DO POPUP CONFIRM
+                await this.props.AlertAction.setConfirmAlert('แก้ไขรายละเอียดบัญชี',this.updatePaymentApi,true);
              }
              else
              {
-             //TO DO POPUP CONFIRM
+                await this.props.AlertAction.setConfirmAlert('เพิ่มรายละเอียดบัญชี',this.addPaymentApi,true);
              }
              
           }

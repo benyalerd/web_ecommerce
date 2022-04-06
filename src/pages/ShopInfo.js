@@ -11,7 +11,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import {DashboardLayout} from '../component/Layout';
 import * as merchantAction from '../actions/Merchant/MerchantAction'
 import {Loading} from '../component/Loadind';
-import {GetMerchantFromToken,IsNullOrEmpty} from '../helper/Common';
+import {IsNullOrEmpty} from '../helper/Common';
 import AlertDialog from '../component/dialog/AlertDialog';
 import * as alertAction from '../actions/Alert/AlertAction';
 
@@ -47,7 +47,12 @@ class AddShop extends React.Component{
       if(!merchantId){
       this.props.history.push('/Login');
       }
-      var merchant = await GetMerchantFromToken();
+      var merchant = await this.props.RegisterApiAction.getMerchant();  
+      if(merchant?.data?.isError == true){
+        this.props.AlertAction.setAlert(2,res?.data?.errorMsg,true);
+        await this.setState({isloading:false});
+        return;
+      }   
       await this.props.MerchantAction.setMerchantInfo(merchant);
       var res = await this.props.ShopApiAction.GetShopInfo(this.props.Merchant.Merchant.id);
       if(res?.data?.isError == true){
@@ -84,7 +89,7 @@ class AddShop extends React.Component{
   updateShopOnClick = async() =>{
     try
     {
-        //TO DO CONFIRM POPUP
+      await this.props.AlertAction.setConfirmAlert('แก้ไขข้อมูลร้านค้า',this.updateShopApi,true);
        
     }
     catch(ex){
@@ -106,7 +111,7 @@ updateShopApi = async() =>{
   var shop = res?.data?.shops;
   await this.props.ShopAction.setShopInfo(shop);
   await this.setState({shopImage:shop?.coverImage,shopName:shop?.shopName,shopEmail:shop?.email,shopTel:shop?.tel,shopAddress:shop?.address})
-  await this.setState({isloading:false});
+  await this.setState({isloading:false,isEdit:false});
   this.props.AlertAction.setAlert(1,"ทำรายการสำเร็จ",true);
 }
 

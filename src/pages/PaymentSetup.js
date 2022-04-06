@@ -17,7 +17,7 @@ import BookBankListDialog from '../component/dialog/BookBankListDialog';
 import AddPaymentDialog from '../component/dialog/AddPaymentDialog';
 import * as paymentSetupApiAction from '../actions/api/PaymentSetupApiAction';
 import queryString from 'query-string';
-import {GetMerchantFromToken,IsNullOrEmpty} from '../helper/Common';
+import {IsNullOrEmpty} from '../helper/Common';
 import AlertDialog from '../component/dialog/AlertDialog';
 import * as alertAction from '../actions/Alert/AlertAction';
 
@@ -53,7 +53,12 @@ class PaymentSetup extends React.Component{
     if(!merchantId){
       this.props.history.push('/Login');
     }
-    var merchant = await GetMerchantFromToken();   
+    var merchant = await this.props.RegisterApiAction.getMerchant();  
+      if(merchant?.data?.isError == true){
+        this.props.AlertAction.setAlert(2,res?.data?.errorMsg,true);
+        await this.setState({isloading:false});
+        return;
+      }   
     await this.props.MerchantAction.setMerchantInfo(merchant);
     var res = await this.props.ShopApiAction.GetShopInfo(this.props.Merchant.Merchant.id);
     if(res?.data?.isError == true){
@@ -101,7 +106,7 @@ class PaymentSetup extends React.Component{
 
   deleteBankInfo = async(index)=> {
   try{
-    //TO DO POPUP CONFIRM
+    await this.props.AlertAction.setConfirmAlert('ลบรายละเอียดบัญชี',this.deleteBankInfoApi,true);
   }
   catch(ex){
     toast.error("เกิดข้อผิดพลาด กรุณาติดต่อเจ้าหน้าที่");

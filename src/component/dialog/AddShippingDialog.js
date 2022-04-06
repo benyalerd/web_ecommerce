@@ -185,14 +185,14 @@ class AddShippingDialog extends React.Component {
               
              if(this.props.ShippingSetup.isEdit)
              {
-             //TO DO POPUP CONFIRM
+                await this.props.AlertAction.setConfirmAlert('แก้ไขข้อมูขนส่ง',this.updateShippingApi,true);
              }
              else
              {
                 shippingSelectDetail.masterName= this.state.selectShipping.masterName;
                 shippingSelectDetail.masterImg = this.state.selectShipping.masterImg;
                 shippingSelectDetail.masterId = this.state.selectShipping._id;
-                //TO DO POPUP CONFIRM
+                await this.props.AlertAction.setConfirmAlert('เพิ่มข้อมูลขนส่ง',this.addShippingApi,true);
              }
              
           }

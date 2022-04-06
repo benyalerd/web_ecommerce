@@ -26,7 +26,7 @@ export  const  RegisterMerchant = (name,lastname,password,repeat_password,email,
     }
 }
 
-export  const  updateMerchant = (name,lastname,tel)=> async (dispatch)=>{
+export  const  updateMerchant = (name,lastname,tel,merchantId)=> async (dispatch)=>{
     try
     {
     const apiEndpoint = "/api/merchant/editmerchant";
@@ -34,7 +34,33 @@ export  const  updateMerchant = (name,lastname,tel)=> async (dispatch)=>{
     const request = JSON.stringify({
         "name":name,
         "lastname":lastname,
-        "tel":tel
+        "tel":tel,
+        "merchantId":merchantId
+    });
+    
+        const data = axios.post(apiEndpoint,request,{
+            headers:{
+                "Content-Type":"application/json",
+                "x-auth-token":token
+            }
+        });
+        return data;
+    }
+    catch(error){
+        throw error;
+    }
+
+}
+
+export  const  getMerchant = ()=> async (dispatch)=>{
+    try
+    {
+       
+    var merchantId = localStorage.getItem('merchantId');
+    const apiEndpoint = "/api/merchant/getmerchant";
+    var token = localStorage.getItem('token');
+    const request = JSON.stringify({
+        "merchantId":merchantId
     });
     
         const data = axios.post(apiEndpoint,request,{

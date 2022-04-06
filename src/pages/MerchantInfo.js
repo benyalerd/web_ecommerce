@@ -14,8 +14,9 @@ import {DashboardLayout} from '../component/Layout';
 import * as shopApiAction from '../actions/api/ShopApiAction'
 import * as shopAction from '../actions/Shop/ShopAction'
 import {Loading} from '../component/Loadind';
-import {GetMerchantFromToken,IsNullOrEmpty} from '../helper/Common';
+import {IsNullOrEmpty} from '../helper/Common';
 import AlertDialog from '../component/dialog/AlertDialog';
+import ConfirmAlertDialog from '../component/dialog/ConfirmAlertDialog';
 import * as alertAction from '../actions/Alert/AlertAction';
 
 class MerchantInfo extends React.Component{
@@ -53,7 +54,12 @@ class MerchantInfo extends React.Component{
     if(!merchantId){
       this.props.history.push('/Login');
     }
-    var merchant = await GetMerchantFromToken();  
+    var merchant = await this.props.RegisterApiAction.getMerchant();  
+      if(merchant?.data?.isError == true){
+        this.props.AlertAction.setAlert(2,res?.data?.errorMsg,true);
+        await this.setState({isloading:false});
+        return;
+      }    
     await this.props.MerchantAction.setMerchantInfo(merchant);
     await this.setState({firstname:merchant.fullname.split(" ")[0],lastname:merchant.fullname.split(" ")[1],email:merchant.email,tel:merchant.tel,role:merchant.role})
     var res = await this.props.ShopApiAction.GetShopInfo(this.props.Merchant.Merchant.id);
@@ -142,7 +148,7 @@ selectRole = (e) =>{
 updateMerchantOnClick = async() =>{
   try
   {
-   //TO DO POPUP CONFIRM
+    await this.props.AlertAction.setConfirmAlert('แก้ไขข้อมูลส่วนตัว',this.updateMerchantApi,true);
   }
   catch(ex){
   toast.error("เกิดข้อผิดพลาด กรุณาติดต่อเจ้าหน้าที่");
@@ -152,17 +158,23 @@ updateMerchantOnClick = async() =>{
 updateMerchantApi = async() =>{
   
   await this.setState({isloading:true});
-  const res = await this.props.RegisterApiAction.updateMerchant(this.state.firstname,this.state.lastname,this.state.tel);
+  const res = await this.props.RegisterApiAction.updateMerchant(this.state.firstname,this.state.lastname,this.state.tel,this.props.Merchant.Merchant.id);
   if(res?.data?.isError == true){
     this.props.AlertAction.setAlert(2,res?.data?.errorMsg,true);
     await this.setState({isloading:false});
     return;
   }
-  var merchant = await GetMerchantFromToken();   
+  var merchant = await this.props.RegisterApiAction.getMerchant();  
+      if(merchant?.data?.isError == true){
+        this.props.AlertAction.setAlert(2,res?.data?.errorMsg,true);
+        await this.setState({isloading:false});
+        return;
+      }     
   await this.props.MerchantAction.setMerchantInfo(merchant);     
   await this.setState({firstname:merchant.fullname.split(" ")[0],lastname:merchant.fullname.split(" ")[1],email:merchant.email,tel:merchant.tel,role:merchant.role})
-  await this.setState({isloading:false});
+  await this.setState({isloading:false,isEdit:false});
   this.props.AlertAction.setAlert(1,"ทำรายการสำเร็จ",true);
+   
 }
 
 editOnClick = async() =>{
@@ -198,6 +210,7 @@ CheckDisableRegisterButton = () =>{
   return(
       <React.Fragment>   
           <AlertDialog/> 
+          <ConfirmAlertDialog/>
        <Loading height={this.state.height} onLoading={this.state.isloading}/>
            <DashboardLayout merchantName={this.props.Merchant?.Merchant?.fullname} shopId={this.props.Shop.Shop._id}>
            <React.Fragment>

@@ -8,3 +8,12 @@ export function setAlert(type, message,isOpen) {
         AlertOpen : isOpen
     };
 }
+
+export function setConfirmAlert(message,action,isOpen) {
+    return {
+        type: Action.Set_Confirm_Alert,
+        ConfirmMessage: message,
+        ConfirmAction : action,
+        AlertConfirmOpen : isOpen
+    };
+}

@@ -68,7 +68,7 @@ class AddShop extends React.Component{
   addShopOnClick = async() =>{
  try
   {
-    //TO DO POPUP CONFIRM
+    await this.props.AlertAction.setConfirmAlert('เพิ่มข้อมูร้านค้า',this.addShopApi,true);
   }
   catch(ex){
   toast.error("เกิดข้อผิดพลาด กรุณาติดต่อเจ้าหน้าที่");

@@ -85,7 +85,7 @@ class AlertDialog extends React.Component {
 
                                     <div style={{ overflowX: 'hidden', marginTop: screenWidth <= 767 ? '40px' : '80px', textAlign: 'center' }}>
                                         
-                                         {/*Master Data - Bank logo / Bank Name*/}     
+                                             
                                         <div className="form-group">
                                             <div className="col-md-12">
                                                 <div style={{ display: 'inline-flex' }}>
