@@ -40,7 +40,7 @@ class ConfirmAlertDialog extends React.Component {
         await this.props.AlertAction.setConfirmAlert('',null,false);
     }
     onSubmit = async () => {
-        alert("onSubmit");
+       
         const doFunction = this.props.Alert.ConfirmAction;
         if (doFunction !== null && doFunction !== undefined) {          
             doFunction();
@@ -51,7 +51,6 @@ class ConfirmAlertDialog extends React.Component {
         let theme = null;
         const { SessionAlert } = this.props;
         const {screenWidth} = this.state;
-
         if (this.props.Alert.AlertConfirmOpen === true) {
             theme = createTheme({
                 overrides: {
@@ -102,8 +101,8 @@ class ConfirmAlertDialog extends React.Component {
                                         </div>
                                         <div className="form-group" style={{padding:'40px 0px',display:'flex',justifyContent:'center',margin:'0px 15px'}}>
      
-     <button  className="primary-button" style={{width:'250px',marginRight:'10px'}} onClick={this.onSubmit}>OK</button>
-     <button  className="secondary-button" style={{width:'250px'}} onClick={this.handleClose} style={{border:'1px solid #4f6137'}}>Cancel</button>
+     <button  className="primary-button" style={{marginRight:'10px'}} onClick={this.onSubmit}>OK</button>
+     <button  className="secondary-button" onClick={this.handleClose} style={{border:'1px solid #4f6137'}}>Cancel</button>
     
    </div>
    

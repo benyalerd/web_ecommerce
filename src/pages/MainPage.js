@@ -38,14 +38,18 @@ class MainPage extends React.Component{
     if(!merchantId){
       this.props.history.push('/Login');
     }
-      var merchant = await this.props.RegisterApiAction.getMerchant();  
-      if(merchant?.data?.isError == true){
-        this.props.AlertAction.setAlert(2,res?.data?.errorMsg,true);
-        await this.setState({isloading:false});
-        return;
-      }    
+    var merchantRes = await this.props.RegisterApiAction.getMerchant();  
+    if(merchantRes?.data?.isError == true){
+      this.props.AlertAction.setAlert(2,merchantRes?.data?.errorMsg,true);
+      await this.setState({isloading:false});
+      return;
+    } 
+    var merchant = merchantRes?.data 
+      console.log("Merchant mainpage : "+ JSON.stringify(merchant));
       await this.props.MerchantAction.setMerchantInfo(merchant);   
-      var res = await this.props.ShopApiAction.GetShopInfo(this.props.Merchant.Merchant.id);     
+      console.log("Merchant Main Page :" + JSON.stringify(this.props.Merchant));
+      var res = await this.props.ShopApiAction.GetShopInfo(this.props.Merchant.Merchant.id); 
+      console.log("ShopMainPage : "+JSON.stringify(res))    
       if(res?.data?.isError == true){
       this.props.AlertAction.setAlert(2,res?.data?.errorMsg,true);
       await this.setState({isloading:false});
@@ -76,7 +80,7 @@ render(){
        <React.Fragment>
          <AlertDialog/>
        <Loading height={this.state.height} onLoading={this.state.isloading} />
-       <DashboardLayout merchantName={this.props.Merchant?.Merchant?.fullname} shopId={this.props?.Shop?.Shop?._id}>        
+       <DashboardLayout merchantName={this.props.Merchant?.Merchant?.name} shopId={this.props?.Shop?.Shop?._id}>        
        <React.Fragment>
         <ToastContainer />  
         <div style={{width: 'auto', height: this.state.height,backgroundColor:'white',margin:'20px',borderRadius:'10px'}}>
@@ -136,6 +140,7 @@ const mapStateToProps = state =>({
     ShopApiAction : bindActionCreators(shopApiAction,dispatch),
       MerchantAction : bindActionCreators(merchantAction,dispatch),
       AlertAction : bindActionCreators(alertAction,dispatch),
+      RegisterApiAction : bindActionCreators(registerApiAction,dispatch)
   });
   
   

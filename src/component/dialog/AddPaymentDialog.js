@@ -16,6 +16,7 @@ import {Loading} from '../../component/Loadind';
 import { ToastContainer, toast } from 'react-toastify';
 import * as paymentSetupApiAction from '../../actions/api/PaymentSetupApiAction';
 import {IsNullOrEmpty} from '../../helper/Common';
+import ConfirmAlertDialog from '../../component/dialog/ConfirmAlertDialog';
 
 class AddPaymentDialog extends React.Component {
 
@@ -30,6 +31,7 @@ class AddPaymentDialog extends React.Component {
             IsLoading: false,
             screenWidth: window.innerWidth,
             accountNumberLength:13,
+            selectBankDetail:[]
         }
         window.addEventListener("resize", this.updateScreenWidth);
     };
@@ -89,8 +91,8 @@ class AddPaymentDialog extends React.Component {
         this.setState({accountNumberDisplay:SetAccountNumberDisplay(value),accountNumberLength:13});
     }
 
-    addPaymentApi = async (selectBankDetail) =>{
-        var res = await this.props.PaymentSetupApiAction.InsertPayment(selectBankDetail);
+    addPaymentApi = async () =>{
+        var res = await this.props.PaymentSetupApiAction.InsertPayment(this.state.selectBankDetail);
         if(res?.data?.isError == true){
             this.props.AlertAction.setAlert(2,res?.data?.errorMsg,true);
             await this.setState({IsLoading:false});
@@ -100,8 +102,8 @@ class AddPaymentDialog extends React.Component {
           await this.props.PaymentSetupAction.setAddPaymentDialogOpen([],false);
     }
 
-    updatePaymentApi = async(selectBankDetail) =>{
-        var res = await this.props.PaymentSetupApiAction.EditPayment(selectBankDetail);
+    updatePaymentApi = async() =>{
+        var res = await this.props.PaymentSetupApiAction.EditPayment(this.state.selectBankDetail);
         if(res?.data?.isError == true){
             this.props.AlertAction.setAlert(2,res?.data?.errorMsg,true);
              await this.setState({IsLoading:false});
@@ -134,14 +136,14 @@ class AddPaymentDialog extends React.Component {
               const selectBankDetail = this.props.PaymentSetup.bankSelect;
               selectBankDetail.accountName = this.state.accountName;
               selectBankDetail.accountNumber = this.state.accountNumber;
-              
+              await this.setState({selectBankDetail:selectBankDetail});
              if(this.props.PaymentSetup.isEdit)
              {
-                await this.props.AlertAction.setConfirmAlert('แก้ไขรายละเอียดบัญชี',this.updatePaymentApi,true);
+                await this.props.AlertAction.setConfirmAlert('แก้ไขรายละเอียดบัญชี',this.updatePaymentApi.bind(this),true);
              }
              else
              {
-                await this.props.AlertAction.setConfirmAlert('เพิ่มรายละเอียดบัญชี',this.addPaymentApi,true);
+                await this.props.AlertAction.setConfirmAlert('เพิ่มรายละเอียดบัญชี',this.addPaymentApi.bind(this),true);
              }
              
           }
@@ -197,7 +199,7 @@ class AddPaymentDialog extends React.Component {
                                 <DialogContent>
                             
        <Loading height={this.state.height} onLoading={this.state.Isloading}/>
-
+       <ConfirmAlertDialog/>
                                     <div style={{ overflowX: 'hidden', marginTop: screenWidth <= 767 ? '40px' : '80px', textAlign: 'center' }}>
                                         
                                          {/*Master Data - Bank logo / Bank Name*/}     

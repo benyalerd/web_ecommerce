@@ -64,7 +64,7 @@ class Register extends React.Component{
       await this.setState({firstname:value,firstnameErrorText:''});
 
     }
-    var isDisable = this.CheckDisableRegisterButton(value,this.state.firstnameErrorText);
+    var isDisable = this.CheckDisableRegisterButton();
     this.setState({IsRegisterDisable:isDisable});
  }
 
@@ -76,7 +76,7 @@ class Register extends React.Component{
   else{
     await this.setState({lastname:value,lastnameErrorText:''});
   }
-  var isDisable = this.CheckDisableRegisterButton(value,this.state.lastnameErrorText);
+  var isDisable = this.CheckDisableRegisterButton();
   this.setState({IsRegisterDisable:isDisable});
 }
 
@@ -91,7 +91,7 @@ validateEmail = async(e) =>{
   else{
     await this.setState({email:value,emailErrorText:''});
   }
-  var isDisable = this.CheckDisableRegisterButton(value,this.state.emailErrorText);
+  var isDisable = this.CheckDisableRegisterButton();
   this.setState({IsRegisterDisable:isDisable});
 }
 
@@ -107,7 +107,7 @@ validateTel = async(e) =>{
     await this.setState({tel:value,telErrorText:''});
   }
 
-  var isDisable = this.CheckDisableRegisterButton(value,this.state.telErrorText);
+  var isDisable = this.CheckDisableRegisterButton();
   this.setState({IsRegisterDisable:isDisable});
 }
 
@@ -123,7 +123,7 @@ validatePasword = async(e) =>{
     await this.setState({password:value,passwordErrorText:''});
   }
 
-  var isDisable = this.CheckDisableRegisterButton(value,this.state.passwordErrorText);
+  var isDisable = this.CheckDisableRegisterButton();
   this.setState({IsRegisterDisable:isDisable});
 }
 
@@ -136,7 +136,7 @@ validateConfirmPasword = async(e) =>{
     await this.setState({confirmPassword:value,confirmPasswordErrorText:''});
   }
   
-  var isDisable = this.CheckDisableRegisterButton(value,this.state.confirmPasswordErrorText);
+  var isDisable = this.CheckDisableRegisterButton();
   this.setState({IsRegisterDisable:isDisable});
 }
 
@@ -300,7 +300,7 @@ CheckDisableRegisterButton = () =>{
       <div className="form-group input col-6">
       <label for="InputRole" className="brown-input-Text">Role</label>
       <div>
-      <select id="lang" onChange={this.selectRole.bind(this)} value={this.state.role} style={{width:'100%',height:'35px',border:'1px solid lightgray'}}>
+      <select id="lang" onChange={this.selectRole.bind(this)} style={{width:'100%',height:'35px',border:'1px solid lightgray',borderRadius:'5px',padding:'5px'}}>
                   <option value="1">Admin</option>
                   <option value="2">Owner</option>
                </select>

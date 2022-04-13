@@ -20,6 +20,7 @@ import queryString from 'query-string';
 import {IsNullOrEmpty} from '../helper/Common';
 import AlertDialog from '../component/dialog/AlertDialog';
 import * as alertAction from '../actions/Alert/AlertAction';
+import ConfirmAlertDialog from '../component/dialog/ConfirmAlertDialog';
 
 class PaymentSetup extends React.Component{
   constructor(props) {
@@ -29,6 +30,7 @@ class PaymentSetup extends React.Component{
       height: 0,
       isloading:false,
       paymentList:null,
+      selectIndex:0,
     };
     this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
   }
@@ -53,12 +55,13 @@ class PaymentSetup extends React.Component{
     if(!merchantId){
       this.props.history.push('/Login');
     }
-    var merchant = await this.props.RegisterApiAction.getMerchant();  
-      if(merchant?.data?.isError == true){
-        this.props.AlertAction.setAlert(2,res?.data?.errorMsg,true);
+    var merchantRes = await this.props.RegisterApiAction.getMerchant();  
+      if(merchantRes?.data?.isError == true){
+        this.props.AlertAction.setAlert(2,merchantRes?.data?.errorMsg,true);
         await this.setState({isloading:false});
         return;
-      }   
+      } 
+      var merchant = merchantRes?.data 
     await this.props.MerchantAction.setMerchantInfo(merchant);
     var res = await this.props.ShopApiAction.GetShopInfo(this.props.Merchant.Merchant.id);
     if(res?.data?.isError == true){
@@ -106,16 +109,17 @@ class PaymentSetup extends React.Component{
 
   deleteBankInfo = async(index)=> {
   try{
-    await this.props.AlertAction.setConfirmAlert('ลบรายละเอียดบัญชี',this.deleteBankInfoApi,true);
+    await this.setState({selectIndex:index});
+    await this.props.AlertAction.setConfirmAlert('ลบรายละเอียดบัญชี',this.deleteBankInfoApi.bind(this),true);
   }
   catch(ex){
     toast.error("เกิดข้อผิดพลาด กรุณาติดต่อเจ้าหน้าที่");
     }
   }
 
-  deleteBankInfoApi = async(index)=> {
+  deleteBankInfoApi = async()=> {
     await this.setState({isloading:true});
-    var res = await this.props.PaymentSetupApiAction.DeletePayment(this.state.paymentList[index]);
+    var res = await this.props.PaymentSetupApiAction.DeletePayment(this.state.paymentList[this.state.selectIndex]);
     if(res?.data?.isError == true){
       this.props.AlertAction.setAlert(2,res?.data?.errorMsg,true);
       await this.setState({isloading:false});
@@ -132,14 +136,15 @@ render(){
       return(
          <React.Fragment>
              <AlertDialog/>
+             <ConfirmAlertDialog/>
            <BookBankListDialog />
            <AddPaymentDialog/>
            <Loading height={this.state.height} onLoading={this.state.isloading}/>
-           <DashboardLayout merchantName={this.props.Merchant?.Merchant?.fullname} shopId={this.props?.Shop?.Shop?._id}>
+           <DashboardLayout merchantName={this.props.Merchant?.Merchant?.name} shopId={this.props?.Shop?.Shop?._id}>
            <React.Fragment>
            <ToastContainer />
 
-        <div className="form-group"> 
+        <div className="form-group" > 
 
         {/*Payment Set Up*/}  
         <div className="brown-Bold-Topic-Text" style={{padding:'0px 20px'}}>Payment Set Up</div>

@@ -17,6 +17,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import * as shippingSetupApiAction from '../../actions/api/ShippingSetupApiAction';
 import {IsNullOrEmpty} from '../../helper/Common';
 import * as masterApiAction from '../../actions/api/MasterApiAction'
+import ConfirmAlertDialog from '../../component/dialog/ConfirmAlertDialog';
 
 class AddShippingDialog extends React.Component {
 
@@ -34,6 +35,7 @@ class AddShippingDialog extends React.Component {
             priceLength:10,
             shippingList: null,
             selectShipping:null,
+            selectShippingDetail:[]
         }
         window.addEventListener("resize", this.updateScreenWidth);
     };
@@ -136,8 +138,8 @@ class AddShippingDialog extends React.Component {
         this.setState({priceDisplay:value,priceLength:10});
     }
 
-    addShippingApi = async (selectShippingDetail) =>{
-        var res = await this.props.ShippingSetupApiAction.InsertShipping(selectShippingDetail);
+    addShippingApi = async () =>{
+        var res = await this.props.ShippingSetupApiAction.InsertShipping(this.state.selectShippingDetail);
         if(res?.data?.isError == true){
             this.props.AlertAction.setAlert(2,res?.data?.errorMsg,true);
             await this.setState({IsLoading:false});
@@ -147,8 +149,8 @@ class AddShippingDialog extends React.Component {
           await this.props.ShippingSetupAction.setAddPaymentDialogOpen([],false);
     }
 
-    updateShippingApi = async(selectShippingDetail) =>{
-        var res = await this.props.ShippingSetupApiAction.EditShipping(selectShippingDetail);
+    updateShippingApi = async() =>{
+        var res = await this.props.ShippingSetupApiAction.EditShipping(this.state.selectShippingDetail);
         if(res?.data?.isError == true){
             this.props.AlertAction.setAlert(2,res?.data?.errorMsg,true);
              await this.setState({IsLoading:false});
@@ -182,17 +184,17 @@ class AddShippingDialog extends React.Component {
               shippingSelectDetail.price = this.state.price;
               shippingSelectDetail.minDay = this.state.minDay;
               shippingSelectDetail.maxDay = this.state.maxDay;
-              
+              await this.setState({selectShippingDetail:shippingSelectDetail});
              if(this.props.ShippingSetup.isEdit)
              {
-                await this.props.AlertAction.setConfirmAlert('แก้ไขข้อมูขนส่ง',this.updateShippingApi,true);
+                await this.props.AlertAction.setConfirmAlert('แก้ไขข้อมูขนส่ง',this.updateShippingApi.bind(this),true);
              }
              else
              {
                 shippingSelectDetail.masterName= this.state.selectShipping.masterName;
                 shippingSelectDetail.masterImg = this.state.selectShipping.masterImg;
                 shippingSelectDetail.masterId = this.state.selectShipping._id;
-                await this.props.AlertAction.setConfirmAlert('เพิ่มข้อมูลขนส่ง',this.addShippingApi,true);
+                await this.props.AlertAction.setConfirmAlert('เพิ่มข้อมูลขนส่ง',this.addShippingApi.bind(this),true);
              }
              
           }
@@ -253,7 +255,7 @@ class AddShippingDialog extends React.Component {
                                 <DialogContent>
                             
        <Loading height={this.state.height} onLoading={this.state.Isloading}/>
-
+       <ConfirmAlertDialog/>
                                     <div style={{ overflowX: 'hidden', marginTop: screenWidth <= 767 ? '40px' : '80px', textAlign: 'center' }}>
                                         
                                          {/*Master Data - Shipping logo / Shiiping Name*/}     
@@ -267,7 +269,7 @@ class AddShippingDialog extends React.Component {
                                                            <React.Fragment>
                                                                  <img className="select-book-bank-logo " src={this.state.selectShipping.masterImg ? this.state.selectShipping.masterImg :require('../../assets/images/noimage.png').default}  />
                                                                  <div>
-      <select id="shippingName" onClick={this.onClickSelectShippingName.bind(this)}  value={this.state.selectShipping._id} style={{width:'150px',height:'35px',border:'1px solid lightgray'}}>
+      <select id="shippingName" onClick={this.onClickSelectShippingName.bind(this)}  value={this.state.selectShipping._id} style={{width:'150px',height:'35px',border:'1px solid lightgray',borderRadius:'5px',padding:'5px'}}>
       <React.Fragment>
                                         {this.state.shippingList?.map(({
                                             _id,

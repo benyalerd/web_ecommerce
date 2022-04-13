@@ -12,6 +12,8 @@ import {Loading} from '../component/Loadind';
 import {IsNullOrEmpty} from '../helper/Common';
 import AlertDialog from '../component/dialog/AlertDialog';
 import * as alertAction from '../actions/Alert/AlertAction';
+import ConfirmAlertDialog from '../component/dialog/ConfirmAlertDialog';
+import $ from 'jquery';
 
 
 class AddShop extends React.Component{
@@ -30,7 +32,7 @@ class AddShop extends React.Component{
       shopImageErrorText:"",
       IsRegisterDisable:true,
       merchantId:"",
-      isloading:false     
+      isloading:false,
     };
     this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
   }
@@ -62,13 +64,13 @@ class AddShop extends React.Component{
   {
     return true;
   } 
-  return false
+    return false
   }
 
   addShopOnClick = async() =>{
  try
   {
-    await this.props.AlertAction.setConfirmAlert('เพิ่มข้อมูร้านค้า',this.addShopApi,true);
+    await this.props.AlertAction.setConfirmAlert('เพิ่มข้อมูร้านค้า',this.addShopApi.bind(this),true);
   }
   catch(ex){
   toast.error("เกิดข้อผิดพลาด กรุณาติดต่อเจ้าหน้าที่");
@@ -101,20 +103,85 @@ validateshopName = async(e) =>{
     else{
       await this.setState({shopName:value,shopNameErrorText:''});
     }   
- }
-
- validateshopImage = async(e) =>{
-   var value = e.target.value
-    if(IsNullOrEmpty(value)){
-      await this.setState({shopImage:value,shopImageErrorText:'กรุณากรอกเลือกรูป'});
-    }
-    else{
-      await this.setState({shopImage:value,shopImageErrorText:''});
-
-    }
-    var isDisable = this.CheckDisableRegisterButton(value,this.state.shopImageErrorText);
+    var isDisable = this.CheckDisableRegisterButton();
     this.setState({IsRegisterDisable:isDisable});
  }
+
+ selectShopImage = async(e) =>{
+   var value = e.target.files
+   if (value.length != 0){
+    e.preventDefault();
+    let currentfile = e.target.files[0];
+    let currentfileType = currentfile.type;
+    let currentfileSize = currentfile.size;
+    let resultSize = this.validateSize(currentfileSize);
+    let resultType = this.validateType(currentfileType);
+    if (!resultSize || !resultType) {
+        return;
+    }
+     
+    var base64 = await this.getBase64(currentfile);
+    await this.setState({shopImage:base64});
+    
+   }
+ }
+
+ validateSize(e) {
+  let result = false;
+  const limitSize = 2097152; 
+  const size = e;
+  if (size < limitSize) {
+      result = true;
+  } else {
+      result = false;
+      this.props.AlertAction.setAlert(2,"ขนาดรูปภาพไม่ถูกต้อง",true);
+  }
+  return result;
+}
+
+validateType(e) {
+  let result = false;
+  const typejpeg = "image/jpeg";
+  const typepng = "image/png";
+  const currentType = e;
+  if (currentType === typejpeg || currentType === typepng) {
+      result = true;
+  } else {
+      result = false;
+      this.props.AlertAction.setAlert(2,"ประเภทรูปภาพไม่ถูกต้อง",true);
+  }
+  return result;
+}
+
+
+ getBase64(file) {
+  return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+          resolve(event.target.result);
+      };
+      reader.onerror = (err) => {
+          reject(err);
+      };
+      reader.readAsDataURL(file);
+  });
+}
+
+deleteImage = async(e) =>{ 
+  e.preventDefault();
+  await this.setState({shopImage:""});
+}
+
+ addImage = async() => {
+  
+  $(document).ready(async function () {
+      try {
+          $('#images').trigger('click')
+      } catch (error) {
+        toast.error("เกิดข้อผิดพลาด กรุณาติดต่อเจ้าหน้าที่");
+      }
+  });
+}
 
  emailOnchange = async(e) =>{
    var value = e.target.value
@@ -137,6 +204,7 @@ validateshopName = async(e) =>{
       return(
          <React.Fragment>     
              <AlertDialog/>
+             <ConfirmAlertDialog/>
          <Loading height={this.state.height} onLoading={this.state.isloading} />
          <React.Fragment>
          <ToastContainer />  
@@ -152,9 +220,12 @@ validateshopName = async(e) =>{
 
         {/*Image Shop*/}
       <div className="form-group input">
-       <div className="input" style={{padding:'0px',width:'150px',height:'150px',border:'1px solid lightgray',borderRadius:'5px'}}>
-            <img className="imageCenter" src={this.state.shopImage!= null && this.state.shopImage != ""?this.state.shopImage: require('../assets/images/add_image.png').default} style={{margin:'37px'}}/>
+      <input type="file" id="images" name="images" style={{ display: 'none' }} accept="image/*" onChange={this.selectShopImage.bind(this)} onClick={(event) => { event.target.value = null }}/>
+       <div className="input" style={this.state.shopImage?{position:'relative',padding:'0px',width:'150px',height:'150px',border:'1px solid lightgray',borderRadius:'5px',cursor:'pointer'}:{padding:'0px',width:'150px',height:'150px',border:'1px solid lightgray',borderRadius:'5px',cursor:'pointer'}} onClick={this.addImage} >
+            <img className={this.state.shopImage?"vertical-center":"imageCenter"} src={this.state.shopImage?this.state.shopImage : require('../assets/images/add_image.png').default} style={this.state.shopImage?{}:{margin:'37px'}}/>
+            {this.state.shopImage?  <button style={{ display: 'inline', zIndex: '1'}}><img onClick={this.deleteImage.bind(this)} style={{position: 'absolute',width: '25px',height: '25px',right: '0px',top: '3px'}} src={require('../assets/images/crossIcon.png').default} /></button> : null}
        </div>
+       
       </div>
 
         {/*Shop Image Error Text*/}

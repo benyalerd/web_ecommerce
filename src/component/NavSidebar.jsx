@@ -27,6 +27,11 @@ export const NavSidebar = (props) => {
           
           activeItemId={location.pathname}
           onSelect={({ itemId }) => {
+            if(itemId == "/Logout")
+            {
+              localStorage.removeItem('merchantId');
+              history.push('/')
+            }
             var split = itemId?.split('|');         
             history.push({pathname:split?split[0]: ""
                           ,search: split?split[1]: ""});
@@ -45,6 +50,19 @@ export const NavSidebar = (props) => {
               elemBefore: () => <Icon name="coffee" />
             },
             {
+              title: "Product",
+              itemId: `/Product-MainPage|?shopId=${props.shopId}`,
+              elemBefore: () => <Icon name="burger" />,
+              subNav: [
+                {
+                  title: "Add Product",
+                  itemId: "/Product-AddProduct",
+                  // Optional
+                  elemBefore: () => <Icon name="star" />
+                }
+              ]
+            },
+            {
               title: "Setting",
               elemBefore: () => <Icon name="settings" />,
               subNav: [
@@ -61,31 +79,15 @@ export const NavSidebar = (props) => {
                   elemBefore: () => <Icon name="star" />
                 }
               ]
+            },
+            {
+              title: "Logout",
+              itemId: `/Logout`,
+              elemBefore: () => <Icon name="log-out" />,
             }
           ]}
         />
 
-        <div className="absolute bottom-0 w-full my-8">
-          <Navigation
-            activeItemId={location.pathname}
-            items={[
-              {
-                title: "Logout",
-                elemBefore: () => <Icon name="log-out" />
-              }
-            ]}
-            onSelect={() => {
-                 localStorage.removeItem('merchant');
-                 history.push('/Login');
-             
-            }}
-          />
-        </div>
-      
-      
-      
-      
-      
       </div>
     </React.Fragment>
   );

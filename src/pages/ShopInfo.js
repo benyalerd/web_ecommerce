@@ -14,6 +14,7 @@ import {Loading} from '../component/Loadind';
 import {IsNullOrEmpty} from '../helper/Common';
 import AlertDialog from '../component/dialog/AlertDialog';
 import * as alertAction from '../actions/Alert/AlertAction';
+import ConfirmAlertDialog from '../component/dialog/ConfirmAlertDialog';
 
 class AddShop extends React.Component{
   constructor(props) {
@@ -47,12 +48,13 @@ class AddShop extends React.Component{
       if(!merchantId){
       this.props.history.push('/Login');
       }
-      var merchant = await this.props.RegisterApiAction.getMerchant();  
-      if(merchant?.data?.isError == true){
-        this.props.AlertAction.setAlert(2,res?.data?.errorMsg,true);
+      var merchantRes = await this.props.RegisterApiAction.getMerchant();  
+      if(merchantRes?.data?.isError == true){
+        this.props.AlertAction.setAlert(2,merchantRes?.data?.errorMsg,true);
         await this.setState({isloading:false});
         return;
-      }   
+      } 
+      var merchant = merchantRes?.data 
       await this.props.MerchantAction.setMerchantInfo(merchant);
       var res = await this.props.ShopApiAction.GetShopInfo(this.props.Merchant.Merchant.id);
       if(res?.data?.isError == true){
@@ -89,7 +91,7 @@ class AddShop extends React.Component{
   updateShopOnClick = async() =>{
     try
     {
-      await this.props.AlertAction.setConfirmAlert('แก้ไขข้อมูลร้านค้า',this.updateShopApi,true);
+      await this.props.AlertAction.setConfirmAlert('แก้ไขข้อมูลร้านค้า',this.updateShopApi.bind(this),true);
        
     }
     catch(ex){
@@ -116,7 +118,7 @@ updateShopApi = async() =>{
 }
 
 editOnClick = async() =>{
-    var isDisable = await this.CheckDisableRegisterButton(this.state.shopName,this.state.shopNameErrorText);
+    var isDisable = await this.CheckDisableRegisterButton();
     await this.setState({IsRegisterDisable:isDisable});
     await this.setState({isEdit:true})
 }
@@ -134,7 +136,7 @@ cancelOnClick = async() =>{
       await this.setState({shopName:value,shopNameErrorText:''});
 
     }
-    var isDisable = this.CheckDisableRegisterButton(value,this.state.shopNameErrorText);
+    var isDisable = this.CheckDisableRegisterButton();
     this.setState({IsRegisterDisable:isDisable});
  }
 
@@ -171,8 +173,9 @@ cancelOnClick = async() =>{
       return(
          <React.Fragment>
              <AlertDialog/>
+             <ConfirmAlertDialog/>
        <Loading height={this.state.height}  onLoading={this.state.isloading}/>
-         <DashboardLayout merchantName={this.props.Merchant?.Merchant?.fullname}  shopId={this.props?.Shop?.Shop?._id}>       
+         <DashboardLayout merchantName={this.props.Merchant?.Merchant?.name}  shopId={this.props?.Shop?.Shop?._id}>       
          <React.Fragment>
            <ToastContainer />  
         <div className="form-group row" style={{height:this.state.height,backgroundColor:'white'}} > 

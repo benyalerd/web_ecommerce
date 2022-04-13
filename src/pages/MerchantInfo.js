@@ -54,14 +54,15 @@ class MerchantInfo extends React.Component{
     if(!merchantId){
       this.props.history.push('/Login');
     }
-    var merchant = await this.props.RegisterApiAction.getMerchant();  
-      if(merchant?.data?.isError == true){
-        this.props.AlertAction.setAlert(2,res?.data?.errorMsg,true);
+    var merchantRes = await this.props.RegisterApiAction.getMerchant();  
+      if(merchantRes?.data?.isError == true){
+        this.props.AlertAction.setAlert(2,merchantRes?.data?.errorMsg,true);
         await this.setState({isloading:false});
         return;
-      }    
+      } 
+      var merchant = merchantRes?.data 
     await this.props.MerchantAction.setMerchantInfo(merchant);
-    await this.setState({firstname:merchant.fullname.split(" ")[0],lastname:merchant.fullname.split(" ")[1],email:merchant.email,tel:merchant.tel,role:merchant.role})
+    await this.setState({firstname:merchant.name.split(" ")[0],lastname:merchant.name.split(" ")[1],email:merchant.email,tel:merchant.tel,role:merchant.role})
     var res = await this.props.ShopApiAction.GetShopInfo(this.props.Merchant.Merchant.id);
     if(res?.data?.isError == true){
       this.props.AlertAction.setAlert(2,res?.data?.errorMsg,true);
@@ -93,7 +94,7 @@ class MerchantInfo extends React.Component{
       await this.setState({firstname:value,firstnameErrorText:''});
 
     }
-    var isDisable = this.CheckDisableRegisterButton(value,this.state.firstnameErrorText);
+    var isDisable = this.CheckDisableRegisterButton();
     this.setState({IsRegisterDisable:isDisable});
  }
 
@@ -105,7 +106,7 @@ class MerchantInfo extends React.Component{
   else{
     await this.setState({lastname:value,lastnameErrorText:''});
   }
-  var isDisable = this.CheckDisableRegisterButton(value,this.state.lastnameErrorText);
+  var isDisable = this.CheckDisableRegisterButton();
   this.setState({IsRegisterDisable:isDisable});
 }
 
@@ -120,7 +121,7 @@ validateEmail = async(e) =>{
   else{
     await this.setState({email:value,emailErrorText:''});
   }
-  var isDisable = this.CheckDisableRegisterButton(value,this.state.emailErrorText);
+  var isDisable = this.CheckDisableRegisterButton();
   this.setState({IsRegisterDisable:isDisable});
 }
 
@@ -136,7 +137,7 @@ validateTel = async(e) =>{
     await this.setState({tel:value,telErrorText:''});
   }
 
-  var isDisable = this.CheckDisableRegisterButton(value,this.state.telErrorText);
+  var isDisable = this.CheckDisableRegisterButton();
   this.setState({IsRegisterDisable:isDisable});
 }
 
@@ -148,7 +149,7 @@ selectRole = (e) =>{
 updateMerchantOnClick = async() =>{
   try
   {
-    await this.props.AlertAction.setConfirmAlert('แก้ไขข้อมูลส่วนตัว',this.updateMerchantApi,true);
+    await this.props.AlertAction.setConfirmAlert('แก้ไขข้อมูลส่วนตัว',this.updateMerchantApi.bind(this),true);
   }
   catch(ex){
   toast.error("เกิดข้อผิดพลาด กรุณาติดต่อเจ้าหน้าที่");
@@ -164,14 +165,15 @@ updateMerchantApi = async() =>{
     await this.setState({isloading:false});
     return;
   }
-  var merchant = await this.props.RegisterApiAction.getMerchant();  
-      if(merchant?.data?.isError == true){
-        this.props.AlertAction.setAlert(2,res?.data?.errorMsg,true);
-        await this.setState({isloading:false});
-        return;
-      }     
+  var merchantRes = await this.props.RegisterApiAction.getMerchant();  
+  if(merchantRes?.data?.isError == true){
+    this.props.AlertAction.setAlert(2,merchantRes?.data?.errorMsg,true);
+    await this.setState({isloading:false});
+    return;
+  } 
+  var merchant = merchantRes?.data 
   await this.props.MerchantAction.setMerchantInfo(merchant);     
-  await this.setState({firstname:merchant.fullname.split(" ")[0],lastname:merchant.fullname.split(" ")[1],email:merchant.email,tel:merchant.tel,role:merchant.role})
+  await this.setState({firstname:merchant.name.split(" ")[0],lastname:merchant.name.split(" ")[1],email:merchant.email,tel:merchant.tel,role:merchant.role})
   await this.setState({isloading:false,isEdit:false});
   this.props.AlertAction.setAlert(1,"ทำรายการสำเร็จ",true);
    
@@ -212,7 +214,7 @@ CheckDisableRegisterButton = () =>{
           <AlertDialog/> 
           <ConfirmAlertDialog/>
        <Loading height={this.state.height} onLoading={this.state.isloading}/>
-           <DashboardLayout merchantName={this.props.Merchant?.Merchant?.fullname} shopId={this.props.Shop.Shop._id}>
+           <DashboardLayout merchantName={this.props.Merchant?.Merchant?.name} shopId={this.props.Shop.Shop._id}>
            <React.Fragment>
            <ToastContainer />  
 

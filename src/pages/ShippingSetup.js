@@ -19,6 +19,7 @@ import queryString from 'query-string';
 import {IsNullOrEmpty} from '../helper/Common';
 import AlertDialog from '../component/dialog/AlertDialog';
 import * as alertAction from '../actions/Alert/AlertAction';
+import ConfirmAlertDialog from '../component/dialog/ConfirmAlertDialog';
 
 class ShippingSetup extends React.Component{
   constructor(props) {
@@ -28,6 +29,7 @@ class ShippingSetup extends React.Component{
       height: 0,
       isloading:false,
       shippingList:null,
+      selectIndex:0
     };
     this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
   }
@@ -52,12 +54,13 @@ class ShippingSetup extends React.Component{
     if(!merchantId){
       this.props.history.push('/Login');
     }
-    var merchant = await this.props.RegisterApiAction.getMerchant();  
-      if(merchant?.data?.isError == true){
-        this.props.AlertAction.setAlert(2,res?.data?.errorMsg,true);
-        await this.setState({isloading:false});
-        return;
-      }   
+    var merchantRes = await this.props.RegisterApiAction.getMerchant();  
+    if(merchantRes?.data?.isError == true){
+      this.props.AlertAction.setAlert(2,merchantRes?.data?.errorMsg,true);
+      await this.setState({isloading:false});
+      return;
+    } 
+    var merchant = merchantRes?.data 
     await this.props.MerchantAction.setMerchantInfo(merchant);
     var res = await this.props.ShopApiAction.GetShopInfo(this.props.Merchant.Merchant.id);
     if(res?.data?.isError == true){
@@ -116,7 +119,8 @@ class ShippingSetup extends React.Component{
 
   deleteShippingInfo = async(index)=> {
   try{
-    await this.props.AlertAction.setConfirmAlert('ลบข้อมูลขนส่ง',this.deleteShippingInfoApi,true);
+    await this.setState({selectIndex:index});
+    await this.props.AlertAction.setConfirmAlert('ลบข้อมูลขนส่ง',this.deleteShippingInfoApi.bind(this),true);
   }
   catch(ex){
     console.log("deleteShippingInfo");
@@ -124,9 +128,9 @@ class ShippingSetup extends React.Component{
     }
   }
 
-  deleteShippingInfoApi = async(index)=> {
+  deleteShippingInfoApi = async()=> {
     await this.setState({isloading:true});
-    var res = await this.props.ShippingSetupApiAction.DeleteShipping(this.state.shippingList[index]);
+    var res = await this.props.ShippingSetupApiAction.DeleteShipping(this.state.shippingList[this.state.selectIndex]);
     if(res?.data?.isError == true){
       this.props.AlertAction.setAlert(2,res?.data?.errorMsg,true);
       await this.setState({isloading:false});
@@ -143,9 +147,10 @@ render(){
       return(
          <React.Fragment>
             <AlertDialog/>
+            <ConfirmAlertDialog/>
            <AddShippingDialog/>
            <Loading height={this.state.height} onLoading={this.state.isloading}/>
-           <DashboardLayout merchantName={this.props.Merchant?.Merchant?.fullname} shopId={this.props?.Shop?.Shop?._id}>
+           <DashboardLayout merchantName={this.props.Merchant?.Merchant?.name} shopId={this.props?.Shop?.Shop?._id}>
            <React.Fragment>
            <ToastContainer />
 
