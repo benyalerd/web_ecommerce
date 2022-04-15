@@ -10,4 +10,5 @@ export default class Action{
     static Set_Alert = "Set_Alert";
     static Set_Confirm_Alert = "Set_Confirm_Alert";
     static Set_Product_TabId = "set_Product_TabId";
+    static Set_Transaction_TabId = "Set_Transaction_TabId";
 }

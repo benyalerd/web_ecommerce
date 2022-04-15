@@ -105,6 +105,10 @@ class ProductMainPageTabLayout extends React.Component{
         }
     }
 
+     onProductDetailClick = async(productId) => {
+      await this.history.push(`/Product-ProductDetail?productId=${productId}`);
+     }
+
     async deleteProductApi () {
       await this.setState({isloading:true});
       var res = await this.props.ProductManagementApiAction.DeleteProduct(this.state.selectProductId);
@@ -181,7 +185,7 @@ class ProductMainPageTabLayout extends React.Component{
 
 {/*Product List*/} 
 <div className="row" style={{margin:'20px 40px', fontSize: '16px',height:'max-content'}}>
-          {this.state.productList == null || this.state.productList.length <= 0?<div className="col-12" style={{background: 'white', padding: '10px 30px', fontWeight: 'bold', border: '1px solid lightgray', color: 'lightgray', borderRadius: '0px',textAlign:'center'}}>ไม่พบข้อมูลบัญชีธนาคาร</div>  :  
+          {this.state.productList == null || this.state.productList.length <= 0?<div className="col-12" style={{background: 'white', padding: '10px 30px', fontWeight: 'bold', border: '1px solid lightgray', color: 'lightgray', borderRadius: '0px',textAlign:'center'}}>ไม่พบสินค้า</div>  :  
           
           <React.Fragment>
             {this.state.productList?.map(({
@@ -196,7 +200,7 @@ class ProductMainPageTabLayout extends React.Component{
           },index) =>
 
             <React.Fragment>
-            <div className="col-9" style={{background: 'white', height: '120px', padding: '10px 30px', fontWeight: 'bold', borderTop: '1px solid lightgray', borderBottom: '1px solid lightgray', borderLeft: '1px solid lightgray', color: 'black', borderRadius: '0px'}}>
+            <div onClick={()=>this.onProductDetailClick(_id)} className="col-9" style={{background: 'white', height: '120px', padding: '10px 30px', fontWeight: 'bold', borderTop: '1px solid lightgray', borderBottom: '1px solid lightgray', borderLeft: '1px solid lightgray', color: 'black', borderRadius: '0px'}}>
                 <div className="row mr-0 ml-0">
                     <div style={{width: 'fit-content'}}>
                           {/*Image*/}  
@@ -212,7 +216,7 @@ class ProductMainPageTabLayout extends React.Component{
                     </div>
                 </div>
                 <div className="col-2" style={isActive?{display:'flex',justifyContent: 'center',alignItems: 'center',background: 'white', height: '120px', padding: '10px 30px', fontWeight: 'bold', borderTop: '1px solid lightgray', borderBottom: '1px solid lightgray', borderLeft: '1px solid lightgray', color: 'green', borderRadius: '0px'}:{display:'flex',justifyContent: 'center',alignItems: 'center',background: 'white', height: '120px', padding: '10px 30px', fontWeight: 'bold', borderTop: '1px solid lightgray', borderBottom: '1px solid lightgray', borderLeft: '1px solid lightgray', color: 'red', borderRadius: '0px'}}>
-                  {!isActive?"ระงับการขาย":stock > 0 ?"ขายอยู่":"สินค้าหมด"}
+                  {!isActive?"ไม่พร้อมขาย":stock > 0 ?"ขายอยู่":"สินค้าหมด"}
                   </div>
  
  {/*Edit / Delete*/}  

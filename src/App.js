@@ -13,6 +13,10 @@ const PaymentSetup = React.lazy(() => import("./pages/PaymentSetup"));
 const ShippingSetup = React.lazy(() => import("./pages/ShippingSetup"));
 const ProductMainPage = React.lazy(() => import("./pages/ProductMainPage"));
 const AddProductPage = React.lazy(()=> import("./pages/AddProductPage"));
+const ProductDetailPage = React.lazy(()=> import("./pages/ProductDetailPage"));
+const TransactionMainPage = React.lazy(()=> import("./pages/TransactionMainPage"));
+const TransactionDetailPage= React.lazy(()=> import("./pages/TransactionDetailPage"));
+
 class App extends Component{
   displayName = "Ecommerce";
 
@@ -33,6 +37,11 @@ class App extends Component{
         <Route path="/PaymentSetup" component={PaymentSetup}/>
         <Route path="/Product-MainPage" component={ProductMainPage}/>
         <Route path="/Product-AddProduct" component={AddProductPage}/>
+        <Route path="/Product-ProductDetail" component={ProductDetailPage}/>
+        <Route path="/Transaction-MainPage" component={TransactionMainPage}/>
+        <Route path="/Transaction-TransactionDetail" component={TransactionDetailPage}/>
+       
+
 
         <Redirect to="/"/>
       </Switch>

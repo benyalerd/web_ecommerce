@@ -6,6 +6,7 @@ import SessionAlert from './Alert/SessionAlert';
 import ShippingSetup from './ShippingSetup/ShippingSetupReducer'
 import Alert  from './Alert/AlertReducer'
 import ProductManagement from './ProductManagement/ProductManagementReducer'
+import TransactionManagement from './TransactionManagement/TransactionManagementReducer'
 
 const appReducer = combineReducers({
     Merchant:Merchant,
@@ -14,7 +15,8 @@ const appReducer = combineReducers({
     SessionAlert: SessionAlert,
     ShippingSetup:ShippingSetup,
     Alert:Alert,
-    ProductManagement:ProductManagement
+    ProductManagement:ProductManagement,
+    TransactionManagement:TransactionManagement
 });
 
 const rootReducer = (state,action) =>{

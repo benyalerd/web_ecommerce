@@ -6,3 +6,4 @@ export function setProductTabId(data){
        productTabId:data
     };
 }
+

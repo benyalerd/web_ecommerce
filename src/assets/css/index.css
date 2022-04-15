@@ -224,6 +224,16 @@
     border-radius: 0px 5px 5px 0px;
 }
 
+.tranType{
+  background: white;
+  padding: 20px;
+  font-weight: bold;
+  border-top: 1px solid lightgray;
+  border-bottom: 1px solid lightgray;
+  border-left : 1px solid lightgray;
+   border-radius: 0px
+}
+
 
 
   

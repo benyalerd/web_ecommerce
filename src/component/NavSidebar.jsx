@@ -51,12 +51,29 @@ export const NavSidebar = (props) => {
             },
             {
               title: "Product",
-              itemId: `/Product-MainPage|?shopId=${props.shopId}`,
               elemBefore: () => <Icon name="burger" />,
               subNav: [
                 {
+                  title: "All Product",
+                  itemId: `/Product-MainPage|?shopId=${props.shopId}`,
+                  // Optional
+                  elemBefore: () => <Icon name="star" />
+                },
+                {
                   title: "Add Product",
                   itemId: "/Product-AddProduct",
+                  // Optional
+                  elemBefore: () => <Icon name="star" />
+                }
+              ]
+            },
+            {
+              title: "Transaction",
+              elemBefore: () => <Icon name="burger" />,
+              subNav: [
+                {
+                  title: "All Transaction",
+                  itemId: `/Transaction-MainPage|?shopId=${props.shopId}`,
                   // Optional
                   elemBefore: () => <Icon name="star" />
                 }
