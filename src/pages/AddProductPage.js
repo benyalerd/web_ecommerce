@@ -557,7 +557,7 @@ async submitValidation (){
 
         <div className="form-group row" style={{margin:'10px',marginRight: '50px'}}>
        {/*ชื่อสินค้า*/}
-      <div className="col-2" style={{alignItems: 'center',display: 'flex',justifyContent: 'end'}}>
+      <div className="col-2 topic-add-detail-div" >
         <div> <a style={{color:'red'}}>*</a> ชื่อสินค้า :</div>
      </div>
 
@@ -570,7 +570,7 @@ async submitValidation (){
  {/*Error Text Product Name*/}
     <div className="form-group row" style={this.state.productNameErrorText?{margin:'10px'}:{display:'none'}}>
 
-    <div className="col-2" style={{alignItems: 'center',display: 'flex',justifyContent: 'end'}}>
+    <div className="col-2 topic-add-detail-div">
         <div></div>
      </div>
 
@@ -585,7 +585,7 @@ async submitValidation (){
 
     <div className="form-group row" style={{margin:'10px',marginRight: '50px'}}>
        {/*รายละเอียดสินค้า*/}
-      <div className="col-2" style={{alignItems: 'center',display: 'flex',justifyContent: 'end'}}>
+      <div className="col-2 topic-add-detail-div" >
         <div> <a style={{color:'red'}}>*</a>รายละเอียดสินค้า :</div>
      </div>
 
@@ -599,7 +599,7 @@ async submitValidation (){
 {/*Error Text Product Desc*/}
 <div className="form-group row" style={this.state.productDescErrorText?{margin:'10px'}:{display:'none'}}>
 
-<div className="col-2" style={{alignItems: 'center',display: 'flex',justifyContent: 'end'}}>
+<div className="col-2 topic-add-detail-div" >
     <div></div>
  </div>
 
@@ -614,7 +614,7 @@ async submitValidation (){
 
 <div className="form-group row" style={this.state.option?{display:'none'}:{margin:'10px',marginRight: '50px'}}>
        {/*ราคา*/}
-      <div className="col-2" style={{alignItems: 'center',display: 'flex',justifyContent: 'end'}}>
+      <div className="col-2 topic-add-detail-div" >
         <div> <a style={{color:'red'}}>*</a> ราคา :</div>
      </div>
 
@@ -627,7 +627,7 @@ async submitValidation (){
  {/*Error Text Product Full Price*/}
     <div className="form-group row" style={this.state.fullPriceErrorText?{margin:'10px'}:{display:'none'}}>
 
-    <div className="col-2" style={{alignItems: 'center',display: 'flex',justifyContent: 'end'}}>
+    <div className="col-2 topic-add-detail-div" >
         <div></div>
      </div>
 
@@ -642,7 +642,7 @@ async submitValidation (){
 
     <div className="form-group row" style={this.state.option?{display:'none'}:{margin:'10px',marginRight: '50px'}}>
        {/*จำนวน*/}
-      <div className="col-2" style={{alignItems: 'center',display: 'flex',justifyContent: 'end'}}>
+      <div className="col-2 topic-add-detail-div" >
         <div> <a style={{color:'red'}}>*</a> ราคา :</div>
      </div>
 
@@ -655,7 +655,7 @@ async submitValidation (){
  {/*Error Text Product Stock*/}
     <div className="form-group row" style={this.state.stockErrorText?{margin:'10px'}:{display:'none'}}>
 
-    <div className="col-2" style={{alignItems: 'center',display: 'flex',justifyContent: 'end'}}>
+    <div className="col-2 topic-add-detail-div" >
         <div></div>
      </div>
 
@@ -670,7 +670,7 @@ async submitValidation (){
 
     <div className="form-group row" style={{margin:'10px',marginRight: '50px'}}>
        {/*อัพโหลดรูปภาพสินค้า*/}
-      <div className="col-2" style={{alignItems: 'center',display: 'flex',justifyContent: 'end'}}>
+      <div className="col-2 topic-add-detail-div">
         <div> <a style={{color:'red'}}>*</a>อัพโหลดรูปภาพสินค้า :</div>
      </div>
 
@@ -681,7 +681,7 @@ async submitValidation (){
        
         {/*รูปปก*/}
         
-        <div style={this.state.productMainContent.length > 0 ?{marginRight:'15px',display:'table-cell',position:'relative',padding:'0px',width:'150px',height:'150px',border:'1px solid lightgray',borderRadius:'5px',cursor:'pointer'}:{marginRight:'15px',padding:'0px',width:'150px',height:'150px',border:'1px solid lightgray',borderRadius:'5px',cursor:'pointer',display: 'table-cell' }} onClick={this.addImage} >
+        <div className="uploadImage-div" style={this.state.productMainContent.length > 0 ?{position:'relative'}:{}} onClick={this.addImage} >
             <img className={this.state.productMainContent.length > 0?"vertical-center":"imageCenter"} src={this.state.productMainContent.length > 0?this.state.productMainContent[0].imagePath : require('../assets/images/add_image.png').default} style={this.state.productMainContent.length > 0 ?{}:{margin:'37px'}}/>
             {this.state.productMainContent.length > 0 ?  <button style={{ display: 'inline', zIndex: '1'}}><img  style={{position: 'absolute',width: '25px',height: '25px',right: '0px',top: '3px'}} onClick={() => this.deleteImage(0)} src={require('../assets/images/crossIcon.png').default} /></button> : null}
             <div style={this.state.productMainContent.length > 0 ?{fontSize: '14px',color: 'gray',position: 'absolute',bottom: '-25px',right: '35%'}:{textAlign: 'center',fontSize: '14px',color: 'gray',paddingTop: '5px'}}>รูปปก</div>
@@ -689,21 +689,21 @@ async submitValidation (){
       
 
   {/*รูป 2*/}
-  <div style={this.state.productMainContent.length > 1 ?{marginRight:'15px',display:'table-cell',position:'relative',padding:'0px',width:'150px',height:'150px',border:'1px solid lightgray',borderRadius:'5px',cursor:'pointer'}:{marginRight:'15px',padding:'0px',width:'150px',height:'150px',border:'1px solid lightgray',borderRadius:'5px',cursor:'pointer',display: 'table-cell' }} onClick={this.addImage} >
+  <div className="uploadImage-div" style={this.state.productMainContent.length > 0 ?{position:'relative'}:{}} onClick={this.addImage} >
             <img className={this.state.productMainContent.length > 1?"vertical-center":"imageCenter"} src={this.state.productMainContent.length > 1?this.state.productMainContent[1].imagePath : require('../assets/images/add_image.png').default} style={this.state.productMainContent.length > 1 ?{}:{margin:'37px'}}/>
             {this.state.productMainContent.length > 1 ?  <button style={{ display: 'inline', zIndex: '1'}}><img  style={{position: 'absolute',width: '25px',height: '25px',right: '0px',top: '3px'}} onClick={() => this.deleteImage(1)} src={require('../assets/images/crossIcon.png').default} /></button> : null}
             <div style={this.state.productMainContent.length > 1 ?{fontSize: '14px',color: 'gray',position: 'absolute',bottom: '-25px',right: '35%'}:{textAlign: 'center',fontSize: '14px',color: 'gray',paddingTop: '5px'}}>รูป 2</div>
        </div>
 
   {/*รูป 3*/}
-  <div style={this.state.productMainContent.length > 2 ?{marginRight:'15px',display:'table-cell',position:'relative',padding:'0px',width:'150px',height:'150px',border:'1px solid lightgray',borderRadius:'5px',cursor:'pointer'}:{marginRight:'15px',padding:'0px',width:'150px',height:'150px',border:'1px solid lightgray',borderRadius:'5px',cursor:'pointer',display: 'table-cell' }} onClick={this.addImage}  >
+  <div className="uploadImage-div" style={this.state.productMainContent.length > 0 ?{position:'relative'}:{}} onClick={this.addImage} >
             <img className={this.state.productMainContent.length > 2?"vertical-center":"imageCenter"} src={this.state.productMainContent.length > 2?this.state.productMainContent[2].imagePath : require('../assets/images/add_image.png').default} style={this.state.productMainContent.length > 2 ?{}:{margin:'37px'}}/>
             {this.state.productMainContent.length > 2 ?  <button style={{ display: 'inline', zIndex: '1'}}><img  style={{position: 'absolute',width: '25px',height: '25px',right: '0px',top: '3px'}} onClick={() => this.deleteImage(2)} src={require('../assets/images/crossIcon.png').default} /></button> : null}
             <div style={this.state.productMainContent.length > 2 ?{fontSize: '14px',color: 'gray',position: 'absolute',bottom: '-25px',right: '35%'}:{textAlign: 'center',fontSize: '14px',color: 'gray',paddingTop: '5px'}}>รูป 3</div>
        </div>
 
   {/*รูป 4*/}
-  <div style={this.state.productMainContent.length > 3 ?{marginRight:'15px',display:'table-cell',position:'relative',padding:'0px',width:'150px',height:'150px',border:'1px solid lightgray',borderRadius:'5px',cursor:'pointer'}:{marginRight:'15px',padding:'0px',width:'150px',height:'150px',border:'1px solid lightgray',borderRadius:'5px',cursor:'pointer',display: 'table-cell' }}  onClick={this.addImage} >
+  <div className="uploadImage-div" style={this.state.productMainContent.length > 0 ?{position:'relative'}:{}} onClick={this.addImage} >
             <img className={this.state.productMainContent.length > 3?"vertical-center":"imageCenter"} src={this.state.productMainContent.length > 3?this.state.productMainContent[3].imagePath : require('../assets/images/add_image.png').default} style={this.state.productMainContent.length > 3 ?{}:{margin:'37px'}}/>
             {this.state.productMainContent.length > 3 ?  <button style={{ display: 'inline', zIndex: '1'}}><img  style={{position: 'absolute',width: '25px',height: '25px',right: '0px',top: '3px'}} onClick={() => this.deleteImage(3)} src={require('../assets/images/crossIcon.png').default} /></button> : null}
             <div style={this.state.productMainContent.length > 3 ?{fontSize: '14px',color: 'gray',position: 'absolute',bottom: '-25px',right: '35%'}:{textAlign: 'center',fontSize: '14px',color: 'gray',paddingTop: '5px'}}>รูป 4</div>
@@ -718,7 +718,7 @@ async submitValidation (){
 {/*Error Text Product Image*/}
 <div className="form-group row" style={this.state.productMainContentErrorText?{margin:'10px'}:{display:'none'}}>
 
-<div className="col-2" style={{alignItems: 'center',display: 'flex',justifyContent: 'end'}}>
+<div className="col-2 topic-add-detail-div">
     <div></div>
  </div>
 
@@ -733,7 +733,7 @@ async submitValidation (){
     <div className="form-group row" style={{margin:'10px',marginRight: '50px',marginTop:'40px'}}>
 
  {/*ตัวเลือกสินค้า*/}
- <div className="col-2" style={{alignItems: 'center',display: 'flex',justifyContent: 'end'}}>
+ <div className="col-2 topic-add-detail-div">
         <div>ตัวเลือกสินค้า :</div>
      </div>
 
@@ -751,7 +751,7 @@ async submitValidation (){
             <button style={{ display: 'inline', zIndex: '1'}}><img  style={{position: 'absolute',width: '25px',height: '25px',right: '0px',top: '3px'}} onClick={this.DeleteOptionOnclick.bind(this)} src={require('../assets/images/crossIcon.png').default} /></button>
             
             {/*ชื่อตัวเลือก*/}
-  <div className="col-2" style={{alignItems: 'center',display: 'flex',justifyContent: 'start'}}>
+  <div className="col-2 value-add-detail-div" >
     <div style={{fontSize:'14px',}}>ชื่อ :</div>
  </div>
 
@@ -776,7 +776,7 @@ async submitValidation (){
      
 <div className="form-group row" style={{margin:'10px',marginRight: '50px'}}>
                 {/*ตัวเลือก*/}
-      <div className="col-2" style={{fontSize:'14px',alignItems: 'center',display: 'flex',justifyContent: 'start'}}>
+      <div className="col-2 value-add-detail-div" style={{fontSize:'14px'}}>
         <div>ตัวเลือก :</div>
      </div>
 
@@ -791,11 +791,11 @@ async submitValidation (){
 
 <div className="form-group row" style={{margin:'10px',marginRight: '50px'}}>
                 {/**/}
-      <div className="col-2" style={{alignItems: 'center',display: 'flex',justifyContent: 'end'}}>
+      <div className="col-2 topic-add-detail-div" >
      </div>
 
       {/*ราคา*/}
-     <div className="col-1" style={{fontSize:'14px', alignItems: 'center',display: 'flex',justifyContent: 'end'}} >
+     <div className="col-1 topic-add-detail-div" style={{fontSize:'14px'}} >
         <div>ราคา :</div>
      </div>
 
@@ -805,7 +805,7 @@ async submitValidation (){
      </div>
 
 {/*Stock*/}
-     <div className="col-2" style={{fontSize:'14px',alignItems: 'center',display: 'flex',justifyContent: 'end'}}>
+     <div className="col-2 topic-add-detail-div" style={{fontSize:'14px'}}>
         <div>จำนวน :</div>
      </div>
 
@@ -826,7 +826,7 @@ async submitValidation (){
 
 <div className="form-group row" style={{margin:'10px'}}>
   
-  <div className="col-2" style={{alignItems: 'center',display: 'flex',justifyContent: 'end'}}>
+  <div className="col-2 topic-add-detail-div" >
     <div></div>
  </div>
 
@@ -844,15 +844,14 @@ async submitValidation (){
 
 <div className="form-group row" style={{margin:'10px',marginRight: '50px'}}>
        {/**/}
-      <div className="col-2" style={{alignItems: 'center',display: 'flex',justifyContent: 'end'}}>
+      <div className="col-2 topic-add-detail-div" >
         <div></div>
      </div>
 
 {/*อัพโหลดรูป SKU Input*/}
 <div className="col-10">
      <div style={{display: 'flex',flexWrap: 'wrap'}}>
-     <input type="file" id="images" name="images" style={{ display: 'none' }} accept="image/*" />
-       
+  
         {/*SKU IMAGE*/}
         
         <React.Fragment>
@@ -865,7 +864,7 @@ async submitValidation (){
 },index) =>
 
   <React.Fragment>
-        <div onClick={this.addSkuImage} style={ProductSkuContent?.imagePath?{marginRight:'15px',display:'table-cell',position:'relative',padding:'0px',width:'150px',height:'150px',border:'1px solid lightgray',borderRadius:'5px',cursor:'pointer'}:{marginRight:'15px',padding:'0px',width:'150px',height:'150px',border:'1px solid lightgray',borderRadius:'5px',cursor:'pointer',display: 'table-cell' }}  >
+        <div className="uploadImage-div" onClick={this.addSkuImage} style={ProductSkuContent?.imagePath?{position:'relative'}:{}}  >
             <img className={ProductSkuContent?.imagePath ?"vertical-center":"imageCenter"} src={ProductSkuContent?.imagePath?ProductSkuContent?.imagePath : require('../assets/images/add_image.png').default} style={ProductSkuContent?.imagePath?{}:{margin:'37px'}}/>
             {ProductSkuContent?.imagePath ?  <button style={{ display: 'inline', zIndex: '1'}}><img  style={{position: 'absolute',width: '25px',height: '25px',right: '0px',top: '3px'}} src={require('../assets/images/crossIcon.png').default} /></button> : null}
             <div style={this.state.productMainContent.length > 0 ?{fontSize: '14px',color: 'gray',position: 'absolute',bottom: '-25px',right: '35%'}:{textAlign: 'center',fontSize: '14px',color: 'gray',paddingTop: '5px'}}>{"SKU "+index+1}</div>
@@ -885,7 +884,7 @@ async submitValidation (){
 {/*Error Text Produc Option*/}
 <div className="form-group row" style={this.state.productOptionErrorText?{margin:'10px'}:{display:'none'}}>
 
-<div className="col-2" style={{alignItems: 'center',display: 'flex',justifyContent: 'end'}}>
+<div className="col-2 topic-add-detail-div" >
     <div></div>
  </div>
 

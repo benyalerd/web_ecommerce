@@ -171,7 +171,7 @@ class TransactionMainPageTabLayout extends React.Component{
                     
       </div>
 
-      <div className="col-2 tranType">
+      <div className="col-2 tranType-div-mainPage">
                 {/*สถานะการสั่งซื้อ*/}  
                 <div style={{fontSize: '12px',color:'gray'}}>{"สถานะการสั่งซื้อ"}</div>
                 <div style={tranType == 7?{color:'green'}:tranType != 8 && tranType != 4?{color:'blue'}:{color:'red'}}>{tranType == 2 ?"รอชำระ":tranType == 3 ?"รอยืนยันการชำระ": tranType == 4 ?"ชำระไม่สำเร็จ" :tranType == 5?"รอจัดส่ง":tranType == 6 ?"ระหว่างจัดส่ง":tranType == 7?"จัดส่งสำเร็จ":"ยกเลิก"}</div>

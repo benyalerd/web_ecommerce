@@ -224,7 +224,7 @@
     border-radius: 0px 5px 5px 0px;
 }
 
-.tranType{
+.tranType-div-mainPage{
   background: white;
   padding: 20px;
   font-weight: bold;
@@ -232,6 +232,43 @@
   border-bottom: 1px solid lightgray;
   border-left : 1px solid lightgray;
    border-radius: 0px
+}
+
+.topic-add-detail-div{
+  align-items: center;
+  display: flex;
+  justify-content: end
+}
+
+.value-add-detail-div{
+  align-items: center;
+  display: flex;
+  justify-content: start
+}
+
+.uploadImage-div{
+  margin-right:15px;
+  padding:0px;
+  width:150px;
+  height:150px;
+  border:1px solid lightgray;
+  border-radius:5px;
+  cursor:pointer;
+  display:table-cell
+}
+
+.product-status-div-mainpage{
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  background: white;
+  height: 120px;
+  padding: 10px 30px;
+  font-weight: bold;
+  border-top: 1px solid lightgray;
+  border-bottom: 1px solid lightgray;
+  border-left: 1px solid lightgray;
+  border-radius: 0px
 }
 
 

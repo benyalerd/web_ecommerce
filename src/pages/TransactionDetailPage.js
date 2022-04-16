@@ -9,6 +9,7 @@ import {Loading} from '../component/Loadind';
 import AlertDialog from '../component/dialog/AlertDialog';
 import * as alertAction from '../actions/Alert/AlertAction';
 import {DashboardLayout} from '../component/Layout';
+import {onlyNumberAndEngText} from '../helper/Regex'
 import * as shopAction from '../actions/Shop/ShopAction'
 import * as shopApiAction from '../actions/api/ShopApiAction'
 import * as merchantAction from '../actions/Merchant/MerchantAction'
@@ -37,12 +38,14 @@ class TransactionDetailPage extends React.Component{
         customerName:"",
         customerTel:"",
         customerAddress:"",
-        isAprrove:false,
+        isAprrove:true,
         paymentImage:"",
         trackingNumber:"",
         shippingName:"",
         shippingImage:"",
-       
+       totalProductPrice:0,
+       totalPrice:0,
+       shippingPrice:0
       };
       this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
     }
@@ -126,6 +129,33 @@ async submitValidation (){
   return isValid
 }
 
+onApproveRadioChange = async(e) =>{
+  var value = e.target.value;
+  if(value == 1)
+  {      
+    await this.setState({isAprrove: true})   
+  }else{
+    await this.setState({isAprrove: false})   
+  }   
+}
+
+onTrackingChange = async(value) =>{
+  if(value)
+  {      
+    if(!onlyNumberAndEngText.test(value)){         
+      value = value.substring(0,value.length-1);          
+      }      
+  } 
+  await this.setState({trackingNumber: value})     
+}
+
+onReasonChange = async(value) =>{
+  if(value)
+  {          
+    await this.setState({reason: value})
+  }      
+}
+
 async getTransactionDetail (){
     await this.setState({isloading:true});
     const query = queryString.parse(this.props.location.search);
@@ -137,11 +167,11 @@ async getTransactionDetail (){
   }
   var transaction = res?.data;
   
-  await this.setState({transactionDetail:transaction.transactionDetail,orderCode:transaction.orderCode,tranType:transaction.tranType,tranDate:transaction.tranDate,paymentDate:transaction.paymentDate,customerName:transaction.customerName,customerTel:transaction.customerTel,customerAddress:transaction.customerAddress,paymentImage:transaction.paymentImg,trackingNumber:transaction.trackingNumber,reason:transaction.reason});
+  await this.setState({transactionDetail:transaction.transactionDetail,orderCode:transaction.orderCode,tranType:transaction.tranType,tranDate:transaction.tranDate,paymentDate:transaction.paymentDate,customerName:transaction.customerName,customerTel:transaction.customerTel,customerAddress:transaction.customerAddress,paymentImage:transaction.paymentImg,trackingNumber:transaction.trackingNumber,reason:transaction.reason,totalProductPrice:transaction.totalProductPrice,shippingPrice:transaction.shippingPrice,totalPrice:transaction.totalPrice});
   
   }
     
-    render(){
+    render(){        
         return(      
         <React.Fragment>   
   <DashboardLayout merchantName={this.props.Merchant?.Merchant?.name} shopId={this.props?.Shop?.Shop?._id}>        
@@ -168,7 +198,307 @@ async getTransactionDetail (){
         <div className="black-Bold-Topic-Text col-9" >ข้อมูลทั่วไป</div>       
         </div >
 
+        <div className="form-group row" style={{margin:'10px',marginRight: '50px'}}>
+       {/*หมายเลขคำสั่งซื้อ : */}
+      <div className="col-2 topic-add-detail-div" style={{fontWeight:'bold'}}>
+        <div>หมายเลขคำสั่งซื้อ :</div>
+     </div>
 
+      {/*Order Code*/}
+     <div className="col-4 value-add-detail-div" >
+     <div>{this.state.orderCode}</div>
+     </div>
+
+     {/*สถานะการสั่งซื้อ : */}
+     <div className="col-2 topic-add-detail-div" style={{fontWeight:'bold'}}>
+        <div>สถานะการสั่งซื้อ :</div>
+     </div>
+
+      {/*Order Code*/}
+     <div className="col-4 value-add-detail-div" style={this.state.tranType == 7?{color:'green'}:this.state.tranType != 8 && this.state.tranType != 4?{color:'blue'}:{color:'red'}}>
+     <div>{this.state.tranType == 2 ?"รอชำระ":this.state.tranType == 3 ?"รอยืนยันการชำระ": this.state.tranType == 4 ?"ชำระไม่สำเร็จ" :this.state.tranType == 5?"รอจัดส่ง":this.state.tranType == 6 ?"ระหว่างจัดส่ง":this.state.tranType == 7?"จัดส่งสำเร็จ":"ยกเลิก"}</div>
+     </div>
+
+    </div>
+
+    <div className="form-group row" style={{margin:'10px',marginRight: '50px'}}>
+       {/*วันที่สั่งซื้อ : */}
+      <div className="col-2 topic-add-detail-div" style={{fontWeight:'bold'}}>
+        <div>วันที่สั่งซื้อ :</div>
+     </div>
+
+      {/*Tran Date*/}
+     <div className="col-4 value-add-detail-div" >
+     <div>{this.state.tranDate}</div>
+     </div>
+
+     {/*วันที่ชำระ : */}
+     <div className="col-2 topic-add-detail-div" style={{fontWeight:'bold'}}>
+        <div>วันที่ชำระ :</div>
+     </div>
+
+      {/*Order Code*/}
+     <div className="col-4 value-add-detail-div" >
+     <div>{this.state.paymentDate}</div>
+     </div>
+
+    </div>
+
+       {/*ข้อมูลจัดส่ง*/}     
+ <div className="form-group row" style={{marginLeft: '30px',paddingTop: '30px'}}>
+        <div className="imageTopic col-3" />
+        <div className="black-Bold-Topic-Text col-9" >ข้อมูลจัดส่ง</div>       
+        </div >
+
+        <div className="form-group row" style={{margin:'10px',marginRight: '50px'}}>
+       {/*ชื่อผู้รับ : */}
+      <div className="col-2 topic-add-detail-div" style={{fontWeight:'bold'}}>
+        <div>ชื่อผู้รับ :</div>
+     </div>
+
+      {/*Customer Name*/}
+     <div className="col-4 value-add-detail-div" >
+     <div>{this.state.customerName}</div>
+     </div>
+
+     {/*เบอร์โทร : */}
+     <div className="col-2 topic-add-detail-div" style={{fontWeight:'bold'}}>
+        <div>เบอร์โทร :</div>
+     </div>
+
+      {/*Customer Tel*/}
+     <div className="col-4 value-add-detail-div" >
+     <div>{this.state.customerTel}</div>
+     </div>
+
+    </div>
+
+    <div className="form-group row" style={{margin:'10px',marginRight: '50px'}}>
+       {/*ที่อยู่ : */}
+      <div className="col-2 topic-add-detail-div" style={{fontWeight:'bold'}}>
+        <div>ที่อยู่ :</div>
+     </div>
+
+      {/*Cust Address*/}
+     <div className="col-4 value-add-detail-div">
+     <div>{this.state.customerAddress}</div>
+     </div>
+
+    </div>
+
+ {/*รายละเอียดสินค้า*/}     
+ <div className="form-group row" style={{marginLeft: '30px',paddingTop: '30px'}}>
+        <div className="imageTopic col-3" />
+        <div className="black-Bold-Topic-Text col-9" >รายละเอียดสินค้า</div>       
+        </div >
+
+       
+      <table style={{width:'100%',margin: '20px 40px'}}>
+        <tr>
+          <th style={{width:'40%'}}>สินค้า</th>
+          <th style={{width:'10%',textAlign: 'center'}}>จำนวน</th>
+          <th style={{width:'20%', textAlign: 'center'}} >ราคาต่อชิ้น</th>
+          <th style={{width:'20%', textAlign: 'center'}}>ราคารวม</th>
+        </tr>
+        {this.state.transactionDetail.map((val, key) => {
+          return (
+            <tr key={key}>
+              <td> <div className="row mr-0 ml-0">
+                    <div style={{width: 'fit-content',padding: '20px 0px'}}>
+                          {/*Image*/}  
+                        <img style={{width: '100px',height: '100px',marginRight: '20px',display:'unset'}}  src={val.productImg?val.productImg: require('../assets/images/noimage.png').default}/> </div>
+                        <div className="col-9" style={{padding: '20px 10px'}}>
+                            {/*Product Name*/}  
+                            <div style={{fontSize: '16px'}}>{val.productName}</div>
+                              {/*Price*/}  
+                            <div style={{fontWeight:'normal',color:'red',fontSize: '16px'}}>{val.option}</div>
+                                                
+                    </div>
+                </div></td>
+              <td style={{textAlign: 'center'}} >{val.qty}</td>
+              <td style={{textAlign: 'center'}}>{val.productPrice}</td>
+              <td style={{textAlign: 'center'}}>{val.qty * val.productPrice}</td>
+            </tr>
+          )
+        })}
+      </table>
+    
+      <div className="form-group row" style={{margin:'10px',marginRight: '50px'}}>
+       {/*ราคาสินค้า*/}
+      <div className="col-9 topic-add-detail-div" style={{fontWeight:'bold'}}>
+        <div>ราคาสินค้า</div>
+     </div>
+
+      {/*ToTal Product Price*/}
+     <div className="col-3" style={{alignItems: 'center',display: 'flex',justifyContent: 'center'}}>
+     <div>{this.state.totalProductPrice}</div>
+     </div>
+
+    </div>
+
+    <div className="form-group row" style={{margin:'10px',marginRight: '50px'}}>
+       {/*ค่าส่ง*/}
+      <div className="col-9 topic-add-detail-div" style={{fontWeight:'bold'}}>
+        <div>ค่าส่ง</div>
+     </div>
+
+      {/*Shipping Price*/}
+     <div className="col-3" style={{alignItems: 'center',display: 'flex',justifyContent: 'center'}}>
+     <div>{this.state.shippingPrice}</div>
+     </div>
+
+    </div>
+
+    <div className="form-group row" style={{margin:'10px',marginRight: '50px'}}>
+       {/*ราคารวมทั้งหมด*/}
+      <div className="col-9 topic-add-detail-div" style={{fontWeight:'bold'}}>
+        <div>ราคารวมทั้งหมด</div>
+     </div>
+
+      {/*Total Price*/}
+     <div className="col-3" style={{alignItems: 'center',display: 'flex',justifyContent: 'center'}}>
+     <div>{this.state.totalPrice}</div>
+     </div>
+
+    </div>
+
+      {/*หลักฐานการโอน*/}     
+ <div className="form-group row" style={{marginLeft: '30px',paddingTop: '30px'}}>
+        <div className="imageTopic col-3" />
+        <div className="black-Bold-Topic-Text col-9" >หลักฐานการโอน</div>       
+        </div >
+
+        {/*รูปสลิปโอนเงิน*/} 
+<div  className="form-group row" style={{justifyContent: 'center',margin: '10px'}}>
+<img style={{border: '1px solid lightgray',width: '450px',height: 'auto',maxHeight: '450px'}}  src={this.state.paymentImage?this.state.paymentImage: require('../assets/images/noimage.png').default}/>
+  </div>
+
+  {this.state.tranType == 3 ?
+  <React.Fragment>
+  {/*Radio Button*/} 
+  <div  className="form-group row" style={{justifyContent: 'center',margin: '10px',alignItems: 'center'}}>
+
+     {/*Approve Radio Button*/} 
+  <input
+                type="radio"
+                name="approve"
+                value={1}
+                checked={this.state.isAprrove}
+                style={{width: 'fit-content'}}
+                onChange={this.onApproveRadioChange.bind(this)}
+              />
+              <div style={{width: 'fit-content',paddingRight: '400px'}}>{"Approve"}</div>
+
+  {/*Reject Radio Button*/} 
+              <input
+                type="radio"
+                name="reject"
+                value={2}
+                checked={!this.state.isAprrove}
+                style={{width: 'fit-content'}}
+                onChange={this.onApproveRadioChange.bind(this)}
+              />
+              <div style={{width: 'fit-content'}}>{"Reject"}</div>
+  </div>
+
+  {/*เหตุผล :*/} 
+  <div  className="form-group row" style={{justifyContent: 'center',margin: '10px 150px',alignItems: 'center'}}>
+  <div className="col-2" style={{ textAlign: 'end'}}>เหตุผล :</div>
+
+  {/*เหตุผล Input*/} 
+  <div className="col-10">
+  <textarea  type="text" class="form-control"  id="RejectReason" maxLength={500} value={this.state.reason} onChange={this.onReasonChange.bind(this)} disabled={this.state.isAprrove} />
+  </div>
+    </div>
+    </React.Fragment> : null}
+  
+    {this.state.tranType == 4 ?
+  <React.Fragment>
+  {/*Radio Button*/} 
+  <div  className="form-group row" style={{justifyContent: 'center',margin: '10px',alignItems: 'center'}}>
+
+     {/*Approve Radio Button*/} 
+  <input
+                type="radio"
+                name="approve"
+                checked={false}
+                style={{width: 'fit-content'}}
+                disabled={true}
+                
+              />
+              <div style={{width: 'fit-content',paddingRight: '400px'}}>{"Approve"}</div>
+
+  {/*Reject Radio Button*/} 
+              <input
+                type="radio"
+                name="reject"
+                checked={true}
+                disabled={true}
+              />
+              <div style={{width: 'fit-content'}}>{"Reject"}</div>
+  </div>
+
+  {/*เหตุผล :*/} 
+  <div  className="form-group row" style={{justifyContent: 'center',margin: '10px 150px',alignItems: 'center'}}>
+  <div className="col-2" style={{ textAlign: 'end'}}>เหตุผล :</div>
+
+  {/*เหตุผล Input*/} 
+  <div className="col-10">
+  <textarea  type="text" class="form-control"  id="RejectReason" maxLength={500} value={this.state.reason} disabled={true} />
+  </div>
+  
+    </div>
+    </React.Fragment> : null}
+
+{/*ข้อมูลขนส่ง*/}     
+<div className="form-group row" style={{marginLeft: '30px',paddingTop: '30px'}}>
+        <div className="imageTopic col-3" />
+        <div className="black-Bold-Topic-Text col-9" >ข้อมูลขนส่ง</div>       
+        </div >
+
+        <div className="form-group row" style={{margin:'10px',marginRight: '50px'}}>
+       {/*ข้อมูลการขนส่ง : */}
+      <div className="col-2 topic-add-detail-div" style={{fontWeight:'bold'}}>
+        <div>ข้อมูลการขนส่ง : </div>
+     </div>
+
+      {/*Shipping Image*/}
+     <div className="col-4 value-add-detail-div" >
+     <img style={{width: '75px',height: 'auto',display:'unset'}} src={this.state.shippingImage} />  
+     </div>
+
+    </div>
+
+{this.state.tranType >= 5?
+        <div className="form-group row" style={{margin:'10px',marginRight: '50px'}}>
+       {/*หมายเลขพัสดุ : */}
+      <div className="col-2 topic-add-detail-div" style={{fontWeight:'bold'}}>
+        <div>หมายเลขพัสดุ : </div>
+     </div>
+
+      {/*Tracking Number*/}
+     <div className="col-4 value-add-detail-div" >
+     {this.state.trackingNumber ? <div>this.state.trackingNumber}</div> :
+     <input type="text" class="form-control" id="trackingNumber" maxLength={15} value={this.state.trackingNumber} onChange={this.onTrackingChange.bind(this)}/>
+}
+     </div>
+
+    </div> 
+    : null
+    }
+  
+  {this.state.tranType == 5 || this.state.tranType == 3 ?
+  <React.Fragment>
+    {/*Button*/}
+    <div className="form-group" style={{padding:'40px 0px',display:'flex',justifyContent:'center',margin:'0px 15px'}}>
+     
+      <button  className={"primary-button"} style={{width:'250px',marginRight:'10px'}} onClick={this.onsubmit} >Update</button>
+      <button  className="secondary-button" style={{width:'250px'}} onClick={this.cancelOnClick}>Cancel</button>
+     
+    </div>
+    </React.Fragment>
+    : null
+    }
        
 </div>
 </div>

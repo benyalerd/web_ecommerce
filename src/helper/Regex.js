@@ -13,3 +13,7 @@ export const validEmail = new RegExp(
  export const onlyNumber = new RegExp(
    '^[0-9]+$'
 );
+
+export const onlyNumberAndEngText = new RegExp(
+   '^[a-zA-Z0-9]+$'
+);

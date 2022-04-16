@@ -215,7 +215,7 @@ class ProductMainPageTabLayout extends React.Component{
                             </div>                       
                     </div>
                 </div>
-                <div className="col-2" style={isActive?{display:'flex',justifyContent: 'center',alignItems: 'center',background: 'white', height: '120px', padding: '10px 30px', fontWeight: 'bold', borderTop: '1px solid lightgray', borderBottom: '1px solid lightgray', borderLeft: '1px solid lightgray', color: 'green', borderRadius: '0px'}:{display:'flex',justifyContent: 'center',alignItems: 'center',background: 'white', height: '120px', padding: '10px 30px', fontWeight: 'bold', borderTop: '1px solid lightgray', borderBottom: '1px solid lightgray', borderLeft: '1px solid lightgray', color: 'red', borderRadius: '0px'}}>
+                <div className="col-2 product-status-div-mainpage" style={isActive?{color: 'green'}:{color: 'red'}}>
                   {!isActive?"ไม่พร้อมขาย":stock > 0 ?"ขายอยู่":"สินค้าหมด"}
                   </div>
  

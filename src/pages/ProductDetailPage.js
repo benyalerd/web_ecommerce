@@ -783,7 +783,7 @@ async submitValidation (){
             <button style={{ display: 'inline', zIndex: '1'}}><img  style={{position: 'absolute',width: '25px',height: '25px',right: '0px',top: '3px'}} onClick={this.DeleteOptionOnclick.bind(this)} src={require('../assets/images/crossIcon.png').default} /></button>
             
             {/*ชื่อตัวเลือก*/}
-  <div className="col-2" style={{alignItems: 'center',display: 'flex',justifyContent: 'start'}}>
+  <div className="col-2 value-add-detail-div" >
 
     <div style={{fontSize:'14px',}}>ชื่อ :</div>
  </div>
@@ -811,7 +811,7 @@ async submitValidation (){
      
 <div className="form-group row" style={{margin:'10px',marginRight: '50px'}}>
                 {/*ตัวเลือก*/}
-      <div className="col-2" style={{fontSize:'14px',alignItems: 'center',display: 'flex',justifyContent: 'start'}}>
+      <div className="col-2 value-add-detail-div" style={{fontSize:'14px'}}>
         <div>ตัวเลือก :</div>
      </div>
 
