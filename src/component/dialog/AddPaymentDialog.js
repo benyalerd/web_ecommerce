@@ -17,6 +17,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import * as paymentSetupApiAction from '../../actions/api/PaymentSetupApiAction';
 import {IsNullOrEmpty} from '../../helper/Common';
 import ConfirmAlertDialog from '../../component/dialog/ConfirmAlertDialog';
+import * as alertAction from '../../actions/Alert/AlertAction';
 
 class AddPaymentDialog extends React.Component {
 
@@ -92,6 +93,7 @@ class AddPaymentDialog extends React.Component {
     }
 
     addPaymentApi = async () =>{
+        alert("Yes");
         var res = await this.props.PaymentSetupApiAction.InsertPayment(this.state.selectBankDetail);
         if(res?.data?.isError == true){
             this.props.AlertAction.setAlert(2,res?.data?.errorMsg,true);
@@ -208,8 +210,8 @@ class AddPaymentDialog extends React.Component {
                                                 <div style={{ display: 'inline-flex' }}>
                                                     <div className="select-book-bank-logobox" style={{ display: screenWidth <= 767 ? 'contents' : 'flex' }} >           
                                                             <React.Fragment>
-                                                                <img className="select-book-bank-logo " src={selectBankDetail.masterImg ? selectBankDetail.masterImg :require('../../assets/images/noimage.png').default}  />
-                                                                <div style={{ fontSize: screenWidth <= 767 ? '20px' : '20px', fontWeight: 'bold', marginTop: '10px' }}>{selectBankDetail.masterName ? selectBankDetail.masterName:""}</div>
+                                                                <img className="select-book-bank-logo " src={selectBankDetail?.master?.masterImg ? selectBankDetail?.master?.masterImg :require('../../assets/images/noimage.png').default}  />
+                                                                <div style={{ fontSize: screenWidth <= 767 ? '20px' : '20px', fontWeight: 'bold', marginTop: '10px' }}>{selectBankDetail?.master?.masterName ? selectBankDetail.masterName:""}</div>
                                                           </React.Fragment>                                                       
                                                     </div>
                                                 </div>
@@ -277,11 +279,13 @@ class AddPaymentDialog extends React.Component {
 const mapStateToProps = state => ({
     PaymentSetup:state.PaymentSetup,
     SessionAlert:state.SessionAlert,
+    
 });
 
 const mapDispatchToProps = dispatch => ({
     PaymentSetupAction : bindActionCreators(paymentSetupAction,dispatch),
     PaymentSetupApiAction : bindActionCreators(paymentSetupApiAction,dispatch),
+    AlertAction : bindActionCreators(alertAction,dispatch),
 });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(AddPaymentDialog));

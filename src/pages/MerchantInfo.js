@@ -62,7 +62,7 @@ class MerchantInfo extends React.Component{
       } 
       var merchant = merchantRes?.data 
     await this.props.MerchantAction.setMerchantInfo(merchant);
-    await this.setState({firstname:merchant.name.split(" ")[0],lastname:merchant.name.split(" ")[1],email:merchant.email,tel:merchant.tel,role:merchant.role})
+    await this.setState({firstname:merchant.name,lastname:merchant.lastname,email:merchant.email,tel:merchant.tel,role:merchant.role})
     var res = await this.props.ShopApiAction.GetShopInfo(this.props.Merchant.Merchant.id);
     if(res?.data?.isError == true){
       this.props.AlertAction.setAlert(2,res?.data?.errorMsg,true);
@@ -173,7 +173,7 @@ updateMerchantApi = async() =>{
   } 
   var merchant = merchantRes?.data 
   await this.props.MerchantAction.setMerchantInfo(merchant);     
-  await this.setState({firstname:merchant.name.split(" ")[0],lastname:merchant.name.split(" ")[1],email:merchant.email,tel:merchant.tel,role:merchant.role})
+  await this.setState({firstname:merchant.name,lastname:merchant.lastname,email:merchant.email,tel:merchant.tel,role:merchant.role})
   await this.setState({isloading:false,isEdit:false});
   this.props.AlertAction.setAlert(1,"ทำรายการสำเร็จ",true);
    
@@ -230,7 +230,7 @@ CheckDisableRegisterButton = () =>{
         <button  className={"primary-button"} style={{width:'150px',marginRight:'10px',right:'90px',position:'absolute',top:'-60px'}} onClick={this.editOnClick} >Edit</button>:null}
       
        {/*Register*/} 
-      <div className="brown-Bold-Topic-Text" style={{textAlign:'center'}}>Register</div>
+      <div className="brown-Bold-Topic-Text" style={{textAlign:'center'}}>Merchant Information</div>
 
       <div className="form-group row">
 
@@ -315,7 +315,7 @@ CheckDisableRegisterButton = () =>{
     {this.state.isEdit?
     <div className="form-group" style={{padding:'40px 0px',display:'flex',justifyContent:'center',margin:'0px 15px'}}>
      
-      <button  className={!this.state.IsRegisterDisable?"primary-button":"primary-button disabled"} style={{width:'250px',marginRight:'10px'}} onClick={this.updateMerchantOnClick}>Register</button>
+      <button  className={!this.state.IsRegisterDisable?"primary-button":"primary-button disabled"} style={{width:'250px',marginRight:'10px'}} onClick={this.updateMerchantOnClick}>Update</button>
       <button  className="secondary-button" style={{width:'250px'}} onClick={this.cancelOnClick}>Cancel</button>
      
     </div>:null

@@ -65,13 +65,41 @@ class TransactionDetailPage extends React.Component{
       this.setState({ width: window.innerWidth, height: window.innerHeight });
     }
 
+    checkLoginAndAddShop = async() => {
+      await this.setState({isloading:true});
+      var merchantId = localStorage.getItem('merchantId');
+      if(!merchantId){
+        this.props.history.push('/Login');
+      }
+      var merchantRes = await this.props.RegisterApiAction.getMerchant();  
+      if(merchantRes?.data?.isError == true){
+        this.props.AlertAction.setAlert(2,merchantRes?.data?.errorMsg,true);
+        await this.setState({isloading:false});
+        return;
+      } 
+      var merchant = merchantRes?.data 
+      await this.props.MerchantAction.setMerchantInfo(merchant);
+      var res = await this.props.ShopApiAction.GetShopInfo(this.props.Merchant.Merchant.id);
+      if(res?.data?.isError == true){
+        this.props.AlertAction.setAlert(2,res?.data?.errorMsg,true);
+      await this.setState({isloading:false});
+      return;
+      }
+   
+     if(!res?.data?.shops){
+      this.props.history.push('/Register-Shop');
+      }
+      await this.props.ShopAction.setShopInfo(res.data?.shops);
+      await this.setState({isloading:false});
+    }
+
     cancelOnClick = () =>{
     this.props.history.push('/MainPage');
     }
 
     onsubmit = async() =>{
     try{
-        await this.props.AlertAction.setConfirmAlert('อัพเดทข้อมูลรายการสั่งซื้อ',this.addProductApi.bind(this),true);
+        await this.props.AlertAction.setConfirmAlert('อัพเดทข้อมูลรายการสั่งซื้อ',this.updateTransactionApi.bind(this),true);
     }
     catch(ex){
         toast.error("เกิดข้อผิดพลาด กรุณาติดต่อเจ้าหน้าที่");
@@ -83,15 +111,17 @@ var isValid = await this.submitValidation();
 if(isValid){
     let tranType = this.state.tranType;
     const query = queryString.parse(this.props.location.search);
-    if(this.state.isAprrove){
+    if(!IsNullOrEmpty(this.state.trackingNumber)){
+      
+      tranType = 6;
+  }
+  else if(!IsNullOrEmpty(this.state.reason)){
+    tranType = 4;
+}
+  else if(this.state.isAprrove){
         tranType = 5;
     }
-    else if(!IsNullOrEmpty(this.state.reason)){
-        tranType = 4;
-    }
-    else if(!IsNullOrEmpty(this.state.trackingNumber)){
-        tranType = 6;
-    }
+   
     var request = {
         transactionId : query.transactionId,
         reason:this.state.reason,
@@ -108,7 +138,11 @@ if(isValid){
    }
    await this.setState({isloading:false});
    this.props.AlertAction.setAlert(1,"ทำรายการสำเร็จ",true);
-   this.props.history.push('/Transaction-MainPage');   
+   await this.props.TransactionManagementAction.setTransactionTabId(tranType);
+   await this.props.history.push({
+    pathname: '/Transaction-MainPage',
+    search: `?shopId=${this.props?.Shop?.Shop?._id}`,
+  });  
 }
 }
 
@@ -139,10 +173,12 @@ onApproveRadioChange = async(e) =>{
   }   
 }
 
-onTrackingChange = async(value) =>{
+onTrackingChange = async(e) =>{
+  var value = e.target.value;
   if(value)
   {      
-    if(!onlyNumberAndEngText.test(value)){         
+    if(!onlyNumberAndEngText.test(value)){  
+      alert(value);       
       value = value.substring(0,value.length-1);          
       }      
   } 
@@ -165,9 +201,10 @@ async getTransactionDetail (){
     await this.setState({isloading:false});
     return;
   }
-  var transaction = res?.data;
-  
-  await this.setState({transactionDetail:transaction.transactionDetail,orderCode:transaction.orderCode,tranType:transaction.tranType,tranDate:transaction.tranDate,paymentDate:transaction.paymentDate,customerName:transaction.customerName,customerTel:transaction.customerTel,customerAddress:transaction.customerAddress,paymentImage:transaction.paymentImg,trackingNumber:transaction.trackingNumber,reason:transaction.reason,totalProductPrice:transaction.totalProductPrice,shippingPrice:transaction.shippingPrice,totalPrice:transaction.totalPrice});
+  var transaction = res?.data?.transaction;
+  var transactionDetail = res?.data?.transactionDetail;
+  console.log("transaction : " +JSON.stringify(transactionDetail));
+  await this.setState({transactionDetail:transactionDetail,orderCode:transaction.orderCode,tranType:transaction.tranType,tranDate:transaction.tranDate,paymentDate:transaction.paymentDate,customerName:transaction.customerName,customerTel:transaction.customerTel,customerAddress:transaction.customerAddress,paymentImage:transaction.paymentImg,trackingNumber:transaction.trackingNumber,reason:transaction.reason,totalProductPrice:transaction.totalProductPrice,shippingPrice:transaction.shippingPrice,totalPrice:transaction.totalPrice,shippingImage:transaction.shippingImg});
   
   }
     
@@ -300,7 +337,7 @@ async getTransactionDetail (){
           <th style={{width:'20%', textAlign: 'center'}} >ราคาต่อชิ้น</th>
           <th style={{width:'20%', textAlign: 'center'}}>ราคารวม</th>
         </tr>
-        {this.state.transactionDetail.map((val, key) => {
+        {this.state.transactionDetail?.map((val, key) => {
           return (
             <tr key={key}>
               <td> <div className="row mr-0 ml-0">
@@ -478,7 +515,7 @@ async getTransactionDetail (){
 
       {/*Tracking Number*/}
      <div className="col-4 value-add-detail-div" >
-     {this.state.trackingNumber ? <div>this.state.trackingNumber}</div> :
+     {this.state.tranType !=5 ? <div>{this.state.trackingNumber}</div> :
      <input type="text" class="form-control" id="trackingNumber" maxLength={15} value={this.state.trackingNumber} onChange={this.onTrackingChange.bind(this)}/>
 }
      </div>

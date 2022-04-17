@@ -15,6 +15,8 @@ import {IsNullOrEmpty} from '../helper/Common';
 import AlertDialog from '../component/dialog/AlertDialog';
 import * as alertAction from '../actions/Alert/AlertAction';
 import ConfirmAlertDialog from '../component/dialog/ConfirmAlertDialog';
+import * as registerApiAction from '../actions/api/RegisterApiAction'
+import $ from 'jquery';
 
 class AddShop extends React.Component{
   constructor(props) {
@@ -28,7 +30,6 @@ class AddShop extends React.Component{
       shopTel:"",
       shopAddress:"",
       shopNameErrorText:"",
-      shopImageErrorText:"",
       IsRegisterDisable:true,
      isEdit:false,
         isloading:false
@@ -68,7 +69,7 @@ class AddShop extends React.Component{
         this.props.history.push('/Register-Shop');
       }
          await this.props.ShopAction.setShopInfo(shop);
-         await this.setState({shopImage:shop?.coverImage,shopName:shop?.shopName,shopEmail:shop?.email,shopTel:shop?.tel,shopAddress:shop?.address})
+         await this.setState({shopImage:shop?.coverImg,shopName:shop?.shopName,shopEmail:shop?.email,shopTel:shop?.tel,shopAddress:shop?.address})
          await this.setState({isloading:false});
   }
 
@@ -87,6 +88,82 @@ class AddShop extends React.Component{
   }
   return false
   }
+
+  selectShopImage = async(e) =>{
+    var value = e.target.files
+    if (value.length != 0){
+     e.preventDefault();
+     let currentfile = e.target.files[0];
+     let currentfileType = currentfile.type;
+     let currentfileSize = currentfile.size;
+     let resultSize = this.validateSize(currentfileSize);
+     let resultType = this.validateType(currentfileType);
+     if (!resultSize || !resultType) {
+         return;
+     }
+      
+     var base64 = await this.getBase64(currentfile);
+     await this.setState({shopImage:base64});
+     
+    }
+  }
+ 
+  validateSize(e) {
+   let result = false;
+   const limitSize = 2097152; 
+   const size = e;
+   if (size < limitSize) {
+       result = true;
+   } else {
+       result = false;
+       this.props.AlertAction.setAlert(2,"ขนาดรูปภาพไม่ถูกต้อง",true);
+   }
+   return result;
+ }
+ 
+ validateType(e) {
+   let result = false;
+   const typejpeg = "image/jpeg";
+   const typepng = "image/png";
+   const currentType = e;
+   if (currentType === typejpeg || currentType === typepng) {
+       result = true;
+   } else {
+       result = false;
+       this.props.AlertAction.setAlert(2,"ประเภทรูปภาพไม่ถูกต้อง",true);
+   }
+   return result;
+ }
+ 
+ 
+  getBase64(file) {
+   return new Promise((resolve, reject) => {
+       const reader = new FileReader();
+       reader.onload = (event) => {
+           resolve(event.target.result);
+       };
+       reader.onerror = (err) => {
+           reject(err);
+       };
+       reader.readAsDataURL(file);
+   });
+ }
+ 
+ deleteImage = async(e) =>{ 
+   e.preventDefault();
+   await this.setState({shopImage:""});
+ }
+ 
+  addImage = async() => {
+   
+   $(document).ready(async function () {
+       try {
+           $('#images').trigger('click')
+       } catch (error) {
+         toast.error("เกิดข้อผิดพลาด กรุณาติดต่อเจ้าหน้าที่");
+       }
+   });
+ }
 
   updateShopOnClick = async() =>{
     try
@@ -110,9 +187,9 @@ updateShopApi = async() =>{
       await this.setState({isloading:false});
       return;
   }
-  var shop = res?.data?.shops;
+  var shop = res?.data;
   await this.props.ShopAction.setShopInfo(shop);
-  await this.setState({shopImage:shop?.coverImage,shopName:shop?.shopName,shopEmail:shop?.email,shopTel:shop?.tel,shopAddress:shop?.address})
+  await this.setState({shopImage:shop?.coverImg,shopName:shop?.shopName,shopEmail:shop?.email,shopTel:shop?.tel,shopAddress:shop?.address})
   await this.setState({isloading:false,isEdit:false});
   this.props.AlertAction.setAlert(1,"ทำรายการสำเร็จ",true);
 }
@@ -140,17 +217,7 @@ cancelOnClick = async() =>{
     this.setState({IsRegisterDisable:isDisable});
  }
 
- validateshopImage = async(e) =>{
-   var value = e.target.value
-    if(IsNullOrEmpty(value)){
-      await this.setState({shopImage:value,shopImageErrorText:'กรุณากรอกเลือกรูป'});
-    }
-    else{
-      await this.setState({shopImage:value,shopImageErrorText:''});
 
-    }
-    
- }
 
  emailOnchange = async(e) =>{
    var value = e.target.value
@@ -192,13 +259,18 @@ cancelOnClick = async() =>{
         <button  className={"primary-button"} style={{width:'150px',marginRight:'10px',right:'90px',position:'absolute',top:'-60px'}} onClick={this.editOnClick} >Edit</button>:null}
      
      {/*Register Shop*/} 
-   <div className="brown-Bold-Topic-Text" style={{textAlign:'center'}}>Register Shop</div>
+   <div className="brown-Bold-Topic-Text" style={{textAlign:'center'}}>Shop Information</div>
 
  {/*Shop Image*/} 
-      <div className="form-group input">
-       <div className="input" style={{padding:'0px',width:'150px',height:'150px',border:'1px solid lightgray',borderRadius:'5px'}}>
-            <img className="imageCenter" src={this.state.shopImage!= null && this.state.shopImage != ""?this.state.shopImage: require('../assets/images/add_image.png').default} style={{margin:'37px'}}/>
+
+       {/*Image Shop*/}
+       <div className="form-group input">
+      <input type="file" id="images" name="images" style={{ display: 'none' }} accept="image/*" onChange={this.selectShopImage.bind(this)} onClick={(event) => { event.target.value = null }}/>
+       <div className="input" style={this.state.shopImage?{position:'relative',padding:'0px',width:'150px',height:'150px',border:'1px solid lightgray',borderRadius:'5px',cursor:'pointer'}:{padding:'0px',width:'150px',height:'150px',border:'1px solid lightgray',borderRadius:'5px',cursor:'pointer'}} onClick={()=> this.state.isEdit? this.addImage() : null} >
+            <img className={this.state.shopImage?"vertical-center":"imageCenter"} src={this.state.shopImage?this.state.shopImage : require('../assets/images/add_image.png').default} style={this.state.shopImage?{}:{margin:'37px'}}/>
+            {this.state.isEdit? this.state.shopImage ?  <button style={{ display: 'inline', zIndex: '1'}}><img onClick={this.deleteImage.bind(this)} style={{position: 'absolute',width: '25px',height: '25px',right: '0px',top: '3px'}} src={require('../assets/images/crossIcon.png').default} /></button> : null : null}
        </div>
+       
       </div>
 
  {/*Shop Name*/} 
@@ -235,7 +307,7 @@ cancelOnClick = async() =>{
      {/*Button*/}    
       {this.state.isEdit?
     <div className="form-group" style={{padding:'40px 0px',display:'flex',justifyContent:'center',margin:'0px 15px'}}>    
-      <button  className={!this.state.IsRegisterDisable?"primary-button":"primary-button disabled"} style={{width:'250px',marginRight:'10px'}} onClick={this.updateShopOnClick}>OK</button>
+      <button  className={!this.state.IsRegisterDisable?"primary-button":"primary-button disabled"} style={{width:'250px',marginRight:'10px'}} onClick={this.updateShopOnClick}>Update</button>
       <button  className="secondary-button" style={{width:'250px'}} onClick={this.cancelOnClick}>Cancel</button>
      
     </div>
@@ -260,6 +332,7 @@ cancelOnClick = async() =>{
     ShopApiAction : bindActionCreators(shopApiAction,dispatch),
      MerchantAction : bindActionCreators(merchantAction,dispatch),
      AlertAction : bindActionCreators(alertAction,dispatch),
+     RegisterApiAction : bindActionCreators(registerApiAction,dispatch),
   });
   
   

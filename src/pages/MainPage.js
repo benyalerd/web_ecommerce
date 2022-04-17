@@ -96,7 +96,7 @@ render(){
           {/*Shop Image*/}  
           <div className="col-3" style={{position:'relative'}} >
           <div className="input vertical-center horizonCenter" style={{backgroundColor:'white', padding:'0px',margin:'0px',width:'100px',height:'100px',border:'1px solid lightgray',borderRadius:'5px'}}>
-            <img  src={this.props.Shop?.Shop?.shopImage != null && this.props.Shop?.Shop?.shopImage != ""?this.state.shopImage: require('../assets/images/add_image.png').default} />
+            <img  src={this.props.Shop?.Shop?.coverImg != null && this.props.Shop?.Shop?.coverImg != ""? this.props.Shop?.Shop?.coverImg: require('../assets/images/add_image.png').default} />
        </div>
 
     </div>
@@ -113,7 +113,7 @@ render(){
          {/*Shop Email*/}  
         <div className="form-group row">
          <div className="col-2 black-Bold-18-Text" style={{textAlign:'end'}}>Email : </div>
-        <div className="col-10 black-Bold-18-Text">{this.props.Shop?.Shop?.shopEmail != null && this.props.Shop?.Shop?.shopEmail != ""?this.props.Shop?.Shop?.shopEmail:"-"}</div>
+        <div className="col-10 black-Bold-18-Text">{this.props.Shop?.Shop?.email != null && this.props.Shop?.Shop?.email != ""?this.props.Shop?.Shop?.email:"-"}</div>
         </div>
         </div> 
 

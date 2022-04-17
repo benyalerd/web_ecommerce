@@ -29,7 +29,6 @@ class AddShop extends React.Component{
       shopTel:"",
       shopAddress:"",
       shopNameErrorText:"",
-      shopImageErrorText:"",
       IsRegisterDisable:true,
       merchantId:"",
       isloading:false,
@@ -221,17 +220,12 @@ deleteImage = async(e) =>{
         {/*Image Shop*/}
       <div className="form-group input">
       <input type="file" id="images" name="images" style={{ display: 'none' }} accept="image/*" onChange={this.selectShopImage.bind(this)} onClick={(event) => { event.target.value = null }}/>
-       <div className="input" style={this.state.shopImage?{position:'relative',padding:'0px',width:'150px',height:'150px',border:'1px solid lightgray',borderRadius:'5px',cursor:'pointer'}:{padding:'0px',width:'150px',height:'150px',border:'1px solid lightgray',borderRadius:'5px',cursor:'pointer'}} onClick={this.addImage} >
+       <div className="input" style={this.state.shopImage?{position:'relative',padding:'0px',width:'150px',height:'150px',border:'1px solid lightgray',borderRadius:'5px',cursor:'pointer'}:{padding:'0px',width:'150px',height:'150px',border:'1px solid lightgray',borderRadius:'5px',cursor:'pointer'}} onClick={() => this.addImage()} >
             <img className={this.state.shopImage?"vertical-center":"imageCenter"} src={this.state.shopImage?this.state.shopImage : require('../assets/images/add_image.png').default} style={this.state.shopImage?{}:{margin:'37px'}}/>
             {this.state.shopImage?  <button style={{ display: 'inline', zIndex: '1'}}><img onClick={this.deleteImage.bind(this)} style={{position: 'absolute',width: '25px',height: '25px',right: '0px',top: '3px'}} src={require('../assets/images/crossIcon.png').default} /></button> : null}
        </div>
        
       </div>
-
-        {/*Shop Image Error Text*/}
-     <div className="form-group input"  style={{padding:'10px 0px',textAlign:'center'}}>
-       <div className="text-error">{this.state.shopImageErrorText}</div>
-     </div>
 
         {/*Shop Name*/}
       <div className="form-group input">

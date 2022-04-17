@@ -76,11 +76,11 @@ class AddProductPage extends React.Component{
       this.setState({ width: window.innerWidth, height: window.innerHeight });
     }
 
-    AddOptionOnclick() {
-      this.setState({ isAddOption: true});
-    }
+    async AddOptionOnclick() {
+    await this.setState({isAddOption: true})
+}
 
-    DeleteOptionOnclick() {
+    async DeleteOptionOnclick() {
       var result = [
         {
           skuName: "",
@@ -96,12 +96,12 @@ class AddProductPage extends React.Component{
           stock:0
       }
       ]
-      this.setState({ isAddOption: false,productSkuList:result});
+      await this.setState({ isAddOption: false,productSkuList:result});
     }
 
     deleteEachOption = async(index)=> {
-    var optionList =  this.state.productSkuList.splice(index, 1);
-    await this.setState({productSkuList:optionList});
+      await this.state.productSkuList.splice(index, 1);
+     await this.setState({productSkuList:this.state.productSkuList});
     }
 
     validateProductName = async(e) =>{
@@ -113,7 +113,7 @@ class AddProductPage extends React.Component{
          await this.setState({productName:value,productNameErrorText:''});
        }   
        var isDisable = this.CheckDisableSaveButton();
-       this.setState({IsRegisterDisable:isDisable});
+       this.setState({IsSaveDisable:isDisable});
     }
 
     validateProductDesc = async(e) =>{
@@ -125,7 +125,7 @@ class AddProductPage extends React.Component{
         await this.setState({productDesc:value,productDescErrorText:''});
       }   
       var isDisable = this.CheckDisableSaveButton();
-      this.setState({IsRegisterDisable:isDisable});
+      this.setState({IsSaveDisable:isDisable});
     }
 
     skuNameOnChange = async(e) =>{
@@ -147,20 +147,20 @@ class AddProductPage extends React.Component{
           value = value.substring(0,value.length-1);          
           }  
       }      
-      await this.setState({fullPrice: value})
+      await this.setState({fullprice: value})
     }
 
     onFullPriceFocus = async(value) =>{
       if(value == 0)
       {
-       await this.setState({fullPrice: ""})
+       await this.setState({fullprice: ""})
       }
     }
 
     onFullPriceBlur = async (value) =>{
      if(!value)
      {
-      await this.setState({fullPrice: 0})
+      await this.setState({fullprice: 0})
      }
   }
 
@@ -219,7 +219,7 @@ class AddProductPage extends React.Component{
      }
   }
 
-  onStockFocus = async(index,value) =>{
+  onSkuStockFocus = async(index,value) =>{
     if(value == 0)
     {
      var sku = this.state.productSkuList;
@@ -228,7 +228,7 @@ class AddProductPage extends React.Component{
     }
   }
 
-  onStockBlur = async (index,value) =>{
+  onSkuStockBlur = async (index,value) =>{
     if(!value)
     {
      var sku = this.state.productSkuList;
@@ -237,7 +237,7 @@ class AddProductPage extends React.Component{
     }
  }
 
-    onStockChange = async(index,value) =>{
+    onSkuStockChange = async(index,value) =>{
       if(value)
       {          
           if(!onlyNumber.test(value)){         
@@ -328,10 +328,9 @@ class AddProductPage extends React.Component{
        
         if(this.state.IsAddImageSku)
         {
-          
           var sku = this.state.productSkuList;
           sku[i].ProductSkuContent.imagePath = base64;
-           await this.setState({IsAddImageSku:false,productSkuList: sku})
+           await this.setState({productSkuList: sku})
         }
         else
         {
@@ -340,7 +339,7 @@ class AddProductPage extends React.Component{
             sku: "",
             mediaType: 1,
             imagePath: base64,
-            contentType: this.state.productMainContent?.length > 1 ? 2 : 1
+            contentType: this.state.productMainContent?.length == 1 ? 2 : 1
           }
         
           this.setState(prevState => ({
@@ -348,7 +347,6 @@ class AddProductPage extends React.Component{
           productMainContent: [...prevState.productMainContent,content]
        }))
       }
-      
        }
       }
     }
@@ -402,10 +400,10 @@ class AddProductPage extends React.Component{
   deleteSkuImage = async(index) =>{   
           var sku = this.state.productSkuList;
           sku[index].ProductSkuContent.imagePath = "";
-           await this.setState({productSkuList: sku})
+          await this.setState({productSkuList: sku})
   }
    addImage = async() => {
-
+    await this.setState({IsAddImageSku:false});
    $(document).ready(async function () {
        try {
            $('#images').trigger('click')
@@ -416,7 +414,6 @@ class AddProductPage extends React.Component{
  }
 
  addSkuImage = async() =>{
-
   await this.setState({IsAddImageSku:true});
   $(document).ready(async function () {
       try {
@@ -433,7 +430,10 @@ cancelOnClick = () =>{
 
 onsubmit = async() =>{
   try{
+    var isValid = await this.submitValidation();
+    if(isValid){
     await this.props.AlertAction.setConfirmAlert('เพิ่มสินค้า',this.addProductApi.bind(this),true);
+    }
   }
   catch(ex){
     toast.error("เกิดข้อผิดพลาด กรุณาติดต่อเจ้าหน้าที่");
@@ -441,22 +441,29 @@ onsubmit = async() =>{
 }
 
 addProductApi = async() =>{
-var isValid = await this.submitValidation();
-if(isValid){
-  let maxPrice = 0;
-  let minPrice = 0;
-  let stock = 0;
+
+  let maxPrice = parseFloat(this.state.fullprice);
+  let minPrice =  parseFloat(this.state.fullprice);
+  let stock = parseFloat(this.state.stock);
   var sku = this.state.productSkuList;
+ 
+  if(this.state.isAddOption)
+  {
   for(let i = 0;i<this.state.productSkuList?.length;i++){
     sku[i].skuName = this.state.skuName;
-    if(sku[i].fullPrice > maxPrice){
-      maxPrice = sku[i].fullPrice
+    if(parseFloat(sku[i].fullPrice) > maxPrice){
+      maxPrice = parseFloat(sku[i].fullPrice)
     }
-    if(sku[i].fullPrice < minPrice){
-      minPrice = sku[i].fullPrice
+    if(minPrice <= 0)
+    {
+      minPrice = parseFloat(sku[i].fullPrice)
     }
-    stock = stock + sku[i].stock;
+    else if(parseFloat(sku[i].fullPrice) < minPrice){
+      minPrice = parseFloat(sku[i].fullPrice)
+    }
+    stock = stock + parseFloat(sku[i].stock);
   }
+}
 
   await this.setState({productSkuList: sku})
   var request =  {
@@ -474,6 +481,7 @@ if(isValid){
 
   await this.setState({isloading:true});
      const res = await this.props.ProductManagementApiAction.AddProduct(request);
+     console.log("add product res : " + JSON.stringify(res));
      if(res?.data?.isError == true){
      await this.setState({isloading:false});
      this.props.AlertAction.setAlert(2,res?.data?.errorMsg,true);
@@ -481,8 +489,11 @@ if(isValid){
    }
    await this.setState({isloading:false});
    this.props.AlertAction.setAlert(1,"ทำรายการสำเร็จ",true);
-   this.props.history.push('/Product-MainPage');   
-}
+   this.props.history.push({
+    pathname: '/Product-MainPage',
+    search: `?shopId=${this.props?.Shop?.Shop?._id}`,
+  }); 
+
 }
 
 async submitValidation (){
@@ -500,7 +511,8 @@ async submitValidation (){
     }
     else
     {
-    for(let i = 0;i <this.state.productSkuList;i++){
+    for(let i = 0;i <this.state.productSkuList.length;i++){
+      
       if(IsNullOrEmpty(this.state.productSkuList[i].option) || this.state.productSkuList[i].fullPrice == 0 || this.state.productSkuList[i].stock == 0)
       {
         await this.setState({productOptionErrorText:'กรุณาใส่ตัวเลือก ราคา จำนวน ให้ครบถ้วน'})
@@ -512,13 +524,16 @@ async submitValidation (){
 
   }
   else{
-    if(IsNullOrEmpty(this.state.fullPrice == 0))
+    
+    if(this.state.fullprice == 0)
     {
+     
       await this.setState({fullpriceErrorText:'กรุณาใส่ราคา'})
       isValid = false;
     }
     if(this.state.stock == 0)
     {
+      
       await this.setState({stockErrorText:'กรุณาใส่จำนวน'})
       isValid = false;
     }
@@ -528,6 +543,7 @@ async submitValidation (){
 }
     
     render(){
+      
         return(      
         <React.Fragment>   
   <DashboardLayout merchantName={this.props.Merchant?.Merchant?.name} shopId={this.props?.Shop?.Shop?._id}>        
@@ -611,7 +627,8 @@ async submitValidation (){
  </div>
  
 </div>
-
+{!this.state.isAddOption?
+<React.Fragment>
 <div className="form-group row" style={this.state.option?{display:'none'}:{margin:'10px',marginRight: '50px'}}>
        {/*ราคา*/}
       <div className="col-2 topic-add-detail-div" >
@@ -620,7 +637,7 @@ async submitValidation (){
 
       {/*ราคา Input*/}
      <div className="col-10">
-        <input type="text" class="form-control" onFocus={(e) => this.onFullPriceFocus(e.target.value)}   value={this.state.fullPrice} onBlur={(e)=> this.onFullPriceBlur(e.target.value)} onChange={(e)=>this.onFullPriceChange(e.target.value)}  id="InputProductFullprice" maxLength={20} />
+        <input type="text" class="form-control" onFocus={(e) => this.onFullPriceFocus(e.target.value)}   value={this.state.fullprice} onBlur={(e)=> this.onFullPriceBlur(e.target.value)} onChange={(e)=>this.onFullPriceChange(e.target.value)}  id="InputProductFullprice" maxLength={20} />
      </div>
     </div>
 
@@ -643,7 +660,7 @@ async submitValidation (){
     <div className="form-group row" style={this.state.option?{display:'none'}:{margin:'10px',marginRight: '50px'}}>
        {/*จำนวน*/}
       <div className="col-2 topic-add-detail-div" >
-        <div> <a style={{color:'red'}}>*</a> ราคา :</div>
+        <div> <a style={{color:'red'}}>*</a> จำนวน :</div>
      </div>
 
       {/*จำนวน Input*/}
@@ -667,7 +684,8 @@ async submitValidation (){
      </div>
      
     </div>
-
+    </React.Fragment>
+    :null}
     <div className="form-group row" style={{margin:'10px',marginRight: '50px'}}>
        {/*อัพโหลดรูปภาพสินค้า*/}
       <div className="col-2 topic-add-detail-div">
@@ -681,7 +699,7 @@ async submitValidation (){
        
         {/*รูปปก*/}
         
-        <div className="uploadImage-div" style={this.state.productMainContent.length > 0 ?{position:'relative'}:{}} onClick={this.addImage} >
+        <div className="uploadImage-div" style={this.state.productMainContent.length > 0 ?{position:'relative'}:{}} onClick={()=> this.addImage()} >
             <img className={this.state.productMainContent.length > 0?"vertical-center":"imageCenter"} src={this.state.productMainContent.length > 0?this.state.productMainContent[0].imagePath : require('../assets/images/add_image.png').default} style={this.state.productMainContent.length > 0 ?{}:{margin:'37px'}}/>
             {this.state.productMainContent.length > 0 ?  <button style={{ display: 'inline', zIndex: '1'}}><img  style={{position: 'absolute',width: '25px',height: '25px',right: '0px',top: '3px'}} onClick={() => this.deleteImage(0)} src={require('../assets/images/crossIcon.png').default} /></button> : null}
             <div style={this.state.productMainContent.length > 0 ?{fontSize: '14px',color: 'gray',position: 'absolute',bottom: '-25px',right: '35%'}:{textAlign: 'center',fontSize: '14px',color: 'gray',paddingTop: '5px'}}>รูปปก</div>
@@ -689,21 +707,21 @@ async submitValidation (){
       
 
   {/*รูป 2*/}
-  <div className="uploadImage-div" style={this.state.productMainContent.length > 0 ?{position:'relative'}:{}} onClick={this.addImage} >
+  <div className="uploadImage-div" style={this.state.productMainContent.length > 0 ?{position:'relative'}:{}} onClick={()=> this.addImage()} >
             <img className={this.state.productMainContent.length > 1?"vertical-center":"imageCenter"} src={this.state.productMainContent.length > 1?this.state.productMainContent[1].imagePath : require('../assets/images/add_image.png').default} style={this.state.productMainContent.length > 1 ?{}:{margin:'37px'}}/>
             {this.state.productMainContent.length > 1 ?  <button style={{ display: 'inline', zIndex: '1'}}><img  style={{position: 'absolute',width: '25px',height: '25px',right: '0px',top: '3px'}} onClick={() => this.deleteImage(1)} src={require('../assets/images/crossIcon.png').default} /></button> : null}
             <div style={this.state.productMainContent.length > 1 ?{fontSize: '14px',color: 'gray',position: 'absolute',bottom: '-25px',right: '35%'}:{textAlign: 'center',fontSize: '14px',color: 'gray',paddingTop: '5px'}}>รูป 2</div>
        </div>
 
   {/*รูป 3*/}
-  <div className="uploadImage-div" style={this.state.productMainContent.length > 0 ?{position:'relative'}:{}} onClick={this.addImage} >
+  <div className="uploadImage-div" style={this.state.productMainContent.length > 0 ?{position:'relative'}:{}} onClick={()=> this.addImage()} >
             <img className={this.state.productMainContent.length > 2?"vertical-center":"imageCenter"} src={this.state.productMainContent.length > 2?this.state.productMainContent[2].imagePath : require('../assets/images/add_image.png').default} style={this.state.productMainContent.length > 2 ?{}:{margin:'37px'}}/>
             {this.state.productMainContent.length > 2 ?  <button style={{ display: 'inline', zIndex: '1'}}><img  style={{position: 'absolute',width: '25px',height: '25px',right: '0px',top: '3px'}} onClick={() => this.deleteImage(2)} src={require('../assets/images/crossIcon.png').default} /></button> : null}
             <div style={this.state.productMainContent.length > 2 ?{fontSize: '14px',color: 'gray',position: 'absolute',bottom: '-25px',right: '35%'}:{textAlign: 'center',fontSize: '14px',color: 'gray',paddingTop: '5px'}}>รูป 3</div>
        </div>
 
   {/*รูป 4*/}
-  <div className="uploadImage-div" style={this.state.productMainContent.length > 0 ?{position:'relative'}:{}} onClick={this.addImage} >
+  <div className="uploadImage-div" style={this.state.productMainContent.length > 0 ?{position:'relative'}:{}} onClick={()=> this.addImage()} >
             <img className={this.state.productMainContent.length > 3?"vertical-center":"imageCenter"} src={this.state.productMainContent.length > 3?this.state.productMainContent[3].imagePath : require('../assets/images/add_image.png').default} style={this.state.productMainContent.length > 3 ?{}:{margin:'37px'}}/>
             {this.state.productMainContent.length > 3 ?  <button style={{ display: 'inline', zIndex: '1'}}><img  style={{position: 'absolute',width: '25px',height: '25px',right: '0px',top: '3px'}} onClick={() => this.deleteImage(3)} src={require('../assets/images/crossIcon.png').default} /></button> : null}
             <div style={this.state.productMainContent.length > 3 ?{fontSize: '14px',color: 'gray',position: 'absolute',bottom: '-25px',right: '35%'}:{textAlign: 'center',fontSize: '14px',color: 'gray',paddingTop: '5px'}}>รูป 4</div>
@@ -811,7 +829,7 @@ async submitValidation (){
 
        {/*Stock Input*/}
        <div className="col-3">
-        <input type="text" class="form-control"  id="InputOption1Stock" maxLength={20} value={stock} onFocus={(e) => this.onStockFocus(index,e.target.value)} onBlur={(e)=> this.onStockBlur(index,e.target.value)} onChange={(e)=>this.onStockChange(index,e.target.value)}/>
+        <input type="text" class="form-control"  id="InputOption1Stock" maxLength={20} value={stock} onFocus={(e) => this.onSkuStockFocus(index,e.target.value)} onBlur={(e)=> this.onSkuStockBlur(index,e.target.value)} onChange={(e)=>this.onSkuStockChange(index,e.target.value)}/>
      </div>
     
 </div>
@@ -864,10 +882,10 @@ async submitValidation (){
 },index) =>
 
   <React.Fragment>
-        <div className="uploadImage-div" onClick={this.addSkuImage} style={ProductSkuContent?.imagePath?{position:'relative'}:{}}  >
+        <div className="uploadImage-div" onClick={() => this.addSkuImage()} style={ProductSkuContent?.imagePath?{position:'relative'}:{}}  >
             <img className={ProductSkuContent?.imagePath ?"vertical-center":"imageCenter"} src={ProductSkuContent?.imagePath?ProductSkuContent?.imagePath : require('../assets/images/add_image.png').default} style={ProductSkuContent?.imagePath?{}:{margin:'37px'}}/>
-            {ProductSkuContent?.imagePath ?  <button style={{ display: 'inline', zIndex: '1'}}><img  style={{position: 'absolute',width: '25px',height: '25px',right: '0px',top: '3px'}} src={require('../assets/images/crossIcon.png').default} /></button> : null}
-            <div style={this.state.productMainContent.length > 0 ?{fontSize: '14px',color: 'gray',position: 'absolute',bottom: '-25px',right: '35%'}:{textAlign: 'center',fontSize: '14px',color: 'gray',paddingTop: '5px'}}>{"SKU "+index+1}</div>
+            {ProductSkuContent?.imagePath ?  <button style={{ display: 'inline', zIndex: '1'}}><img  style={{position: 'absolute',width: '25px',height: '25px',right: '0px',top: '3px'}} src={require('../assets/images/crossIcon.png').default} onClick={() => this.deleteSkuImage(index)}/></button> : null}
+            <div style={this.state.productMainContent.length > 0 ?{fontSize: '14px',color: 'gray',position: 'absolute',bottom: '-25px',right: '35%'}:{textAlign: 'center',fontSize: '14px',color: 'gray',paddingTop: '5px'}}>{"SKU "+(parseFloat(index)+1)}</div>
        </div>
        </React.Fragment>
   )}
@@ -899,7 +917,7 @@ async submitValidation (){
   {/*Button*/}
   <div className="form-group" style={{padding:'40px 0px',display:'flex',justifyContent:'center',margin:'0px 15px'}}>
      
-     <button  className={!this.state.IsSaveDisable?"primary-button":"primary-button disabled"} style={{width:'250px',marginRight:'10px'}} onClick={this.onsubmit.bind(this)} >Save</button>
+     <button  className={!this.state.IsSaveDisable?"primary-button":"primary-button disabled"} style={{width:'250px',marginRight:'10px'}} onClick={!this.state.IsSaveDisable?this.onsubmit.bind(this):null} >Save</button>
      <button  className="secondary-button" style={{width:'250px'}} onClick={this.cancelOnClick.bind(this)} >Cancel</button>
     
    </div>

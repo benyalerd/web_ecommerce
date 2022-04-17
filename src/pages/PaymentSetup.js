@@ -180,8 +180,7 @@ render(){
           <React.Fragment>
             {this.state.paymentList?.map(({
               _id,
-              masterName,
-              masterImg,
+              master,
               accountName,
               accountNumber     
           },index) =>
@@ -191,10 +190,10 @@ render(){
                 <div className="row mr-0 ml-0">
                     <div style={{width: 'fit-content'}}>
                           {/*Image*/}  
-                        <img style={{width: '50px',height: '50px',marginRight: '20px',marginTop: '3px',display:'unset'}}  src={masterImg ?masterImg:require('../assets/images/noimage.png').default}/> </div>
+                        <img style={{width: '50px',height: '50px',marginRight: '20px',marginTop: '3px',display:'unset'}}  src={master.masterImg ?master.masterImg:require('../assets/images/noimage.png').default}/> </div>
                         <div className="col-9" >
                             {/*Bank Name*/}  
-                            <div>{masterName}</div>
+                            <div>{master.masterName}</div>
                               {/*Account Number*/}  
                             <div style={{fontWeight:'normal'}}>{accountNumber}</div>
                               {/*Account Name*/}  

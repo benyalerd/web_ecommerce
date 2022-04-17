@@ -45,6 +45,14 @@ class ProductMainPageTabLayout extends React.Component{
       window.addEventListener('resize', this.updateWindowDimensions);
       this.getProductList();
     }
+
+    componentDidUpdate(prevProps){
+      if(prevProps.ProductManagement.productTabId != this.props.ProductManagement.productTabId)
+      {
+        
+        this.getProductList();
+      }
+    }
     
     componentWillUnmount() {
       window.removeEventListener('resize', this.updateWindowDimensions);
@@ -56,6 +64,7 @@ class ProductMainPageTabLayout extends React.Component{
 
     getProductList = async() => {
       await this.setState({isloading:true});
+      
       const query = queryString.parse(this.props.location.search);
       var res = await this.props.ProductManagementApiAction.GetProductList(query.shopId,this.state.limit,this.state.activePage,this.state.searchText,this.state.sorting,this.state.sortingDesc,this.props.ProductManagement.productTabId);
       if(res?.data?.isError == true){
@@ -106,7 +115,10 @@ class ProductMainPageTabLayout extends React.Component{
     }
 
      onProductDetailClick = async(productId) => {
-      await this.history.push(`/Product-ProductDetail?productId=${productId}`);
+      this.props.history.push({
+        pathname: 'Product-ProductDetail',
+        search: `?productId=${productId}`,
+      }); 
      }
 
     async deleteProductApi () {
@@ -200,7 +212,7 @@ class ProductMainPageTabLayout extends React.Component{
           },index) =>
 
             <React.Fragment>
-            <div onClick={()=>this.onProductDetailClick(_id)} className="col-9" style={{background: 'white', height: '120px', padding: '10px 30px', fontWeight: 'bold', borderTop: '1px solid lightgray', borderBottom: '1px solid lightgray', borderLeft: '1px solid lightgray', color: 'black', borderRadius: '0px'}}>
+            <div onClick={()=>this.onProductDetailClick(_id)} className="col-9" style={{background: 'white', height: '120px', padding: '10px 30px', fontWeight: 'bold', borderTop: '1px solid lightgray', borderBottom: '1px solid lightgray', borderLeft: '1px solid lightgray', color: 'black', borderRadius: '0px',cursor:'pointer'}}>
                 <div className="row mr-0 ml-0">
                     <div style={{width: 'fit-content'}}>
                           {/*Image*/}  
@@ -215,7 +227,7 @@ class ProductMainPageTabLayout extends React.Component{
                             </div>                       
                     </div>
                 </div>
-                <div className="col-2 product-status-div-mainpage" style={isActive?{color: 'green'}:{color: 'red'}}>
+                <div className="col-2 product-status-div-mainpage" style={isActive && stock > 0?{color: 'green'}:{color: 'red'}}>
                   {!isActive?"ไม่พร้อมขาย":stock > 0 ?"ขายอยู่":"สินค้าหมด"}
                   </div>
  

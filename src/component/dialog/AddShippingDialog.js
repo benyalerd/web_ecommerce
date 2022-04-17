@@ -18,6 +18,7 @@ import * as shippingSetupApiAction from '../../actions/api/ShippingSetupApiActio
 import {IsNullOrEmpty} from '../../helper/Common';
 import * as masterApiAction from '../../actions/api/MasterApiAction'
 import ConfirmAlertDialog from '../../component/dialog/ConfirmAlertDialog';
+import * as alertAction from '../../actions/Alert/AlertAction';
 
 class AddShippingDialog extends React.Component {
 
@@ -33,8 +34,8 @@ class AddShippingDialog extends React.Component {
             IsLoading: false,
             screenWidth: window.innerWidth,
             priceLength:10,
-            shippingList: null,
-            selectShipping:null,
+            shippingList: [],
+            selectShipping:[],
             selectShippingDetail:[]
         }
         window.addEventListener("resize", this.updateScreenWidth);
@@ -47,7 +48,7 @@ class AddShippingDialog extends React.Component {
     async componentDidMount() {
         await this.getMasterData();
         const shippingSelectDetail = this.props.ShippingSetup.shippingSelect;
-        this.setState({ maxDay: shippingSelectDetail?.maxDay, minDay: shippingSelectDetail.minDay, priceDisplay: shippingSelectDetail?.price?.toFixed(2) });
+        this.setState({ maxDay: shippingSelectDetail?.maxDay, minDay: shippingSelectDetail.minDay, priceDisplay: shippingSelectDetail?.price?.toFixed(2),price:shippingSelectDetail?.price });
     }
 
     async componentDidUpdate(prevProps, prevState) {
@@ -55,7 +56,7 @@ class AddShippingDialog extends React.Component {
      {
         await this.getMasterData();
         const shippingSelectDetail = this.props.ShippingSetup.shippingSelect;
-        this.setState({ maxDay: shippingSelectDetail?.maxDay, minDay: shippingSelectDetail.minDay, priceDisplay: shippingSelectDetail?.price?.toFixed(2) });
+        this.setState({ maxDay: shippingSelectDetail?.maxDay, minDay: shippingSelectDetail.minDay, priceDisplay: shippingSelectDetail?.price?.toFixed(2),price:shippingSelectDetail?.price });
      }
     }
 
@@ -70,8 +71,9 @@ class AddShippingDialog extends React.Component {
                 return;
             }           
             await this.setState({shippingList:response?.data?.masters});
+            console.log("shippingList : "+JSON.stringify(this.state.shippingList));
             if(response?.data?.masters != null || response?.data?.masters.length > 0 ){
-                await this.setState({IsLoading:false,shippingList:response?.data?.masters[1]});
+                await this.setState({IsLoading:false,selectShipping:response?.data?.masters[0]});
             }
         } 
         catch (error) {
@@ -81,6 +83,7 @@ class AddShippingDialog extends React.Component {
     };
 
     onClose = async() => {
+        await this.props.ShippingSetupAction.setShippingEdit(false); 
         await this.props.ShippingSetupAction.setAddShippingDialogOpen([],false);
     };
 
@@ -126,16 +129,19 @@ class AddShippingDialog extends React.Component {
       }
 
       onPriceFocus = (e) =>{
-       
-        var value = e.target.value
-          this.setState({priceDisplay:this.state.price,priceLength:7});
+        this.setState({priceDisplay:this.state.price,priceLength:7});
       }
 
       
       onPriceBlur = (e) =>{
-        var value = e.target.value   
-        var x = value.toFixed(2);
-        this.setState({priceDisplay:value,priceLength:10});
+        var value = e.target.value  
+        var display  = ""
+        if(value)
+        {
+        var doubleValue = parseFloat(value)
+        display = doubleValue.toFixed(2);
+        }
+        this.setState({priceDisplay:display,priceLength:10,price:value});
     }
 
     addShippingApi = async () =>{
@@ -145,8 +151,8 @@ class AddShippingDialog extends React.Component {
             await this.setState({IsLoading:false});
             return;
           }
-          await this.props.ShippingSetupAction.setPaymentEdit(false); 
-          await this.props.ShippingSetupAction.setAddPaymentDialogOpen([],false);
+          await this.props.ShippingSetupAction.setShippingEdit(false); 
+          await this.props.ShippingSetupAction.setAddShippingDialogOpen([],false);
     }
 
     updateShippingApi = async() =>{
@@ -156,8 +162,8 @@ class AddShippingDialog extends React.Component {
              await this.setState({IsLoading:false});
              return;
            }
-           await this.props.ShippingSetupAction.setPaymentEdit(false); 
-           await this.props.ShippingSetupAction.setAddPaymentDialogOpen([],false);
+           await this.props.ShippingSetupAction.setShippingEdit(false); 
+           await this.props.ShippingSetupAction.setAddShippingDialogOpen([],false);
     }
 
     Onsubmit = async() =>{
@@ -208,9 +214,10 @@ class AddShippingDialog extends React.Component {
         
     }
      
-    async onClickSelectShippingName(e) {
+    async onChangeSelectShippingName(e) {
         var value = e.target.value; 
-        var select = this.state.shippingList?.find(x => x._id = value);
+        var select = this.state.shippingList?.find(x => x._id == value);
+        console.log("select : " + JSON.stringify(select));
         await this.setState({selectShipping:select});
     }
     render() {
@@ -219,7 +226,7 @@ class AddShippingDialog extends React.Component {
         const selectShippingDetail = this.props.ShippingSetup.shippingSelect;
         const {screenWidth} = this.state;
 
-        if (this.props.ShippingSetup.IsAddPaymentOpen === true) {
+        if (this.props.ShippingSetup.IsAddShippingOpen === true) {
             theme = createTheme({
                 overrides: {
                     MuiDialog: {
@@ -264,32 +271,27 @@ class AddShippingDialog extends React.Component {
                                                 <div style={{ display: 'inline-flex' }}>
                                                     <div className="select-book-bank-logobox" style={{ display: screenWidth <= 767 ? 'contents' : 'flex' }} >           
                                                            {/*(Edit) Master Data - Shipping logo / Shiiping Name*/} 
-                                                           {this.props.ShippingSetup.isEdit?  
-                                                           
+                                                          {!this.state.isEdit?
                                                            <React.Fragment>
-                                                                 <img className="select-book-bank-logo " src={this.state.selectShipping.masterImg ? this.state.selectShipping.masterImg :require('../../assets/images/noimage.png').default}  />
+                                                                 <img className="select-book-bank-logo " src={this.state.selectShipping?.masterImg ? this.state.selectShipping?.masterImg :require('../../assets/images/noimage.png').default}  />
                                                                  <div>
-      <select id="shippingName" onClick={this.onClickSelectShippingName.bind(this)}  value={this.state.selectShipping._id} style={{width:'150px',height:'35px',border:'1px solid lightgray',borderRadius:'5px',padding:'5px'}}>
+      <select id="shippingName" onChange={this.onChangeSelectShippingName.bind(this)} style={{width:'150px',height:'35px',border:'1px solid lightgray',borderRadius:'5px',padding:'5px'}}>
       <React.Fragment>
-                                        {this.state.shippingList?.map(({
+      {this.state.shippingList?.map(({
                                             _id,
                                             masterName,
                                             masterImg,                                    
                                         },index) =>
-                                        <React.Fragment>    
+                                        <React.Fragment> 
+
                   <option value={_id}>{masterName}</option>
                   </React.Fragment>    
                    )}
-                   </React.Fragment>                  
+                    </React.Fragment>
                </select>
                </div>
-                                                           </React.Fragment>
-                                                           :
-                                                            <React.Fragment>
-                                                                <img className="select-book-bank-logo " src={selectShippingDetail.masterImg ? selectShippingDetail.masterImg :require('../../assets/images/noimage.png').default}  />
-                                                                <div style={{ fontSize: screenWidth <= 767 ? '20px' : '20px', fontWeight: 'bold', marginTop: '10px' }}>{selectShippingDetail.masterName ? selectShippingDetail.masterName:""}</div>
-                                                          </React.Fragment>   
-    }                                                    
+                                                           </React.Fragment> : null}
+                                                     
                                                     </div>
                                                 </div>
                                             </div>
@@ -366,7 +368,8 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
     ShippingSetupAction : bindActionCreators(shippingSetupAction,dispatch),
     ShippingSetupApiAction : bindActionCreators(shippingSetupApiAction,dispatch),
-    MasterApiAction : bindActionCreators(masterApiAction,dispatch)
+    MasterApiAction : bindActionCreators(masterApiAction,dispatch),
+    AlertAction : bindActionCreators(alertAction,dispatch),
 });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(AddShippingDialog));

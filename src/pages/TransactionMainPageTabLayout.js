@@ -54,6 +54,14 @@ class TransactionMainPageTabLayout extends React.Component{
       this.setState({ width: window.innerWidth, height: window.innerHeight });
     }
 
+    componentDidUpdate(prevProps){
+      if(prevProps.TransactionManagement.transactionTabId != this.props.TransactionManagement.transactionTabId)
+      {
+        
+        this.getTransactionList();
+      }
+    }
+
     getTransactionList = async() => {
       await this.setState({isloading:true});
       const query = queryString.parse(this.props.location.search);
@@ -91,7 +99,10 @@ class TransactionMainPageTabLayout extends React.Component{
     }
 
      onTransactionDetailClick = async(transactionId) => {
-      await this.history.push(`/Transaction-TransactionDetail?transactionId=${transactionId}`);
+      this.props.history.push({
+        pathname: '/Transaction-TransactionDetail',
+        search: `?transactionId=${transactionId}`,
+      }); 
      }
     
     render(){
@@ -141,7 +152,7 @@ class TransactionMainPageTabLayout extends React.Component{
 <hr style={{border: '1px solid #4f6137', backgroundColor: '#4f6137',margin: '0px 30px'}}/> 
 
 {/*Transaction List*/} 
-<div className="row" style={{margin:'20px 40px', fontSize: '16px',height:'max-content'}}>
+<div className="row" style={{margin:'20px 40px', fontSize: '16px',height:'max-content',cursor:'pointer'}}>
           {this.state.transactionList == null || this.state.transactionList.length <= 0?<div className="col-12" style={{background: 'white', padding: '10px 30px', fontWeight: 'bold', border: '1px solid lightgray', color: 'lightgray', borderRadius: '0px',textAlign:'center'}}>ไม่พบรายการสั่งซื้อ</div>  :  
           
           <React.Fragment>
@@ -179,7 +190,7 @@ class TransactionMainPageTabLayout extends React.Component{
  
  {/*Shipping Detail*/}  
        
-       <div className="col-2 tranType" style={{borderRight : '1px solid lightgray'}}>        
+       <div className="col-2 tranType-div-mainPage" style={{border : '1px solid lightgray'}}>        
        <div style={{fontSize: '12px',color:'gray'}}>{"ข้อมูลจัดส่ง"}</div>
            <img style={{width: '75px',height: 'auto',display:'unset'}} src={shippingImg} />         
       </div>
