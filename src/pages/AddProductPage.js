@@ -700,7 +700,7 @@ async submitValidation (){
         {/*รูปปก*/}
         
         <div className="uploadImage-div" style={this.state.productMainContent.length > 0 ?{position:'relative'}:{}} onClick={()=> this.addImage()} >
-            <img className={this.state.productMainContent.length > 0?"vertical-center":"imageCenter"} src={this.state.productMainContent.length > 0?this.state.productMainContent[0].imagePath : require('../assets/images/add_image.png').default} style={this.state.productMainContent.length > 0 ?{}:{margin:'37px'}}/>
+            <img className={this.state.productMainContent.length > 0?"vertical-center imgProduct":"imageCenter"} src={this.state.productMainContent.length > 0?this.state.productMainContent[0].imagePath : require('../assets/images/add_image.png').default} style={this.state.productMainContent.length > 0 ?{}:{margin:'37px'}}/>
             {this.state.productMainContent.length > 0 ?  <button style={{ display: 'inline', zIndex: '1'}}><img  style={{position: 'absolute',width: '25px',height: '25px',right: '0px',top: '3px'}} onClick={() => this.deleteImage(0)} src={require('../assets/images/crossIcon.png').default} /></button> : null}
             <div style={this.state.productMainContent.length > 0 ?{fontSize: '14px',color: 'gray',position: 'absolute',bottom: '-25px',right: '35%'}:{textAlign: 'center',fontSize: '14px',color: 'gray',paddingTop: '5px'}}>รูปปก</div>
        </div>
@@ -708,21 +708,21 @@ async submitValidation (){
 
   {/*รูป 2*/}
   <div className="uploadImage-div" style={this.state.productMainContent.length > 0 ?{position:'relative'}:{}} onClick={()=> this.addImage()} >
-            <img className={this.state.productMainContent.length > 1?"vertical-center":"imageCenter"} src={this.state.productMainContent.length > 1?this.state.productMainContent[1].imagePath : require('../assets/images/add_image.png').default} style={this.state.productMainContent.length > 1 ?{}:{margin:'37px'}}/>
+            <img className={this.state.productMainContent.length > 1?"vertical-center imgProduct":"imageCenter"} src={this.state.productMainContent.length > 1?this.state.productMainContent[1].imagePath : require('../assets/images/add_image.png').default} style={this.state.productMainContent.length > 1 ?{}:{margin:'37px'}}/>
             {this.state.productMainContent.length > 1 ?  <button style={{ display: 'inline', zIndex: '1'}}><img  style={{position: 'absolute',width: '25px',height: '25px',right: '0px',top: '3px'}} onClick={() => this.deleteImage(1)} src={require('../assets/images/crossIcon.png').default} /></button> : null}
             <div style={this.state.productMainContent.length > 1 ?{fontSize: '14px',color: 'gray',position: 'absolute',bottom: '-25px',right: '35%'}:{textAlign: 'center',fontSize: '14px',color: 'gray',paddingTop: '5px'}}>รูป 2</div>
        </div>
 
   {/*รูป 3*/}
   <div className="uploadImage-div" style={this.state.productMainContent.length > 0 ?{position:'relative'}:{}} onClick={()=> this.addImage()} >
-            <img className={this.state.productMainContent.length > 2?"vertical-center":"imageCenter"} src={this.state.productMainContent.length > 2?this.state.productMainContent[2].imagePath : require('../assets/images/add_image.png').default} style={this.state.productMainContent.length > 2 ?{}:{margin:'37px'}}/>
+            <img className={this.state.productMainContent.length > 2?"vertical-center imgProduct":"imageCenter"} src={this.state.productMainContent.length > 2?this.state.productMainContent[2].imagePath : require('../assets/images/add_image.png').default} style={this.state.productMainContent.length > 2 ?{}:{margin:'37px'}}/>
             {this.state.productMainContent.length > 2 ?  <button style={{ display: 'inline', zIndex: '1'}}><img  style={{position: 'absolute',width: '25px',height: '25px',right: '0px',top: '3px'}} onClick={() => this.deleteImage(2)} src={require('../assets/images/crossIcon.png').default} /></button> : null}
             <div style={this.state.productMainContent.length > 2 ?{fontSize: '14px',color: 'gray',position: 'absolute',bottom: '-25px',right: '35%'}:{textAlign: 'center',fontSize: '14px',color: 'gray',paddingTop: '5px'}}>รูป 3</div>
        </div>
 
   {/*รูป 4*/}
   <div className="uploadImage-div" style={this.state.productMainContent.length > 0 ?{position:'relative'}:{}} onClick={()=> this.addImage()} >
-            <img className={this.state.productMainContent.length > 3?"vertical-center":"imageCenter"} src={this.state.productMainContent.length > 3?this.state.productMainContent[3].imagePath : require('../assets/images/add_image.png').default} style={this.state.productMainContent.length > 3 ?{}:{margin:'37px'}}/>
+            <img className={this.state.productMainContent.length > 3?"vertical-center imgProduct":"imageCenter"} src={this.state.productMainContent.length > 3?this.state.productMainContent[3].imagePath : require('../assets/images/add_image.png').default} style={this.state.productMainContent.length > 3 ?{}:{margin:'37px'}}/>
             {this.state.productMainContent.length > 3 ?  <button style={{ display: 'inline', zIndex: '1'}}><img  style={{position: 'absolute',width: '25px',height: '25px',right: '0px',top: '3px'}} onClick={() => this.deleteImage(3)} src={require('../assets/images/crossIcon.png').default} /></button> : null}
             <div style={this.state.productMainContent.length > 3 ?{fontSize: '14px',color: 'gray',position: 'absolute',bottom: '-25px',right: '35%'}:{textAlign: 'center',fontSize: '14px',color: 'gray',paddingTop: '5px'}}>รูป 4</div>
        </div>
@@ -883,7 +883,7 @@ async submitValidation (){
 
   <React.Fragment>
         <div className="uploadImage-div" onClick={() => this.addSkuImage()} style={ProductSkuContent?.imagePath?{position:'relative'}:{}}  >
-            <img className={ProductSkuContent?.imagePath ?"vertical-center":"imageCenter"} src={ProductSkuContent?.imagePath?ProductSkuContent?.imagePath : require('../assets/images/add_image.png').default} style={ProductSkuContent?.imagePath?{}:{margin:'37px'}}/>
+            <img className={ProductSkuContent?.imagePath ?"vertical-center imgProduct":"imageCenter"} src={ProductSkuContent?.imagePath?ProductSkuContent?.imagePath : require('../assets/images/add_image.png').default} style={ProductSkuContent?.imagePath?{}:{margin:'37px'}}/>
             {ProductSkuContent?.imagePath ?  <button style={{ display: 'inline', zIndex: '1'}}><img  style={{position: 'absolute',width: '25px',height: '25px',right: '0px',top: '3px'}} src={require('../assets/images/crossIcon.png').default} onClick={() => this.deleteSkuImage(index)}/></button> : null}
             <div style={this.state.productMainContent.length > 0 ?{fontSize: '14px',color: 'gray',position: 'absolute',bottom: '-25px',right: '35%'}:{textAlign: 'center',fontSize: '14px',color: 'gray',paddingTop: '5px'}}>{"SKU "+(parseFloat(index)+1)}</div>
        </div>

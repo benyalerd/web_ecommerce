@@ -271,6 +271,12 @@
   border-radius: 0px
 }
 
+.imgProduct{
+  height: inherit;
+  width: inherit;
+  padding: 2px;
+}
+
 
 
   

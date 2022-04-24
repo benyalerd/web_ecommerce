@@ -93,7 +93,6 @@ class AddPaymentDialog extends React.Component {
     }
 
     addPaymentApi = async () =>{
-        alert("Yes");
         var res = await this.props.PaymentSetupApiAction.InsertPayment(this.state.selectBankDetail);
         if(res?.data?.isError == true){
             this.props.AlertAction.setAlert(2,res?.data?.errorMsg,true);

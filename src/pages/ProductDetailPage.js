@@ -47,7 +47,7 @@ class ProductDetailPage extends React.Component{
           {
             skuName: "",
             option: "",
-            ProductSkuContent: {
+            productSkuContent: {
                 product: "",
                 sku: "",
                 mediaType: 1,
@@ -86,7 +86,7 @@ class ProductDetailPage extends React.Component{
         {
           skuName: "",
           option: "",
-          ProductSkuContent: {
+          productSkuContent: {
               product: "",
               sku: "",
               mediaType: 1,
@@ -101,8 +101,9 @@ class ProductDetailPage extends React.Component{
     }
 
     deleteEachOption = async(index)=> {
-    var optionList =  this.state.productSkuList.splice(index, 1);
-    await this.setState({productSkuList:optionList});
+     
+      this.state.productSkuList.splice(index, 1);
+     await this.setState({productSkuList:this.state.productSkuList});
     }
 
     selectStatus = (e) =>{
@@ -270,6 +271,7 @@ class ProductDetailPage extends React.Component{
       }
       var product = res?.data;
       let isAddOption = false;
+      console.log("productSkuList : " +JSON.stringify(product.productSkuList));
       if(product.productSkuList?.length > 0){
           isAddOption = true;
       }
@@ -278,6 +280,7 @@ class ProductDetailPage extends React.Component{
         fullPrice = product.minPrice
       }
       await this.setState({isActive:product.isActive,skuName:product.skuName,isAddOption:isAddOption,fullprice:fullPrice,stock:product.stock,isloading:false,productName:product.productName,productDesc:product.productDesc,productMainContent:product.productMainContent,productSkuList:product.productSkuList});
+      console.log("productSkuList State : " +JSON.stringify(this.state.productSkuList[0].productSkuContent));
       var isDisable = this.CheckDisableSaveButton();
       await this.setState({IsSaveDisable:isDisable});
     }
@@ -298,7 +301,7 @@ class ProductDetailPage extends React.Component{
       var sku = {
         skuName: "",
         option: "",
-        ProductSkuContent: {
+        productSkuContent: {
             product: "",
             sku: "",
             mediaType: 1,
@@ -363,7 +366,7 @@ class ProductDetailPage extends React.Component{
         {
           
           var sku = this.state.productSkuList;
-          sku[i].ProductSkuContent.imagePath = base64;
+          sku[i].productSkuContent.imagePath = base64;
            await this.setState({productSkuList: sku})
         }
         else
@@ -433,8 +436,9 @@ class ProductDetailPage extends React.Component{
   }
 
   deleteSkuImage = async(index) =>{   
+   
           var sku = this.state.productSkuList;
-          sku[index].ProductSkuContent.imagePath = "";
+          sku[index].productSkuContent.imagePath = "";
            await this.setState({productSkuList: sku})
   }
    addImage = async() => {
@@ -503,6 +507,7 @@ if(isValid){
     stock = stock + parseFloat(sku[i].stock);
   }
 }
+
   await this.setState({productSkuList: sku})
   const query = queryString.parse(this.props.location.search);
   var request =  {
@@ -735,7 +740,7 @@ async submitValidation (){
         {/*รูปปก*/}
         
         <div style={this.state.productMainContent.length > 0 ?{marginRight:'15px',display:'table-cell',position:'relative',padding:'0px',width:'150px',height:'150px',border:'1px solid lightgray',borderRadius:'5px',cursor:'pointer'}:{marginRight:'15px',padding:'0px',width:'150px',height:'150px',border:'1px solid lightgray',borderRadius:'5px',cursor:'pointer',display: 'table-cell' }} onClick={()=>this.state.isEdit?this.addImage():null} >
-            <img className={this.state.productMainContent.length > 0?"vertical-center":"imageCenter"} src={this.state.productMainContent.length > 0?this.state.productMainContent[0].imagePath : require('../assets/images/add_image.png').default} style={this.state.productMainContent.length > 0 ?{}:{margin:'37px'}}/>
+            <img className={this.state.productMainContent.length > 0?"vertical-center imgProduct":"imageCenter"} src={this.state.productMainContent.length > 0?this.state.productMainContent[0].imagePath : require('../assets/images/add_image.png').default} style={this.state.productMainContent.length > 0 ?{}:{margin:'37px'}}/>
             {this.state.productMainContent.length > 0 && this.state.isEdit ?  <button style={{ display: 'inline', zIndex: '1'}}><img  style={{position: 'absolute',width: '25px',height: '25px',right: '0px',top: '3px'}} onClick={() => this.deleteImage(0)} src={require('../assets/images/crossIcon.png').default} /></button> : null}
             <div style={this.state.productMainContent.length > 0 ?{fontSize: '14px',color: 'gray',position: 'absolute',bottom: '-25px',right: '35%'}:{textAlign: 'center',fontSize: '14px',color: 'gray',paddingTop: '5px'}}>รูปปก</div>
        </div>
@@ -743,21 +748,21 @@ async submitValidation (){
 
   {/*รูป 2*/}
   <div style={this.state.productMainContent.length > 1 ?{marginRight:'15px',display:'table-cell',position:'relative',padding:'0px',width:'150px',height:'150px',border:'1px solid lightgray',borderRadius:'5px',cursor:'pointer'}:{marginRight:'15px',padding:'0px',width:'150px',height:'150px',border:'1px solid lightgray',borderRadius:'5px',cursor:'pointer',display: 'table-cell' }} onClick={()=>this.state.isEdit?this.addImage():null} >
-            <img className={this.state.productMainContent.length > 1?"vertical-center":"imageCenter"} src={this.state.productMainContent.length > 1?this.state.productMainContent[1].imagePath : require('../assets/images/add_image.png').default} style={this.state.productMainContent.length > 1 ?{}:{margin:'37px'}}/>
+            <img className={this.state.productMainContent.length > 1?"vertical-center imgProduct":"imageCenter"} src={this.state.productMainContent.length > 1?this.state.productMainContent[1].imagePath : require('../assets/images/add_image.png').default} style={this.state.productMainContent.length > 1 ?{}:{margin:'37px'}}/>
             {this.state.productMainContent.length > 1 && this.state.isEdit?  <button style={{ display: 'inline', zIndex: '1'}}><img  style={{position: 'absolute',width: '25px',height: '25px',right: '0px',top: '3px'}} onClick={() => this.deleteImage(1)} src={require('../assets/images/crossIcon.png').default} /></button> : null}
             <div style={this.state.productMainContent.length > 1 ?{fontSize: '14px',color: 'gray',position: 'absolute',bottom: '-25px',right: '35%'}:{textAlign: 'center',fontSize: '14px',color: 'gray',paddingTop: '5px'}}>รูป 2</div>
        </div>
 
   {/*รูป 3*/}
   <div style={this.state.productMainContent.length > 2 ?{marginRight:'15px',display:'table-cell',position:'relative',padding:'0px',width:'150px',height:'150px',border:'1px solid lightgray',borderRadius:'5px',cursor:'pointer'}:{marginRight:'15px',padding:'0px',width:'150px',height:'150px',border:'1px solid lightgray',borderRadius:'5px',cursor:'pointer',display: 'table-cell' }} onClick={()=>this.state.isEdit?this.addImage():null} >
-            <img className={this.state.productMainContent.length > 2?"vertical-center":"imageCenter"} src={this.state.productMainContent.length > 2?this.state.productMainContent[2].imagePath : require('../assets/images/add_image.png').default} style={this.state.productMainContent.length > 2 ?{}:{margin:'37px'}}/>
+            <img className={this.state.productMainContent.length > 2?"vertical-center imgProduct":"imageCenter"} src={this.state.productMainContent.length > 2?this.state.productMainContent[2].imagePath : require('../assets/images/add_image.png').default} style={this.state.productMainContent.length > 2 ?{}:{margin:'37px'}}/>
             {this.state.productMainContent.length > 2 && this.state.isEdit?  <button style={{ display: 'inline', zIndex: '1'}}><img  style={{position: 'absolute',width: '25px',height: '25px',right: '0px',top: '3px'}} onClick={() => this.deleteImage(2)} src={require('../assets/images/crossIcon.png').default} /></button> : null}
             <div style={this.state.productMainContent.length > 2 ?{fontSize: '14px',color: 'gray',position: 'absolute',bottom: '-25px',right: '35%'}:{textAlign: 'center',fontSize: '14px',color: 'gray',paddingTop: '5px'}}>รูป 3</div>
        </div>
 
   {/*รูป 4*/}
   <div style={this.state.productMainContent.length > 3 ?{marginRight:'15px',display:'table-cell',position:'relative',padding:'0px',width:'150px',height:'150px',border:'1px solid lightgray',borderRadius:'5px',cursor:'pointer'}:{marginRight:'15px',padding:'0px',width:'150px',height:'150px',border:'1px solid lightgray',borderRadius:'5px',cursor:'pointer',display: 'table-cell' }}  onClick={()=>this.state.isEdit?this.addImage():null} >
-            <img className={this.state.productMainContent.length > 3?"vertical-center":"imageCenter"} src={this.state.productMainContent.length > 3?this.state.productMainContent[3].imagePath : require('../assets/images/add_image.png').default} style={this.state.productMainContent.length > 3 ?{}:{margin:'37px'}}/>
+            <img className={this.state.productMainContent.length > 3?"vertical-center imgProduct":"imageCenter"} src={this.state.productMainContent.length > 3?this.state.productMainContent[3].imagePath : require('../assets/images/add_image.png').default} style={this.state.productMainContent.length > 3 ?{}:{margin:'37px'}}/>
             {this.state.productMainContent.length > 3 && this.state.isEdit?  <button style={{ display: 'inline', zIndex: '1'}}><img  style={{position: 'absolute',width: '25px',height: '25px',right: '0px',top: '3px'}} onClick={() => this.deleteImage(3)} src={require('../assets/images/crossIcon.png').default} /></button> : null}
             <div style={this.state.productMainContent.length > 3 ?{fontSize: '14px',color: 'gray',position: 'absolute',bottom: '-25px',right: '35%'}:{textAlign: 'center',fontSize: '14px',color: 'gray',paddingTop: '5px'}}>รูป 4</div>
        </div>
@@ -789,10 +794,10 @@ async submitValidation (){
  <div className="col-2" style={{alignItems: 'center',display: 'flex',justifyContent: 'end'}}>
         <div>ตัวเลือกสินค้า :</div>
      </div>
-     {this.state.isEdit ?
+     {this.state.productSkuList?.length > 0 ?
      <div className="col-10"  style={!this.state.isAddOption?{}:{paddingBottom:'15px',border: '2px solid #d7c6b4',borderStyle: 'dashed',position:'relative'}}>
-         
-     {!this.state.isAddOption  ?
+        
+     {!this.state.isAddOption ?
      <button onClick={this.AddOptionOnclick.bind(this)} style={{width:'100%', border:'2px solid #d7c6b4', color:'#d7c6b4',height:'35px',fontSize:'12px',cursor:'pointer',borderStyle: 'dashed'}} >
             <span>+ เพิ่มตัวเลือกสินค้า</span>
             </button>  
@@ -801,8 +806,9 @@ async submitValidation (){
             <React.Fragment>
               
             <div className="form-group row" style={{margin:'10px',marginRight: '50px'}}>
+              {this.state.isEdit?
             <button style={{ display: 'inline', zIndex: '1'}}><img  style={{position: 'absolute',width: '25px',height: '25px',right: '0px',top: '3px'}} onClick={this.DeleteOptionOnclick.bind(this)} src={require('../assets/images/crossIcon.png').default} /></button>
-            
+            :null}
             {/*ชื่อตัวเลือก*/}
   <div className="col-2 value-add-detail-div" >
 
@@ -810,10 +816,10 @@ async submitValidation (){
  </div>
 
   {/*ชื่อตัวเลือก Input*/}
-  <div className="col-10" >
-      {this.state.isEdit?
+  <div className="col-10" >    
+  {this.state.isEdit?
     <input type="text" class="form-control" value={this.state.skuName} onChange={this.skuNameOnChange.bind(this)}  id="InputOptionName" maxLength={100} />
-    :<div>{this.state.skuName}</div>}
+    :null}
     </div>
 
 </div>
@@ -823,7 +829,7 @@ async submitValidation (){
   {this.state.productSkuList?.map(({
    skuName,
    option,
-   ProductSkuContent,
+   productSkuContent,
    fullPrice,
    stock
 },index) =>
@@ -844,7 +850,7 @@ async submitValidation (){
         :<div>{option}</div>}
         </div>
 
-     {this.state.productSkuList?.length > 1 ? <button style={{ display: 'inline', zIndex: '1'}}><img  style={{position: 'absolute',width: '25px',height: '25px',right: '15px',top: '3px'}} onClick={() => this.deleteEachOption(index)} src={require('../assets/images/deleteIcon.png').default} /></button>:null}
+     {this.state.productSkuList?.length > 1 && this.state.isEdit ? <button style={{ display: 'inline', zIndex: '1'}}><img  style={{position: 'absolute',width: '25px',height: '25px',right: '15px',top: '3px'}} onClick={() => this.deleteEachOption(index)} src={require('../assets/images/deleteIcon.png').default} /></button>:null}
     
 </div>
 
@@ -895,10 +901,10 @@ async submitValidation (){
 
   {/*Button เพิ่มตัวเลือก*/}
   <div className="col-10">
-
+  {this.state.isEdit?
   <button onClick={this.AddMoreOptionOnClick.bind(this)} style={{width:'100%', border:'2px solid #d7c6b4', color:'#d7c6b4',height:'35px',fontSize:'12px',cursor:'pointer',borderStyle: 'dashed'}} >
  <span>+ เพิ่มตัวเลือก</span>
- </button>  
+ </button> :null}
 
  </div>
 
@@ -922,15 +928,16 @@ async submitValidation (){
   {this.state.productSkuList?.map(({
    skuName,
    option,
-   ProductSkuContent,
+   productSkuContent,
    fullPrice,
    stock
 },index) =>
 
   <React.Fragment>
-        <div onClick={()=>this.state.isEdit ?this.addSkuImage():null} style={ProductSkuContent?.imagePath?{marginRight:'15px',display:'table-cell',position:'relative',padding:'0px',width:'150px',height:'150px',border:'1px solid lightgray',borderRadius:'5px',cursor:'pointer'}:{marginRight:'15px',padding:'0px',width:'150px',height:'150px',border:'1px solid lightgray',borderRadius:'5px',cursor:'pointer',display: 'table-cell' }}  >
-            <img className={ProductSkuContent?.imagePath ?"vertical-center":"imageCenter"} src={ProductSkuContent?.imagePath?ProductSkuContent?.imagePath : require('../assets/images/add_image.png').default} style={ProductSkuContent?.imagePath?{}:{margin:'37px'}}/>
-            {ProductSkuContent?.imagePath && this.state.isEdit ?  <button style={{ display: 'inline', zIndex: '1'}}><img  style={{position: 'absolute',width: '25px',height: '25px',right: '0px',top: '3px'}} src={require('../assets/images/crossIcon.png').default} onClick={()=>this.deleteSkuImage()} /></button> : null}
+        <div onClick={()=>this.state.isEdit ?this.addSkuImage():null} style={productSkuContent?.imagePath?{marginRight:'15px',display:'table-cell',position:'relative',padding:'0px',width:'150px',height:'150px',border:'1px solid lightgray',borderRadius:'5px',cursor:'pointer'}:{marginRight:'15px',padding:'0px',width:'150px',height:'150px',border:'1px solid lightgray',borderRadius:'5px',cursor:'pointer',display: 'table-cell' }}  >
+            
+            <img className={productSkuContent?.imagePath ?"vertical-center imgProduct":"imageCenter"} src={productSkuContent?.imagePath?productSkuContent?.imagePath : require('../assets/images/add_image.png').default} style={productSkuContent?.imagePath?{}:{margin:'37px'}}/>
+            {productSkuContent?.imagePath && this.state.isEdit ?  <button style={{ display: 'inline', zIndex: '1'}}><img  style={{position: 'absolute',width: '25px',height: '25px',right: '0px',top: '3px'}} src={require('../assets/images/crossIcon.png').default} onClick={()=>this.deleteSkuImage(index)} /></button> : null}
             <div style={this.state.productMainContent.length > 0 ?{fontSize: '14px',color: 'gray',position: 'absolute',bottom: '-25px',right: '35%'}:{textAlign: 'center',fontSize: '14px',color: 'gray',paddingTop: '5px'}}>{"SKU "+index+1}</div>
        </div>
        </React.Fragment>
@@ -938,14 +945,14 @@ async submitValidation (){
   </React.Fragment>
        </div>
        </div>
-
+    
      </div>
 </React.Fragment>
     }
 
 
 </div>
- :null}
+  :<div>{"-"}</div>}
 {/*Error Text Produc Option*/}
 <div className="form-group row" style={this.state.productOptionErrorText?{margin:'10px'}:{margin:'10px',display:'none'}}>
 
@@ -990,12 +997,13 @@ async submitValidation (){
     </div>
 
   {/*Button*/}
+  {this.state.isEdit?
   <div className="form-group" style={{padding:'40px 0px',display:'flex',justifyContent:'center',margin:'0px 15px'}}>
      
      <button  className={!this.state.IsSaveDisable?"primary-button":"primary-button disabled"} style={{width:'250px',marginRight:'10px'}} onClick={!this.state.IsSaveDisable?this.onsubmit.bind(this):null} >Save</button>
      <button  className="secondary-button" style={{width:'250px'}} onClick={this.cancelOnClick.bind(this)} >Cancel</button>
     
-   </div>
+   </div>:null}
 
       </div>
 </div>
