@@ -1,4 +1,4 @@
-This Website is is e-commerce websites for the shop that can manage their shop such as manage products, order. The video demo is below
+This Website is an e-commerce website for the shop that can manage their shop such as manage products, orders. The video demo is below
 
 Register Page / Login Page / Merchant and Shop Information Page / Merchant and Shop Edit Information Page
 #
